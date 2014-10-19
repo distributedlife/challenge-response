@@ -1,0 +1,36 @@
+define(["vendor/three"], function(THREE) {
+  "use strict";
+
+  return function(width, height, config) {
+    var build_grid = function() {
+      var geometry = new THREE.Geometry();
+      var vertical_lines = width / config.size;
+      var horizontal_lines = height / config.size;
+
+      for(var w = 1; w < vertical_lines; w++) {
+        var x = w * config.size;
+
+        geometry.vertices.push(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, height, 0));
+        geometry.colors.push(new THREE.Color(), new THREE.Color());
+      }
+      for (var h = 1; h < horizontal_lines; h++) {
+        var y = h * config.size;
+
+        geometry.vertices.push(new THREE.Vector3(0, y, 0), new THREE.Vector3(width, y, 0));
+        geometry.colors.push(new THREE.Color(), new THREE.Color());
+      }
+
+      var material = new THREE.LineBasicMaterial({ color: config.colour});
+
+      var line = new THREE.Line(geometry, material);
+      line.visible = true;
+      line.type = THREE.LinePieces;
+
+      return line;
+    };
+
+    return {
+      grid: build_grid()
+    };
+  };
+});
