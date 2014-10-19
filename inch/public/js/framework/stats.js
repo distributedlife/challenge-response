@@ -1,5 +1,17 @@
-define(["vendor/rStats"], function(ignored) {
+define(["vendor/rStats", "framework/config"], function(ignored, config) {
 	"use strict";
+
+	if (config.nostats) {
+		return function() {
+			return {
+				start: function() {},
+				end: function() {},
+				tick: function() {},
+				frame: function() {},
+				update: function() {}
+			}
+		};
+	}
 
 	var rS = new rStats({
 		CSSPath: "/inch/css/",
@@ -11,7 +23,7 @@ define(["vendor/rStats"], function(ignored) {
 		groups: [
 	        { caption: 'Framerate', values: [ 'fps', 'raf' ] },
 	        { caption: 'Frame Budget', values: [ 'frame', 'tick' ] },
-	        { caption: 'Respond To Server', values: [ 'update-lib', 'update-custom' ] }
+	        { caption: 'Respond To Server', values: [ 'update-inch', 'update-game' ] }
 	    ]
 	});
 

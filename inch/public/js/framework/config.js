@@ -10,6 +10,7 @@ define([], function() {
     global_volume: 0.0,
     wireframe: false,
     nodamage: false,
+    nostats: true,
 
     grid: {
       enabled: true,

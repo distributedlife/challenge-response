@@ -1,10 +1,10 @@
 module.exports = function(io, game_state, user_input, watchjs) {
 	var start_update_client_loop = function(socket) {
 		var update_client = function() {
-			socket.volatile.emit("game_state/update", game_state) 
+			socket.volatile.emit("game_state/update", game_state);
 			setTimeout(update_client, 1000 / 60);
 		}
-		setTimeout(update_client, 1000 / 60);
+		update_client();
 	};
 
 	var setup_playable_client = function(socket) {

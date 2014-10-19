@@ -138,7 +138,7 @@ require.config({
           return this.screenfull;
         }
       },
-      'lib/particle_engine': {
+      'lib/particle/engine': {
         deps: ['vendor/ShaderParticleUtils', 'vendor/ShaderParticleGroup', 'vendor/ShaderParticleEmitter'],
         init: function() {
           "use strict";

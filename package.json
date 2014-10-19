@@ -20,7 +20,7 @@
     "morgan": "latest",
     "microtime": "latest",
     "body-parser": "latest",
-    "screenfull": "~1.2.1",
+    "screenfull": "latest",
     "rekuire": "latest"
   },
   "devDependencies": {

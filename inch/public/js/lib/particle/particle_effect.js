@@ -1,8 +1,8 @@
-define(['lib/particle/particle_engine'], function(ParticleEngine) {
+define(['lib/particle/engine'], function(ParticleEngine) {
 	"use strict";
 
 	return function(group_options, emitter_options_array) {
-		var rocket_trail = {
+		var effect = {
 			group: new ParticleEngine.Group(group_options),
 			emitters: [],
 			tick: function(dt) {
@@ -31,10 +31,10 @@ define(['lib/particle/particle_engine'], function(ParticleEngine) {
 
 		_.each(emitter_options_array, function(emitter_options) {
 			var emitter = new ParticleEngine.Emitter(emitter_options);
-			rocket_trail.emitters.push(emitter);
-			rocket_trail.group.addEmitter(emitter);
+			effect.emitters.push(emitter);
+			effect.group.addEmitter(emitter);
 		});
 
-		return rocket_trail;
+		return effect;
 	};
 });
