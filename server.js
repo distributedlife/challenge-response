@@ -4,7 +4,7 @@ var inch_files = "./inch";
 var framework_files = inch_files+'/public/js/server_core';
 var game_files = "./game/js";
 
-var _ = require('underscore');
+var _ = require('lodash');
 var express = require('express');
 var app = express();
 require(inch_files+'/configure_express')(app, express, require('consolidate'));

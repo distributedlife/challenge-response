@@ -12,7 +12,7 @@
     "requirejs": "latest",
     "nodemon": "latest",
     "hamljs": "latest",
-    "underscore": "latest",
+    "lodash": "latest",
     "wrench": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
@@ -40,6 +40,10 @@
     "grunt-notify": "latest"
   },
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit --coffee"
-  }
+    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit --coffee",
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "author": "Ryan Boucher",
+  "license": "BSD"
 }

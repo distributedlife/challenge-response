@@ -1,5 +1,5 @@
 var rek = require('rekuire')
-var _ = rek('underscore');
+var _ = rek('lodash');
 var requirejs = rek('requirejs');
 var config = requirejs('framework/config');
 

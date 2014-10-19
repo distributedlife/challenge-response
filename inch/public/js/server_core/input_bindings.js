@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = function(game_state, user_input, action_map, watchjs) {
 	var input_bindings = {

@@ -9,7 +9,7 @@ module.exports = function(game_state, entities) {
   var permanent_things = [];
   
   var all_the_things = function() {
-    return permanent_things.concat(game_state.fires);
+    return permanent_things;
   };
 
   return {

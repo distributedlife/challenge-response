@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = {
 	check_for_collisions_using_aabb: function(things) {

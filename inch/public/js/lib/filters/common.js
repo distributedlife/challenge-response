@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = {
 	inactive_things: function(things) {

@@ -4,11 +4,8 @@ module.exports = function(requirejs) {
     nodeRequire: require,
     paths: {
       "socket.io": "/socket.io/socket.io",
-      underscore: "npm/underscore-min",
       events: "npm/events",
-      bacon: "npm/bacon",
       zepto: "vendor/zepto.min",
-      jquery: "vendor/zepto.min",
       lodash: "vendor/lodash.min"
     },
     shim: {
@@ -17,9 +14,6 @@ module.exports = function(requirejs) {
           "use strict";
           return this.$;
         }
-      },
-      underscore: {
-        exports: "_"
       },
       'vendor/gamepad': {
         init: function() {
