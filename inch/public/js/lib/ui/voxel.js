@@ -1,4 +1,4 @@
-define(["ext/three", "lib/temporary_effect", "lib/math"], function(THREE, temporary_effect, math) {
+define(["vendor/three", "lib/util/temporary_effect", "lib/math/lerp"], function(THREE, temporary_effect, lerp) {
   "use strict";
   
   //TODO: remove temporary effect and make two kinds of voxel, temp and non-temp or mix it in some how... Or make everything inherit from temporary effect and just use a duration of zero to indicate infinite life.
@@ -95,14 +95,14 @@ define(["ext/three", "lib/temporary_effect", "lib/math"], function(THREE, tempor
       },
 
       tick_colour: function(dt, progress) {
-        var rgba = math.lerpRGBA(options.colour.from, options.colour.to, progress);
+        var rgba = lerp.lerpRGBA(options.colour.from, options.colour.to, progress);
         this.mesh.material.color.setRGB(rgba[0], rgba[1], rgba[2]);  
         this.mesh.material.opacity = rgba[3];
         this.mesh.material.needsUpdate = true;
       },
 
       tick_position: function(dt, progress) {
-        var position = math.lerpVector(options.position.from, options.position.to, progress);
+        var position = lerp.lerpVector(options.position.from, options.position.to, progress);
         this.mesh.position = position;
       },
 
@@ -111,7 +111,7 @@ define(["ext/three", "lib/temporary_effect", "lib/math"], function(THREE, tempor
 
         this.transitions = _.reject(this.transitions, function(t) { !t.is_alive(); });
 
-        // var scale = math.lerp(options.scale.from, options.scale.to, this.progress());
+        // var scale = lerp.lerp(options.scale.from, options.scale.to, this.progress());
         // this.mesh.scale.set(scale, scale, scale);
       },
 

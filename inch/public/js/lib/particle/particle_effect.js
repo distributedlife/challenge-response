@@ -1,4 +1,4 @@
-define(['lib/particle_engine'], function(ParticleEngine) {
+define(['lib/particle/particle_engine'], function(ParticleEngine) {
 	"use strict";
 
 	return function(group_options, emitter_options_array) {

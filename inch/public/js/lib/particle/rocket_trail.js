@@ -1,4 +1,4 @@
-define(['lib/particle_effect', 'lib/config'], function(ParticleEffect, config) {
+define(['lib/particle/particle_effect', 'framework/config'], function(ParticleEffect, config) {
 	"use strict";
 
 	return {

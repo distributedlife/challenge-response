@@ -1,4 +1,4 @@
-define(["lib/unique", "lib/tracks_state_changes", "lib/config"], function(unique, tracks_state_changes, config) {
+define(["lib/util/unique", "framework/tracks_state_changes", "framework/config"], function(unique, tracks_state_changes, config) {
   "use strict";
 
   return function(sound_manager, filename, additional_options, f) {

@@ -1,4 +1,4 @@
-define(["ext/three"], function(THREE) {
+define(["vendor/three"], function(THREE) {
   "use strict";
   
   return function(model, texture_filename, options) {

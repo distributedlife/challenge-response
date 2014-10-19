@@ -1,4 +1,4 @@
-define(["ext/three", "lib/temporary_effect", "lib/alignment", "lib/math"], function(THREE, temporary_effect, alignment, math) {
+define(["vendor/three", "util/temporary_effect", "lib/math/alignment", "lib/math/lerp"], function(THREE, temporary_effect, alignment, lerp) {
   "use strict";
 
   return function(initialText, options) {
@@ -77,10 +77,10 @@ define(["ext/three", "lib/temporary_effect", "lib/alignment", "lib/math"], funct
           this.mesh.visible = false;
         }
 
-        var scale = math.lerp(options.scale.from, options.scale.to, this.progress());
+        var scale = lerp.lerp(options.scale.from, options.scale.to, this.progress());
         this.mesh.scale.set(scale, scale, scale);
 
-        var rgba = math.lerpRGBA(options.colour.from, options.colour.to, this.progress());
+        var rgba = lerp.lerpRGBA(options.colour.from, options.colour.to, this.progress());
         this.mesh.material.color.setRGB(rgba[0], rgba[1], rgba[2]);  
         this.mesh.material.opacity = rgba[3];
         this.mesh.material.needsUpdate = true;

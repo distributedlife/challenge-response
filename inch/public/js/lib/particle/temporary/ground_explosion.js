@@ -1,4 +1,4 @@
-define(['lib/particle_effect', 'lib/config', 'lib/temporary_effect', 'lodash'], function(ParticleEffect, config, temporary_effect, _) {
+define(['lib/particle/particle_effect', 'framework/config', 'lib/util/temporary_effect', 'lodash'], function(ParticleEffect, config, temporary_effect, _) {
 	"use strict";
 
 	return {
