@@ -6,7 +6,7 @@ requirejs.config({ baseUrl: 'inch/public/js' })
 
 var unique = requirejs('lib/util/unique');
 
-module.exports = function(bullet) {
+module.exports = function() {
   return {
     id: unique.id(),
     active: true,
