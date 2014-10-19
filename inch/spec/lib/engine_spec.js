@@ -1,6 +1,6 @@
 var rek = require('rekuire');
 
-var Engine = rek("inch/public/js/framework/engine");
+var Engine = rek("inch/public/js/server_core/engine");
 
 describe("the engine", function() {
 	var engine = null;
