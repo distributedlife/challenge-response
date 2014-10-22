@@ -33,13 +33,36 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
     var scene = create_a_scene();
     var renderer = build_scene_renderer(scene, camera);
 
+    var things_in_scene = [];
+
+    var scene_manager = {
+      add: function() {
+        _.each(arguments, function(mesh) { 
+          scene.add(mesh); 
+          things_in_scene.push(mesh);
+        }.bind(this)); 
+      },
+      remove: function() {
+        _.each(arguments, function(mesh) { 
+          scene.remove(mesh); 
+
+          var i = things_in_scene.indexOf(mesh);
+          things_in_scene.splice(i, 1);
+
+        }.bind(this));
+      },
+      reset: function() {
+        _.each(things_in_scene, function(mesh) {
+          scene.remove(mesh);
+        });
+
+        things_in_scene = [];
+      }
+    };
+
+
     var display = Object.create(standard_display_behaviour(element, width, height, options, setup_func, update_func));
     _.extend(display, {
-      camera: camera,
-      scene: scene,
-      things_in_scene: [],
-      renderer: renderer,
-
       expired_effects_func: function(expired_effects) {
         _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
       },
@@ -57,29 +80,20 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
       
       //TODO: move to scene management
       add_to_scene: function() {
-        _.each(arguments, function(mesh) { 
-          display.scene.add(mesh); 
-          display.things_in_scene.push(mesh);
-        }.bind(display)); 
+        scene_manager.add.apply(this, arguments);
       },
       remove_from_scene: function() {
-        _.each(arguments, function(mesh) { 
-          display.scene.remove(mesh); 
-
-          var i = display.things_in_scene.indexOf(mesh);
-          display.things_in_scene.splice(i, 1);
-
-        }.bind(display));
+        scene_manager.remove.apply(this, arguments);
       },
       reset: function() {
-        _.each(display.things_in_scene, function(thing_in_scene) {
-          display.scene.remove(thing_in_scene);
-        });
-
-        display.things_in_scene = [];
+        scene_manager.reset();
       },
+      scene_manager: function() {
+        return scene_manager;
+      },
+
       animate: function(dt) {
-        this.renderer.render(display.scene, display.camera); 
+        renderer.render(scene, camera); 
 
         if (this.setup_complete) {
           this.tick(dt); 
@@ -87,10 +101,11 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
       },
       resize: function(width, height) {
         display.__proto__.resize(width, height);
-        display.renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
+        
+        renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
 
-        display.camera.aspect = width / height;
-        display.camera.updateProjectionMatrix();
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
       }
     });    
 

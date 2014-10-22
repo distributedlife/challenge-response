@@ -7,7 +7,7 @@ define([], function() {
 		var age = 0;
 		var progress = function() { 
 			return duration === 0 ? 0.0 : age / duration; 
-		}
+		};
 
 		return {
 			tick: function(dt) {

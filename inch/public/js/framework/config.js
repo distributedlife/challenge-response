@@ -13,7 +13,7 @@ define([], function() {
     nostats: true,
 
     grid: {
-      enabled: true,
+      enabled: false,
       size: 50,
       colour: 0x00FF00
     },

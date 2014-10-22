@@ -8,10 +8,12 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                 x: 0,
                 y: 0,
                 touches: [],
-                keys: []
+                keys: [],
+                single_press_keys: []
             },
 
             keys: {},
+            single_press_keys: {},
 
             key_map: function() {
                 var map = {
@@ -43,6 +45,10 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                 };
             },
             
+            single_press: function(key) { 
+                this.single_press_keys[key] = true; 
+            },
+
             press: function(key) { 
                 this.keys[key] = true; 
             },
@@ -125,11 +131,19 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                     this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
                 }.bind(this));
 
+
+                $(window.document).keypress(function(e) {
+                    if (e.metaKey) { return; }
+
+                    this.single_press(this.key_map()[e.which]);
+                    // e.preventDefault();
+                }.bind(this));
+
                 $(window.document).keydown(function(e) {
                     if (e.metaKey) { return; }
 
                     this.press(this.key_map()[e.which]);
-                    e.preventDefault();
+                    // e.preventDefault();
                 }.bind(this));
 
                 $(window.document).keyup(function(e) {
@@ -150,6 +164,15 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                     }
                 });
                 this.input_data.keys = keys_to_send;
+
+                var single_press_keys_to_send = [];
+                _.each(this.single_press_keys, function(value, key) {
+                    if (value) { 
+                        single_press_keys_to_send.push(key); 
+                    }
+                    this.single_press_keys[key] = false
+                }.bind(this));
+                this.input_data.single_press_keys = single_press_keys_to_send;
                 
                 if (_.isEqual(this.input_data, this.last_sent)) {
                     return;
@@ -158,7 +181,7 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                 socket.emit('input', this.input_data);
                 this.last_sent = _.clone(this.input_data, true);
             },
-            notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 60); }
+            notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 120); }
         };
 
         controller.detectButtonsMappingToKeys();

@@ -7,7 +7,19 @@ module.exports = function(game_state, user_input, action_map, watchjs) {
 				if (action_map[key] === undefined) { return; }
 
 				_.each(action_map[key], function(action) { 
-					callback(action.target, action.func);
+					if (!action.keypress) {
+						callback(action.target, action.func);
+					}					
+				});
+			});
+
+			_.each(user_input.raw_data.single_press_keys, function(key) {
+				if (action_map[key] === undefined) { return; }
+
+				_.each(action_map[key], function(action) { 
+					if (action.keypress) {
+						callback(action.target, action.func);	
+					}
 				});
 			});
 		},

@@ -21,26 +21,21 @@
     "microtime": "latest",
     "body-parser": "latest",
     "screenfull": "latest",
-    "rekuire": "latest"
+    "rekuire": "latest",
+    "passport": "~0.2.1",
+    "passport-local": "~1.0.0",
+    "javascript-state-machine": "~2.3.2"
   },
   "devDependencies": {
     "amdefine": "latest",
-    "jasmine-node": "latest",
     "jsdom": "latest",
-    "coffee-script": "latest",
-    "jscoverage-reporter": "latest",
-    "jshint": "latest",
-    "growl": "latest",
-    "jasmine-growl-reporter": "latest",
-    "grunt": "latest",
-    "grunt-bump": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-jasmine-node": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-notify": "latest"
+    "gulp": "~3.8.8",
+    "jasmine-node": "~1.14.5",
+    "gulp-develop-server": "~0.2.4",
+    "gulp-livereload": "~2.1.1"
   },
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit --coffee",
+    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit",
     "start": "node server.js"
   },
   "main": "server.js",

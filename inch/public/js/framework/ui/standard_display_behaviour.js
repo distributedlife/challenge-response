@@ -77,6 +77,8 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	        resize: function(width, height) {
 	        	this.width = width;
 	        	this.height = height;
+	        	_.each(this.permanent_effects, function(permanent_effect) { permanent_effect.reposition(); });
+        		_.each(this.temporary_effects, function(temporary_effect) { temporary_effect.reposition(); });
 	        },
 
 	        //TODO: can we make this callback function?
@@ -88,13 +90,23 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	        	stats( 'update-inch' ).start();
 	            this.update_state(state);
 
-	            if (this.changed(this.the('dimensions'))) { this.resize(this.width, this.height); }
+	            if (this.changed(this.the('dimensions'))) { 
+	            	this.resize(this.width, this.height); 
+	            }
 
-	            if (this.changed(this.the('paused')) && this.value(this.is('paused'))) { this.pause(); }
-	            if (this.changed(this.the('paused')) && this.value(this.isnt('paused'))) { this.resume(); }
+	            if (this.changed(this.the('paused')) && this.value(this.is('paused'))) { 
+	            	this.pause(); 
+	            }
+	            if (this.changed(this.the('paused')) && this.value(this.isnt('paused'))) { 
+	            	this.resume(); 
+	            }
 
-	            if (this.changed(this.the('players'))) {  $('#player-count').text(format.number_to_3_chars(this.value(this.the('players'))));  }
-	            if (this.changed(this.the('observers'))) {  $('#observer-count').text(format.number_to_3_chars(this.value(this.the('observers'))));  }
+	            if (this.changed(this.the('players'))) {  
+	            	$('#player-count').text(format.number_to_3_chars(this.value(this.the('players'))));  
+	            }
+	            if (this.changed(this.the('observers'))) {  
+	            	$('#observer-count').text(format.number_to_3_chars(this.value(this.the('observers'))));  
+	            }
 
 	            this.detect_changes_and_notify_observers();
 	            stats( 'update-inch' ).end();
