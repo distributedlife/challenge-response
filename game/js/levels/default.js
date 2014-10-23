@@ -25,6 +25,12 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             score.fade_in(0, 1.0);
         };
 
+        var show_false_start = function(model, prior_model, false_start, score) {
+            false_start.fade_in(0, 1.0);
+            score.update_text(model.score + "ms");
+            score.fade_in(0, 1.0);  
+        }
+
         var position_helpers = function() {
             var width = function() {
                 return level.value(level.screen_width);
@@ -89,12 +95,24 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
                 start_hidden: true
             });
             level.permanent_effects.push(score);
+
+            var false_start = new text("False Start", level.scene_manager().add, level.scene_manager().remove, {
+                size: 80,
+                position: {
+                    x: position_helpers().width.centre,
+                    y: position_helpers().height.div4(1),
+                    z: 0
+                },
+                start_hidden: true
+            });
+            level.permanent_effects.push(acknowledgment);
         	
             level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('a'), show_instructions, title);
             level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('b'), hide_instructions, title);
             level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('c'), show_challenge, challenge);
             level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('d'), acknowledge_response, [challenge, acknowledgment]);
             level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('e'), show_results, [acknowledgment, score]);
+            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('f'), show_false_start, [false_start, score]);
 
             if (level.value(level.the('controller')).state === 'a') {
                 show_instructions(undefined, undefined, title);

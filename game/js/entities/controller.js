@@ -32,43 +32,71 @@ module.exports = function() {
 	  	{ name: 'b', from: 'b', to: 'c' },    
 	  	{ name: 'c', from: 'c', to: 'd' },    
 	  	{ name: 'd', from: 'd', to: 'e' },
-	  	{ name: 'e', from: 'e', to: 'a' }
+	  	{ name: 'e', from: 'e', to: 'a' },
+	  	{ name: 'false_start', from: '*', to: 'f' }
 	  ]
 	});
 	fsm.onstate = function() {
 		controller.state = fsm.current;
-		console.log(controller.state);
+		console.log(fsm.current)
 	};
 	fsm.onenterc = function() {
+		controller.started = true;
 		start = Date.now();
 	};
 	fsm.onenterd = function() {
 		finish = Date.now();
 	};
 	var delayed = function() {
+		if (controller.false_start) {
+			return;
+		}
+		
 		fsm.b();
 	};
 	var acknowledgement = function() {
+		if (controller.false_start) {
+			return;
+		}
+
 		controller.score = finish - start;
 		fsm.d();
 	};
 	var reset = function() {
 		controller.score = 0;
+		controller.started = false;
+		controller.false_start = false;
 		fsm.cycle();
+	};
+
+	var false_start = function() {
+		controller.false_start = true;
+		controller.score = -1000;
+		fsm.false_start();
 	};
 
 	_.extend(controller, {
 		score: 0,
 		state: 'a',
+		started: false,
+		false_start: false,
 		active: true,
 		anykey: function() {
 			if (controller.state === 'a') {
 				fsm.cycle();
-				timers.push(Object.create(delayed_effect(3, delayed)));
+				timers.push(Object.create(delayed_effect((Math.random() * 6) + (Math.random() * 6), delayed)));
+				return;
+			}
+			if (controller.state === 'b') {
+				controller.false_start = true;
+				controller.score = -1000;
+				fsm.false_start();
+				return;
 			}
 			if (controller.state === 'c') {
 				fsm.cycle();
 				timers.push(Object.create(delayed_effect(1, acknowledgement)));
+				return;
 			}
 		},
 		update: function(dt) {
