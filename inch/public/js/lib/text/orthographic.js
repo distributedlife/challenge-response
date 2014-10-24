@@ -1,9 +1,10 @@
-define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/math/lerp", "lib/util/supports_transitions"], function(THREE, is_a_temporary_effect, alignment, lerp, supports_transitions) {
+define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/math/lerp", "lib/util/supports_transitions"], function(THREE, a_temporary_effect, alignment, lerp, supports_transitions) {
   "use strict";
 
   return function(initialText, on_create, on_destroy, options) {
     options = options || {};
     
+    //TODO: bring in these defaults from elsewhere
     _.defaults(options, {
       transparent: false,
       alphaTest: 0.1,
@@ -31,6 +32,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
       options.colour.from[3] = 0.0;
     }
 
+    //put mesh in the closure
     var createMeshFromText = function(textToDisplay) {
       var shape = THREE.FontUtils.generateShapes(textToDisplay, options);
       
@@ -68,10 +70,6 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
         this.mesh.visible = updated_model.active || true;
       },
 
-      reposition: function() {
-        this.mesh.position = alignment.align_to_self(this.position, this.width(), this.height(), options.alignment);
-      },
-
       update_text: function(updatedText) {
         var is_visible = this.mesh.visible;
 
@@ -81,7 +79,6 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
         this.mesh.position = alignment.align_to_self(this.position, this.width(), this.height(), options.alignment);
         this.mesh.visible = is_visible;
 
-        on_create(this.mesh);
         this.update_mesh(this.mesh);
       },
 
@@ -95,7 +92,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
       }
     };
     _.extend(orthographic_text, supports_transitions(orthographic_text.mesh, options));
-    _.extend(orthographic_text, is_a_temporary_effect(options.duration, orthographic_text.on_tick.bind(orthographic_text)));
+    _.extend(orthographic_text, a_temporary_effect(options.duration, orthographic_text.on_tick.bind(orthographic_text)));
 
     return orthographic_text;
   }

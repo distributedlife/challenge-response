@@ -26,33 +26,28 @@ module.exports = function() {
 	var finish = 0;
 
 	var fsm = state_machine({
-	  initial: 'a',  
+	  initial: 'ready',  
 	  events: [
-	  	{ name: 'a', from: 'a', to: 'b' },    
-	  	{ name: 'b', from: 'b', to: 'c' },    
-	  	{ name: 'c', from: 'c', to: 'd' },    
-	  	{ name: 'd', from: 'd', to: 'e' },
-	  	{ name: 'e', from: 'e', to: 'a' },
-	  	{ name: 'false_start', from: '*', to: 'f' }
+	  	{ name: 'ready', from: 'ready', to: 'waiting' },    
+	  	{ name: 'waiting', from: 'waiting', to: 'challenge_started' },    
+	  	{ name: 'challenge_started', from: 'challenge_started', to: 'response_accepted' },    
+	  	{ name: 'response_accepted', from: 'response_accepted', to: 'complete' },
+	  	{ name: 'complete', from: 'complete', to: 'ready' },
+	  	{ name: 'false_start', from: '*', to: 'false_start' }
 	  ]
 	});
 	fsm.onstate = function() {
 		controller.state = fsm.current;
-		console.log(fsm.current)
 	};
-	fsm.onenterc = function() {
+	fsm.onenterchallenge_started = function() {
 		controller.started = true;
-		start = Date.now();
-	};
-	fsm.onenterd = function() {
-		finish = Date.now();
 	};
 	var delayed = function() {
 		if (controller.false_start) {
 			return;
 		}
 		
-		fsm.b();
+		fsm.waiting();
 	};
 	var acknowledgement = function() {
 		if (controller.false_start) {
@@ -60,7 +55,7 @@ module.exports = function() {
 		}
 
 		controller.score = finish - start;
-		fsm.d();
+		fsm.response_accepted();
 	};
 	var reset = function() {
 		controller.score = 0;
@@ -77,23 +72,27 @@ module.exports = function() {
 
 	_.extend(controller, {
 		score: 0,
-		state: 'a',
+		state: 'ready',
 		started: false,
 		false_start: false,
 		active: true,
-		anykey: function() {
-			if (controller.state === 'a') {
+		challenge_seen: function(ack) {
+			start = ack.rcvd_timestamp;
+		},
+		anykey: function(force, data) {
+			if (controller.state === 'ready') {
 				fsm.cycle();
 				timers.push(Object.create(delayed_effect((Math.random() * 6) + (Math.random() * 6), delayed)));
 				return;
 			}
-			if (controller.state === 'b') {
+			if (controller.state === 'waiting') {
 				controller.false_start = true;
 				controller.score = -1000;
 				fsm.false_start();
 				return;
 			}
-			if (controller.state === 'c') {
+			if (controller.state === 'challenge_started') {
+				finish = data.rcvd_timestamp;
 				fsm.cycle();
 				timers.push(Object.create(delayed_effect(1, acknowledgement)));
 				return;

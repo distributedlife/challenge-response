@@ -67,17 +67,6 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
         _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
       },
 
-      dimensions: function(width, height) {
-        if (this.current_state === null) {
-          return {width: width, height: height};
-        } else {
-          return {
-            width: width * width / this.current_state.dimensions.width, 
-            height: height * height / this.current_state.dimensions.height
-          };
-        }
-      },
-      
       //TODO: move to scene management
       add_to_scene: function() {
         scene_manager.add.apply(this, arguments);
@@ -106,6 +95,9 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
 
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
+
+        // _.each(this.permanent_effects, function(permanent_effect) { permanent_effect.reposition(); });
+        // _.each(this.temporary_effects, function(temporary_effect) { temporary_effect.reposition(); });
       }
     });    
 

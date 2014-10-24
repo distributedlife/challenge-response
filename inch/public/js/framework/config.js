@@ -14,7 +14,7 @@ define([], function() {
 
     grid: {
       enabled: false,
-      size: 50,
+      size: 75,
       colour: 0x00FF00
     },
 

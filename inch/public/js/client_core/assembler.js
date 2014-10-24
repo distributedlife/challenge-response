@@ -1,4 +1,4 @@
-define(["vendor/window", "client_core/engine", "client_core/dimensions", "client_core/layout_icons"], function (window, rendering_engine, dimensions, layout_icons) {
+ define(["vendor/window", "client_core/engine", "client_core/dimensions", "client_core/layout_icons"], function (window, rendering_engine, dimensions, layout_icons) {
     "use strict";
 
     return function(config) {
@@ -24,7 +24,7 @@ define(["vendor/window", "client_core/engine", "client_core/dimensions", "client
             }
         } else {
             var engine_assembler = {
-                resize: function() {
+                resize: function(e) {
                     var dims = dimensions(config.ratio);
 
                     layout_icons(dims.orientation);

@@ -45,16 +45,20 @@ module.exports = function(game_state, user_input, action_map, watchjs) {
 			});
 		},
 		map_input_to_action: function() {
+			var data = {
+				rcvd_timestamp: user_input.rcvd_timestamp
+			};
+
 			this.parse_keys_and_buttons(function(target, func) {
-				game_state[target][func](1.0);
+				game_state[target][func](1.0, data);
 			});
 
 			this.parse_touches(function(target, func, x, y) {
-				game_state[target][func](x, y);
+				game_state[target][func](x, y, data);
 			});
 
 			this.parse_sticks(function(target, func, x, y, force) {
-				game_state[target][func](x, y, force);
+				game_state[target][func](x, y, force, data);
 			});
 
 			if (action_map['cursor'] !== undefined) {
@@ -64,7 +68,7 @@ module.exports = function(game_state, user_input, action_map, watchjs) {
 
 					var cx = user_input.raw_data.x;
 					var cy = user_input.raw_data.y;
-					game_state[target][func](cx, cy);
+					game_state[target][func](cx, cy, data);
 				});
 			}
 		},

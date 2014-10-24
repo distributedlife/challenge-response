@@ -23,10 +23,10 @@ var watchjs = require('watchjs');
 var user_input = {
 	raw_data: {}
 };
-require(framework_files+'/socket_routes')(io, game_state, user_input, watchjs);
+require(framework_files+'/socket_routes')(io, game_state, user_input, watchjs, action_map.acks);
 require(game_files+'/routes')(app, game_state);
 
-var input_bindings = require(framework_files+'/input_bindings')(game_state, user_input, action_map, watchjs);
+var input_bindings = require(framework_files+'/input_bindings')(game_state, user_input, action_map.input, watchjs);
 var game_engine = require(framework_files+'/engine')(game_state, game_logic, input_bindings);
 
 game_engine.run();

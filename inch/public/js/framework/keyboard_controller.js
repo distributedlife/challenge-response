@@ -1,7 +1,7 @@
 define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
     "use strict";
 
-    return function(socket, element) {
+    return function(socket, element, flush_pending_acks) {
         var controller = {
             last_sent: {},
             input_data: {
@@ -9,7 +9,8 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                 y: 0,
                 touches: [],
                 keys: [],
-                single_press_keys: []
+                single_press_keys: [],
+                sent_timestamp: undefined
             },
 
             keys: {},
@@ -136,6 +137,9 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                     if (e.metaKey) { return; }
 
                     this.single_press(this.key_map()[e.which]);
+                    //TODO: we need a prevent default in order to stop space moving the page, but we need it 
+                    //to ensure that both keypress and keydown fire on the same event. We can work around this 
+                    //but we'll need to get a replicable scene (this is only a problem for the space key)
                     // e.preventDefault();
                 }.bind(this));
 
@@ -157,6 +161,9 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
             },
 
             emit: function() {
+                //TODO: make a stats function to wrap anyold function
+                // stats( 'check-input' ).start();
+
                 var keys_to_send = [];
                 _.each(this.keys, function(value, key) {
                     if (value) { 
@@ -178,8 +185,13 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                     return;
                 }
 
+                this.input_data.sent_timestamp = Date.now();
+                this.input_data.pending_acks = flush_pending_acks();
+
                 socket.emit('input', this.input_data);
                 this.last_sent = _.clone(this.input_data, true);
+
+                // stats( 'check-input' ).start();
             },
             notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 120); }
         };

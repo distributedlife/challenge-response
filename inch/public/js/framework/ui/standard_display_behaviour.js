@@ -1,7 +1,22 @@
-define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/keyboard_controller", "framework/sound_manager", "framework/track_state_changes", "framework/stats", 'framework/text_format'], 
-	function($, _, io, screenfull, keyboard_controller, SoundManager, tracks_state_changes, stats, format) {
+define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/keyboard_controller", "framework/sound_manager", "framework/track_state_changes", "framework/stats", 'framework/text_format', 'lib/util/sequence'], 
+	function($, _, io, screenfull, keyboard_controller, SoundManager, tracks_state_changes, stats, format, sequence) {
 		
 	"use strict";
+
+	var pending_acknowledgements = [];
+	var last_received_id = 0;
+
+	var reset_pending_messages = function() {
+		pending_acknowledgements = [];
+	};
+
+	var flush_pending_acks = function() {
+		var pending = pending_acknowledgements;
+
+		reset_pending_messages();
+
+		return pending;
+	};
 
 	return function(element, width, height, options, setup_func, update_func) {
 		var display = {};
@@ -16,6 +31,9 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
         	permanent_effects: [],
         	changes: [],
 
+        	acknowledge: function(name) {
+        		pending_acknowledgements[pending_acknowledgements.length - 1].names.push(name);
+        	},
         	update_display: function() {
         		if (this.value(this.is('paused'))) {
         			this.prior_step = Date.now();
@@ -77,8 +95,6 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	        resize: function(width, height) {
 	        	this.width = width;
 	        	this.height = height;
-	        	_.each(this.permanent_effects, function(permanent_effect) { permanent_effect.reposition(); });
-        		_.each(this.temporary_effects, function(temporary_effect) { temporary_effect.reposition(); });
 	        },
 
 	        //TODO: can we make this callback function?
@@ -86,9 +102,21 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	        	return {width: width, height: height};
 	        },
 
-	        update: function(state) {
+	        update: function(packet) {
 	        	stats( 'update-inch' ).start();
-	            this.update_state(state);
+
+	        	pending_acknowledgements.push({
+	        		id: packet.id,
+	        		rcvd_timestamp: Date.now(),
+	        		names: []
+	        	});
+
+	        	if (packet.id <= last_received_id) {
+	        		return;
+	        	}
+	        	last_received_id = packet.id;
+
+	            this.update_state(packet.game_state);
 
 	            if (this.changed(this.the('dimensions'))) { 
 	            	this.resize(this.width, this.height); 
@@ -128,7 +156,7 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	            socket.on('error', function(data) { throw Error(data); });
 
 	            if (!options.controls.indexOf("keyboard") !== -1) {
-	                keyboard_controller(socket, element);
+	                keyboard_controller(socket, element, flush_pending_acks);
 	            }
 	        }
 	    });

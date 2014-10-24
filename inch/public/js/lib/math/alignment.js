@@ -1,4 +1,4 @@
-define([], function() {
+define(["lodash"], function(_) {
 	"use strict";
 
 	return {
@@ -28,7 +28,7 @@ define([], function() {
 			} else if (options.vertical === "bottom") {
 				new_position.y = resolved_position_values.y;
 			} else {
-				new_position.y = resolved_position_values.y + (height / 2);
+				new_position.y = resolved_position_values.y + (height / 4);
 			}
 
 			return new_position;

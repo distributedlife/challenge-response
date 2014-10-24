@@ -4,13 +4,13 @@ define(["vendor/window"], function(window) {
     var min_margin = 32;
 
     return function(ratio) {
-        var width, height;
-        var ratio = ratio;
+        var width = undefined;
+        var height = undefined;
         var ratioHeight = Math.round(window.innerWidth / ratio);
         var ratioWidth = Math.round(window.innerHeight * ratio);
         var orientation = "";
         
-        if (ratioHeight > window.innerHeight) {
+        if (ratioHeight >= window.innerHeight) {
             if (ratioWidth + min_margin + min_margin > window.innerWidth) {
                 width = window.innerWidth - min_margin - min_margin;
                 height = ratioHeight;
