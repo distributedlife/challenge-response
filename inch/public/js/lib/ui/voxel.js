@@ -109,7 +109,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/lerp"], function(
       tick: function(dt) {
         _.each(this.transitions, function(t) { t.tick(dt); });
 
-        this.transitions = _.reject(this.transitions, function(t) { !t.is_alive(); });
+        this.transitions = _.reject(this.transitions, function(t) { return !t.is_alive(); });
 
         // var scale = lerp.lerp(options.scale.from, options.scale.to, this.progress());
         // this.mesh.scale.set(scale, scale, scale);

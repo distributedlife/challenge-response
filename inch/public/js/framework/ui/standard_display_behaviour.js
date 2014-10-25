@@ -56,8 +56,8 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
                 _.each(this.permanent_effects, function(permanent_effect) { permanent_effect.tick(dt); });
                 _.each(this.temporary_effects, function(temporary_effect) { temporary_effect.tick(dt); });
 
-                var expired_effects = _.select(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
-                this.temporary_effects = _.reject(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
+                var expired_effects = _.select(this.temporary_effects, function(temporary_effect) { return !temporary_effect.is_alive(); });
+                this.temporary_effects = _.reject(this.temporary_effects, function(temporary_effect) { return !temporary_effect.is_alive(); });
 
                 this.expired_effects_func(expired_effects);
             },

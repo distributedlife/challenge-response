@@ -10,7 +10,7 @@ define([], function() {
 		return {
 			tick: function(dt) {
 				age += dt;
-
+		
 				if (done()) {
 					if (on_complete !== undefined) {
 						on_complete();
@@ -18,6 +18,10 @@ define([], function() {
 
 					on_complete = undefined;
 				}
+			},
+			cancel: function() {
+				on_complete = undefined;
+				age = duration;
 			},
 			is_alive: function() { return !done(); }
 		};

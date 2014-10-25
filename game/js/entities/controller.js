@@ -38,15 +38,9 @@ module.exports = function() {
 	});
 	fsm.onstate = function() {
 		controller.state = fsm.current;
-		console.log(controller.state);
 	};
 	fsm.onenterchallenge_started = function() {
 		controller.started = true;
-	};
-	fsm.onenterreset = function() {
-		controller.score = 0;
-		controller.started = false;
-		controller.false_start = false;
 	};
 	var delayed = function() {
 		if (controller.false_start) {
@@ -64,13 +58,6 @@ module.exports = function() {
 		fsm.response_accepted();
 	};
 
-
-	var false_start = function() {
-		controller.false_start = true;
-		controller.score = -1000;
-		fsm.false_start();
-	};
-
 	_.extend(controller, {
 		score: 0,
 		state: 'ready',
@@ -83,8 +70,7 @@ module.exports = function() {
 		anykey: function(force, data) {
 			if (controller.state === 'ready') {
 				fsm.cycle();
-				var delay = (Math.random() * 6) + (Math.random() * 6);
-				console.log("a delay of ", delay);
+				var delay = Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
 				timers.push(Object.create(delayed_effect(delay, delayed)));
 				return;
 			}
@@ -92,6 +78,11 @@ module.exports = function() {
 				controller.false_start = true;
 				controller.score = -1000;
 				fsm.false_start();
+
+				_.each(timers, function(timer) {
+					timer.cancel();
+				});
+
 				return;
 			}
 			if (controller.state === 'challenge_started') {
@@ -102,16 +93,18 @@ module.exports = function() {
 			}
 		},
 		reset: function(force, data) {
-			console.log('reset', controller.state)
 			if (controller.state === 'complete' || controller.state === "false_start") {
 				fsm.reset();
+				controller.score = 0;
+				controller.started = false;
+				controller.false_start = false;
 			}
 		},
 		update: function(dt) {
 			_.each(timers, function(timer) {
 				timer.tick(dt);
 			});
-			timers = _.reject(timers, function(t) { !t.is_alive(); });
+			timers = _.reject(timers, function(t) { return !t.is_alive(); });
 		}
 	});
 
