@@ -23,7 +23,6 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
         };
 
         var show_challenge = function(model, prior_model, challenge, score) {
-            console.log(arguments);
             start = Date.now();
             challenge.fade_in();
             level.acknowledge('show-challenge');   
@@ -180,7 +179,6 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
 
         var update = function() {
             if (start !== undefined && !finished) {
-                console.log(Date.now() - start)
                 // score.update_text(Date.now() - start + "ms");
             }
         };

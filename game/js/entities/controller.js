@@ -34,23 +34,21 @@ module.exports = function() {
 	  	{ name: 'response_accepted', from: 'response_accepted', to: 'complete' },
 	  	{ name: 'reset', from: '*', to: 'ready' },
 	  	{ name: 'false_start', from: '*', to: 'false_start' }
-	  ]
+	  ],
+	  callbacks: {
+	  	onstate: function(event, from, to) { controller.state = this.current; },
+	  }
 	});
-	fsm.onstate = function() {
-		controller.state = fsm.current;
-	};
-	fsm.onenterchallenge_started = function() {
-		controller.started = true;
-	};
+
 	var delayed = function() {
-		if (controller.false_start) {
+		if (fsm.is('false_start')) {
 			return;
 		}
 		
 		fsm.waiting();
 	};
 	var acknowledgement = function() {
-		if (controller.false_start) {
+		if (fsm.is('false_start')) {
 			return;
 		}
 
@@ -61,8 +59,6 @@ module.exports = function() {
 	_.extend(controller, {
 		score: 0,
 		state: 'ready',
-		started: false,
-		false_start: false,
 		active: true,
 		challenge_seen: function(ack) {
 			start = ack.rcvd_timestamp;
@@ -75,7 +71,6 @@ module.exports = function() {
 				return;
 			}
 			if (controller.state === 'waiting') {
-				controller.false_start = true;
 				controller.score = -1000;
 				fsm.false_start();
 
@@ -96,14 +91,10 @@ module.exports = function() {
 			if (controller.state === 'complete' || controller.state === "false_start") {
 				fsm.reset();
 				controller.score = 0;
-				controller.started = false;
-				controller.false_start = false;
 			}
 		},
 		update: function(dt) {
-			_.each(timers, function(timer) {
-				timer.tick(dt);
-			});
+			_.each(timers, function(timer) { timer.tick(dt);});
 			timers = _.reject(timers, function(t) { return !t.is_alive(); });
 		}
 	});
