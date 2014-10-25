@@ -52,7 +52,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
       },
 
       dimensions: function(width, height) {
-        if (this.current_state === null) {
+        if (this.has_no_current_state()) {
           return {width: width, height: height};
         } else {
           return {

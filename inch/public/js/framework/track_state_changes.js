@@ -11,16 +11,95 @@ define(["lodash"], function(_) {
         }
     };
 
-	return {
-		prior_state: null,
-        current_state: null,
+    var prior_state = null;
+    var current_state = null;
+    var changes = [];
 
+    var changed = function(f) { 
+        if (prior_state === null) { return true; }
+
+        return !_.isEqual(f(prior_state), f(current_state));
+    };
+    var property_changed = function(f, p) {
+        if (prior_state === null) { return true; }
+        
+        return p(f(prior_state)) !== p(f(current_state));
+    };
+
+    var value = function(f) {  
+        if (current_state === null) { 
+            return false; 
+        }
+
+        return f(current_state);  
+    };
+    var prior_value = function(f) {  
+        if (prior_state === null) { 
+            return false; 
+        }
+
+        return f(prior_state);  
+    };
+
+    var element = function(f, model) { 
+        return _.where(f(prior_state), {id: model.id});
+    };
+    var prior_element = function(f, model) {  
+        if (prior_state === null) { 
+            return null; 
+        }
+
+        return _.where(f(prior_state), {id: model.id})[0];
+    };
+    var element_added = function(f, model) { 
+        return (_.where(f(prior_state), {id: model.id}).length === 0);
+    };
+    var element_removed = function(f, model) { 
+        return (_.where(f(current_state), {id: model.id}).length === 0);
+    };
+    var element_changed = function(f, model) { 
+        if (prior_state === null) { return true; }
+
+        return _.where(f(current_state), {id: model.id}) !== _.where(f(prior_state), {id: model.id});
+    };
+
+    var handle_objects = function(change) {
+        if (changed(change.focus)) {
+            if (change.when === undefined) {
+                invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
+            } else {
+                if (change.when(value(change.focus))) {
+                    invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
+                }
+            }
+        }
+    };
+    var handle_object_property = function(change) {
+        if (property_changed(change.focus, change.property)) {
+            if (change.when === undefined) {
+                invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
+            } else {
+                if (change.when(change.property(change.focus(current_state)))) {
+                    invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
+                }
+            }
+        }
+    };
+    var handle_arrays = function(change) {
+        _.each(change.operates_on(change.focus), function(model) {
+            if (change.detection_func(change.focus, model)) {
+                invoke_callback(change.callback, model, prior_element(change.focus, model), change.data);
+            }
+        });
+    };
+
+	return {
         the: function(name) { return function(state) { return state[name]; }; },
         property: function(name) { return function(state) { return state[name]; }; },
         all: function(name) { return function(state) { return state[name]; }; },
         is: function(name) { return function(state) { return state[name] === true; }; },
         isnt: function(name) { return function(state) { return state[name] === false; }; },
-        is2: function(f) { return f(this.current_state) === true; },
+        is2: function(f) { return f(current_state) === true; },
         
         equals: function(expected_value) { return function(current_value) { return current_value === expected_value; }; },
 
@@ -28,68 +107,30 @@ define(["lodash"], function(_) {
         screen_height: function(state) { return state.dimensions.height; },
 
         update_state: function(new_state) {
-        	this.prior_state = this.current_state;
-            this.current_state = new_state;
+        	prior_state = current_state;
+            current_state = new_state;
         },
 
-        changed: function(f) { 
-        	if (this.prior_state === null) { return true; }
+        has_no_current_state: function() {
+            return current_state !== null;
+        },
 
-            return !_.isEqual(f(this.prior_state), f(this.current_state));
-        	// return f(this.prior_state) !== f(this.current_state); 
-        },
-        property_changed: function(f, p) {
-            if (this.prior_state === null) { return true; }
-            
-            return p(f(this.prior_state)) !== p(f(this.current_state));
-        },
+        changed: changed,
+        property_changed: property_changed,
         changed_strict: function(f) { 
-        	if (this.prior_state === null) { return false; }
+        	if (prior_state === null) { return false; }
 
-            return !_.isEqual(f(this.prior_state), f(this.current_state));
-        	// return f(this.prior_state) !== f(this.current_state); 
+            return !_.isEqual(f(prior_state), f(current_state));
       	},
 
-        element_added: function(f, model) { 
-            return (_.where(f(this.prior_state), {id: model.id}).length === 0);
-        },
-        element_removed: function(f, model) { 
-            return (_.where(f(this.current_state), {id: model.id}).length === 0);
-        },
-        element_changed: function(f, model) { 
-            if (this.prior_state === null) { return true; }
+        value: value,
+        prior_value: prior_value,
 
-            return _.where(f(this.current_state), {id: model.id}) !== _.where(f(this.prior_state), {id: model.id});
-        },
-
-        value: function(f) {  
-            if (this.current_state === null) { 
-                return false; 
-            }
-
-            return f(this.current_state);  
-        },
-        prior_value: function(f) {  
-            if (this.prior_state === null) { 
-                return false; 
-            }
-
-            return f(this.prior_state);  
-        },
-
-        element: function(f, model) { 
-            return _.where(f(this.prior_state), {id: model.id});
-        },
-        prior_element: function(f, model) {  
-            if (this.prior_state === null) { 
-                return null; 
-            }
-
-            return _.where(f(this.prior_state), {id: model.id})[0];
-        },
+        element: element,
+        prior_element: prior_element,
 
         on_change: function(model, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'object',
                 focus: model, 
                 callback: callback,
@@ -97,7 +138,7 @@ define(["lodash"], function(_) {
             });
         },
         on_property_change: function(model, property, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'property',
                 focus: model, 
                 property: property,
@@ -106,7 +147,7 @@ define(["lodash"], function(_) {
             });
         },
         on_property_changed_to: function(model, property, condition, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'property',
                 focus: model, 
                 property: property,
@@ -116,7 +157,7 @@ define(["lodash"], function(_) {
             });
         },
         on_conditional_change: function(model, condition, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'object',
                 focus: model, 
                 'when': condition, 
@@ -125,74 +166,45 @@ define(["lodash"], function(_) {
             });
         },
         on_element_change: function(model_array, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'array',
                 focus: model_array,
                 callback: callback,
-                detection_func: this.element_changed.bind(this),
-                operates_on: this.value.bind(this),
+                detection_func: element_changed,
+                operates_on: value,
                 data: data
             });
         },
         on_element_arrival: function(model_array, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'array',
                 focus: model_array,  
                 callback: callback,
-                detection_func: this.element_added.bind(this),
-                operates_on: this.value.bind(this),
+                detection_func: element_added,
+                operates_on: value,
                 data: data
             });
         },
         on_element_removal: function(model_array, callback, data) {
-            this.changes.push({
+            changes.push({
                 type: 'array',
                 focus: model_array, 
                 callback: callback,
-                detection_func: this.element_removed.bind(this),
-                operates_on: this.prior_value.bind(this),
+                detection_func: element_removed,
+                operates_on: prior_value,
                 data: data
             });
         },
-        handle_objects: function(change) {
-            if (this.changed(change.focus)) {
-                if (change.when === undefined) {
-                    invoke_callback(change.callback, this.value(change.focus), this.prior_value(change.focus), change.data);
-                } else {
-                    if (change.when(this.value(change.focus))) {
-                        invoke_callback(change.callback, this.value(change.focus), this.prior_value(change.focus), change.data);
-                    }
-                }
-            }
-        },
-        handle_object_property: function(change) {
-            if (this.property_changed(change.focus, change.property)) {
-                if (change.when === undefined) {
-                    invoke_callback(change.callback, this.value(change.focus), this.prior_value(change.focus), change.data);
-                } else {
-                    if (change.when(change.property(change.focus(this.current_state)))) {
-                        invoke_callback(change.callback, this.value(change.focus), this.prior_value(change.focus), change.data);
-                    }
-                }
-            }
-        },
-        handle_arrays: function(change) {
-            _.each(change.operates_on(change.focus), function(model) {
-                if (change.detection_func(change.focus, model)) {
-                    invoke_callback(change.callback, model, this.prior_element(change.focus, model), change.data);
-                }
-            }.bind(this));
-        },
         detect_changes_and_notify_observers: function() {
-            _.each(this.changes, function(change) {
+            _.each(changes, function(change) {
                 if (change.type === 'array') {
-                    this.handle_arrays(change);
+                    handle_arrays(change);
                 } else if (change.type === 'object') {
-                    this.handle_objects(change);   
+                    handle_objects(change);   
                 } else {
-                    this.handle_object_property(change);
+                    handle_object_property(change);
                 }
-            }.bind(this));
+            });
         },
 	};
 });
