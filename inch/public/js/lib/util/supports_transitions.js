@@ -25,11 +25,15 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 				current_mesh = new_mesh;
 			},
 			fade_in: function(duration, final_opacity) {
+				duration = duration || 0;
 				final_opacity = final_opacity || 1.0;
+
 				options.colour.to[3] = final_opacity;
 				add_temporary_effect(duration, tick_colour);
 			},
 		    fade_out: function(duration) {
+		    	duration = duration || 0;
+		    	
 		        options.colour.to[3] = 0.0;
 		        add_temporary_effect(duration, tick_colour);
 		    },

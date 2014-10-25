@@ -32,15 +32,21 @@ module.exports = function() {
 	  	{ name: 'waiting', from: 'waiting', to: 'challenge_started' },    
 	  	{ name: 'challenge_started', from: 'challenge_started', to: 'response_accepted' },    
 	  	{ name: 'response_accepted', from: 'response_accepted', to: 'complete' },
-	  	{ name: 'complete', from: 'complete', to: 'ready' },
+	  	{ name: 'reset', from: '*', to: 'ready' },
 	  	{ name: 'false_start', from: '*', to: 'false_start' }
 	  ]
 	});
 	fsm.onstate = function() {
 		controller.state = fsm.current;
+		console.log(controller.state);
 	};
 	fsm.onenterchallenge_started = function() {
 		controller.started = true;
+	};
+	fsm.onenterreset = function() {
+		controller.score = 0;
+		controller.started = false;
+		controller.false_start = false;
 	};
 	var delayed = function() {
 		if (controller.false_start) {
@@ -57,12 +63,7 @@ module.exports = function() {
 		controller.score = finish - start;
 		fsm.response_accepted();
 	};
-	var reset = function() {
-		controller.score = 0;
-		controller.started = false;
-		controller.false_start = false;
-		fsm.cycle();
-	};
+
 
 	var false_start = function() {
 		controller.false_start = true;
@@ -82,7 +83,9 @@ module.exports = function() {
 		anykey: function(force, data) {
 			if (controller.state === 'ready') {
 				fsm.cycle();
-				timers.push(Object.create(delayed_effect((Math.random() * 6) + (Math.random() * 6), delayed)));
+				var delay = (Math.random() * 6) + (Math.random() * 6);
+				console.log("a delay of ", delay);
+				timers.push(Object.create(delayed_effect(delay, delayed)));
 				return;
 			}
 			if (controller.state === 'waiting') {
@@ -96,6 +99,12 @@ module.exports = function() {
 				fsm.cycle();
 				timers.push(Object.create(delayed_effect(1, acknowledgement)));
 				return;
+			}
+		},
+		reset: function(force, data) {
+			console.log('reset', controller.state)
+			if (controller.state === 'complete' || controller.state === "false_start") {
+				fsm.reset();
 			}
 		},
 		update: function(dt) {

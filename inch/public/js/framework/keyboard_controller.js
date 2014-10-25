@@ -29,8 +29,9 @@ define(["lodash", "zepto", "vendor/window"], function(_, $, window) {
                     '40': 'down'
                 };
 
-                for(var i = 48; i <= 90; i++) {
+                for(var i = 48; i <= 122; i++) {
                     if (i > 57 && i < 65) { continue ;}
+                    if (i > 90 && i < 97) { continue ;}
                     if (map[i] !== undefined) {
                         continue;
                     }

@@ -3,7 +3,7 @@ define(["lodash"], function(_) {
 
     var invoke_callback = function(callback, model, prior_model, data) {
         if (_.isArray(data)) {
-            var args = data;
+            var args = _.clone(data);
             args.unshift(model, prior_model);
             callback.apply(this, args);
         } else {
