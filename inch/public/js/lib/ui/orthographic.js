@@ -2,7 +2,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
   function(_, THREE, config, grid_view, standard_display_behaviour, axes, window) {
   "use strict";
 
-  return function(element, width, height, options, setup_func, update_func) {
+  return function(element, width, height, options, setup_func) {
     var setup_camera = function() {
       var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
       camera.position.z = 1;
@@ -40,7 +40,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
         _.each(arguments, function(mesh) { 
           scene.add(mesh); 
           things_in_scene.push(mesh);
-        }.bind(this)); 
+        }); 
       },
       remove: function() {
         _.each(arguments, function(mesh) { 
@@ -49,7 +49,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
           var i = things_in_scene.indexOf(mesh);
           things_in_scene.splice(i, 1);
 
-        }.bind(this));
+        });
       },
       reset: function() {
         _.each(things_in_scene, function(mesh) {
@@ -61,7 +61,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
     };
 
 
-    var display = Object.create(standard_display_behaviour(element, width, height, options, setup_func, update_func));
+    var display = Object.create(standard_display_behaviour(element, width, height, options, setup_func));
     _.extend(display, {
       expired_effects_func: function(expired_effects) {
         _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });

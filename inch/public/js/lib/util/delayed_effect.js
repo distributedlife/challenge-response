@@ -23,7 +23,7 @@ define([], function() {
 				on_complete = undefined;
 				age = duration;
 			},
-			is_alive: function() { return !done(); }
-		};
+			is_alive: function() { return !done(); },
+		};		
 	};
 });

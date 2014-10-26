@@ -5,33 +5,20 @@ var _ = rek('lodash');
 var requirejs = rek('requirejs')
 requirejs.config({ baseUrl: 'inch/public/js' })
 
-var basic_entity = rek('basic');
-var StateMachine = rek('javascript-state-machine');
-var delayed_effect = requirejs('lib/util/delayed_effect');
-
-var state_machine = function(options) {
-	var fsm = StateMachine.create(options);
-
-	fsm.cycle = function() {
-		fsm[fsm.current]();
-	};
-
-	return fsm;
-}
+var updatable_entity = rek('updatable');
+var StateMachine = rek('state_machine');
+var delayed_effect_owner = requirejs('lib/util/delayed_effect_owner');
 
 module.exports = function() {
-	var controller = Object.create(basic_entity("controller"));
-	var timers = [];
+	var controller = Object.create(updatable_entity("controller"));
 	var start = 0;
-	var finish = 0;
 
-	var fsm = state_machine({
+	var state_machine = StateMachine({
 	  initial: 'ready',  
 	  events: [
 	  	{ name: 'ready', from: 'ready', to: 'waiting' },    
 	  	{ name: 'waiting', from: 'waiting', to: 'challenge_started' },    
-	  	{ name: 'challenge_started', from: 'challenge_started', to: 'response_accepted' },    
-	  	{ name: 'response_accepted', from: 'response_accepted', to: 'complete' },
+	  	{ name: 'challenge_started', from: 'challenge_started', to: 'complete' },   
 	  	{ name: 'reset', from: '*', to: 'ready' },
 	  	{ name: 'false_start', from: '*', to: 'false_start' }
 	  ],
@@ -41,63 +28,51 @@ module.exports = function() {
 	});
 
 	var delayed = function() {
-		if (fsm.is('false_start')) {
+		if (state_machine.is('false_start')) {
 			return;
 		}
 		
-		fsm.waiting();
+		state_machine.waiting();
 	};
-	var acknowledgement = function() {
-		if (fsm.is('false_start')) {
-			return;
-		}
 
-		controller.score = finish - start;
-		fsm.response_accepted();
-	};
+	var roll_up_an_unnerving_delay = function() {
+		return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
+	}
 
 	_.extend(controller, {
 		score: 0,
 		state: 'ready',
-		active: true,
 		challenge_seen: function(ack) {
 			start = ack.rcvd_timestamp;
 		},
-		anykey: function(force, data) {
-			if (controller.state === 'ready') {
-				fsm.cycle();
-				var delay = Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
-				timers.push(Object.create(delayed_effect(delay, delayed)));
+		response: function(force, data) {
+			if (state_machine.is('ready')) {
+				state_machine.cycle();
+				controller.add_delayed_effect(roll_up_an_unnerving_delay(), delayed)
 				return;
 			}
-			if (controller.state === 'waiting') {
-				controller.score = -1000;
-				fsm.false_start();
+			if (state_machine.is('waiting')) {
+				state_machine.false_start();
 
-				_.each(timers, function(timer) {
-					timer.cancel();
-				});
+				controller.cancel_all();
 
 				return;
 			}
-			if (controller.state === 'challenge_started') {
-				finish = data.rcvd_timestamp;
-				fsm.cycle();
-				timers.push(Object.create(delayed_effect(1, acknowledgement)));
+			if (state_machine.is('challenge_started')) {
+				state_machine.cycle();
+				controller.score = data.rcvd_timestamp - start;
 				return;
 			}
 		},
 		reset: function(force, data) {
 			if (controller.state === 'complete' || controller.state === "false_start") {
-				fsm.reset();
+				state_machine.reset();
 				controller.score = 0;
 			}
 		},
-		update: function(dt) {
-			_.each(timers, function(timer) { timer.tick(dt);});
-			timers = _.reject(timers, function(t) { return !t.is_alive(); });
-		}
 	});
+
+	delayed_effect_owner(controller);
 
 	return controller;
 };

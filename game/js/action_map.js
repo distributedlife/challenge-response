@@ -1,6 +1,6 @@
 module.exports = {
 	input: {
-		'space': [{target: 'controller', func: 'anykey', keypress: true}],
+		'space': [{target: 'controller', func: 'response', keypress: true}],
 		'r': [{target: 'controller', func: 'reset', keypress: true}]
 	},
 	acks: {

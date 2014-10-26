@@ -75,11 +75,11 @@ define(["lodash"], function(_) {
         }
     };
     var handle_object_property = function(change) {
-        if (property_changed(change.focus, change.property)) {
+        if (changed(change.focus)) {
             if (change.when === undefined) {
                 invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
             } else {
-                if (change.when(change.property(change.focus(current_state)))) {
+                if (change.when(change.focus(current_state))) {
                     invoke_callback(change.callback, value(change.focus), prior_value(change.focus), change.data);
                 }
             }
@@ -93,15 +93,16 @@ define(["lodash"], function(_) {
         });
     };
 
-	return {
+    var equals = function(expected_value) { return function(current_value) { return current_value === expected_value; }; };
+
+    return {
         the: function(name) { return function(state) { return state[name]; }; },
+        obj: function(name) { return function(state) { return state[name]; }; },
         property: function(name) { return function(state) { return state[name]; }; },
         all: function(name) { return function(state) { return state[name]; }; },
         is: function(name) { return function(state) { return state[name] === true; }; },
         isnt: function(name) { return function(state) { return state[name] === false; }; },
-        is2: function(f) { return f(current_state) === true; },
-        
-        equals: function(expected_value) { return function(current_value) { return current_value === expected_value; }; },
+        is2: function(f) { return f(current_state) === true; },   
 
         screen_width: function(state) { return state.dimensions.width; },
         screen_height: function(state) { return state.dimensions.height; },
@@ -137,21 +138,19 @@ define(["lodash"], function(_) {
                 data: data
             });
         },
-        on_property_change: function(model, property, callback, data) {
+        on_property_change: function(property, callback, data) {
             changes.push({
                 type: 'property',
-                focus: model, 
-                property: property,
+                focus: property, 
                 callback: callback,
                 data: data
             });
         },
-        on_property_changed_to: function(model, property, condition, callback, data) {
+        on_property_changed_to: function(property, condition, callback, data) {
             changes.push({
                 type: 'property',
-                focus: model, 
-                property: property,
-                'when': condition,
+                focus: property,
+                'when': equals(condition),
                 callback: callback,
                 data: data
             });

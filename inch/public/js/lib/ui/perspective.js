@@ -2,7 +2,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
   function(_, THREE, config, grid_view, standard_display_behaviour, axes, window, wireframe) {
   "use strict";
 
-  return function(element, width, height, options, setup_func, update_func) {
+  return function(element, width, height, options, setup_func) {
     var setup_camera = function() {
       var camera = new THREE.PerspectiveCamera(60, width / height, 1, 1000);
       camera.position.z = 100;
@@ -40,7 +40,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
       setup_func();
     }
 
-    var display = Object.create(standard_display_behaviour(element, width, height, options, wrapped_setup_func, update_func));
+    var display = Object.create(standard_display_behaviour(element, width, height, options, wrapped_setup_func));
     _.extend(display, {
       camera: camera,
       scene: scene,

@@ -73,6 +73,14 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
       update_text: function(updatedText) {
         var is_visible = this.mesh.visible;
 
+        options.transparent = this.mesh.material.transparent;
+        options.alphaTest = this.mesh.material.alphaTest;
+        options.blending = this.mesh.material.blending;
+        options.colour.from[0] = this.mesh.material.color.r;
+        options.colour.from[1] = this.mesh.material.color.g;
+        options.colour.from[2] = this.mesh.material.color.b;
+        options.colour.from[3] = this.mesh.material.opacity;
+
         on_destroy(this.mesh);
 
         this.mesh = createMeshFromText(updatedText);

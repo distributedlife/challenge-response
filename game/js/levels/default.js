@@ -3,17 +3,11 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
     "use strict";
 
     return function(element, width, height, options) {
-        var start = undefined;
-        var finished = false;
 
-        var score = undefined;
-
-        var show_instructions = function(model, prior_model, title, challenge, score, acknowledgment, false_start, restart) {
-            start = undefined;
+        var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart) {
             title.fade_in();
             challenge.fade_out();
             score.fade_out();
-            acknowledgment.fade_out();
             false_start.fade_out();
             restart.fade_out();
         };
@@ -22,33 +16,24 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             title.fade_out(0.25);
         };
 
-        var show_challenge = function(model, prior_model, challenge, score) {
-            start = Date.now();
+        var show_challenge = function(model, prior_model, challenge) {
             challenge.fade_in();
             level.acknowledge('show-challenge');   
-
-            // score.fade_in();
         };
 
-        var acknowledge_response = function(model, prior_model, challenge, acknowledgment, score) {
-            finished = true;
+        var show_results = function(model, prior_model, challenge, score, restart) {
             challenge.fade_out();
-            acknowledgment.fade_in();
-            // score.fade_out();  
-        };
-
-        var show_results = function(model, prior_model, acknowledgment, score, restart) {
-            acknowledgment.fade_out();
-            score.update_text(model.score + "ms");
             score.fade_in();
             restart.fade_in();
         };
 
         var show_false_start = function(model, prior_model, false_start, score, restart) {
             false_start.fade_in();
-            score.update_text(model.score + "ms");
-            score.fade_in();
             restart.fade_in();
+        }
+
+        var update_score = function(model, prior_model, score) {
+            score.update_text(model + "ms");
         }
 
         var screen_width = function() { return level.width; };
@@ -56,7 +41,7 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
         var game_width = function() { level.width * level.width / level.the('dimensions').width; };
         var game_height = function() { level.height * level.height / level.the('dimensions').height; };
 
-        var position_helpers = function() {
+        var position = function() {
             var div = function(dim, slices) {
                 return function(p) {
                     return dim * (p / slices);
@@ -93,8 +78,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             };
 
             return {
-                screen_space_coordinates: build_coordinate_helpers(screen_width, screen_height),
-                game_space_coordinates: build_coordinate_helpers(game_width, game_height)
+                ss: build_coordinate_helpers(screen_width, screen_height),
+                gsc: build_coordinate_helpers(game_width, game_height)
             };
         };
 
@@ -102,8 +87,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var title = new text("CHALLENGE:RESPONSE", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.gridNy(4, 1),
+                    x: position().ss.centre_x(),
+                    y: position().ss.gridNy(4, 1),
                     z: 0
                 },
                 start_hidden: true
@@ -113,30 +98,19 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var challenge = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.centre_y(),
+                    x: position().ss.centre_x(),
+                    y: position().ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
             });
             level.permanent_effects.push(challenge);
 
-            var acknowledgment = new text("Got it!", level.scene_manager().add, level.scene_manager().remove, {
-                size: 80,
-                position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.centre_y(),
-                    z: 0
-                },
-                start_hidden: true
-            });
-            level.permanent_effects.push(acknowledgment);
-
-            score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
+            var score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
                 size: 160,
                 position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.centre_y(),
+                    x: position().ss.centre_x(),
+                    y: position().ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -146,45 +120,41 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var false_start = new text("False Start", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.gridNy(4, 1),
+                    x: position().ss.centre_x(),
+                    y: position().ss.gridNy(4, 1),
                     z: 0
                 },
                 start_hidden: true
             });
-            level.permanent_effects.push(acknowledgment);
+            level.permanent_effects.push(false_start);
 
             var restart = new text("Please R to try again.", level.scene_manager().add, level.scene_manager().remove, {
                 size: 20,
                 position: {
-                    x: position_helpers().screen_space_coordinates.centre_x(),
-                    y: position_helpers().screen_space_coordinates.gridNy(4, 3),
+                    x: position().ss.centre_x(),
+                    y: position().ss.gridNy(4, 3),
                     z: 0
                 },
                 start_hidden: true
             });
             level.permanent_effects.push(restart);
+
+            var the_game_state = function(state) { return state['controller']['state']; };
+            var the_score = function(state) { return state['controller']['score']; };
         	
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('ready'), show_instructions, [title, challenge, score, acknowledgment, false_start, restart]);
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('waiting'), hide_instructions, title);
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('challenge_started'), show_challenge, [challenge, score]);
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('response_accepted'), acknowledge_response, [challenge, acknowledgment, score]);
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('complete'), show_results, [acknowledgment, score, restart]);
-            level.on_property_changed_to(level.the('controller'), level.property('state'), level.equals('false_start'), show_false_start, [false_start, score, restart]);
+            level.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart]);
+            level.on_property_changed_to(the_game_state, 'waiting', hide_instructions, title);
+            level.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, challenge);
+            level.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart]);
+            level.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart]);
+            level.on_property_change(the_score, update_score, score);
 
-            if (level.value(level.the('controller')).state === 'ready') {
-                show_instructions(undefined, undefined, title, challenge, score, acknowledgment, false_start, restart);
+            if (level.value(the_game_state) === 'ready') {
+                show_instructions(undefined, undefined, title, challenge, score, false_start, restart);
             }
         };
 
-        var update = function() {
-            if (start !== undefined && !finished) {
-                // score.update_text(Date.now() - start + "ms");
-            }
-        };
-
-        var level = Object.create(orthographic_display(element, width, height, options, setup, update));
-
+        var level = Object.create(orthographic_display(element, width, height, options, setup));
         return level;
     };
 });

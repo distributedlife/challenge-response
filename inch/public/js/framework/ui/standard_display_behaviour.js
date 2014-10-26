@@ -18,7 +18,7 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 		return pending;
 	};
 
-	return function(element, width, height, options, setup_func, update_func) {
+	return function(element, width, height, options, setup_func) {
 		var display = {};
 		_.extend(display, tracks_state_changes);
 		_.extend(display, {
@@ -138,10 +138,6 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 
 	            this.detect_changes_and_notify_observers();
 	            stats( 'update-inch' ).end();
-
-	            stats( 'update-game' ).start();
-	            update_func();
-	            stats( 'update-game' ).end();
 	        }, 
 
 	        connect_to_server: function() {
