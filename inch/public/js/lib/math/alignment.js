@@ -31,6 +31,8 @@ define(["lodash"], function(_) {
 				new_position.y = resolved_position_values.y + (height / 4);
 			}
 
+			new_position.z = resolved_position_values.z;
+
 			return new_position;
 		}
 	}
