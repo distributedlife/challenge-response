@@ -21,7 +21,7 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
         var show_challenge = function(model, prior_model, challenge, status_indicator) {
             challenge.fade_in();
             level.acknowledge('show-challenge');   
-            status_indicator.change_colour(0, colours.green.rgba());
+            status_indicator.change_colour(0, colours.green1.rgba());
         };
 
         var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {

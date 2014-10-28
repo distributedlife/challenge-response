@@ -14,7 +14,7 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 	    };
 
 	    var add_temporary_effect = function(duration, callback) {
-	    	if (duration === 0) {
+	    	if (duration === 0 || duration === undefined) {
 				callback(undefined, 1.0);
 			} else {
 				transitions.push(Object.create(a_temporary_effect(duration, callback)));
@@ -28,30 +28,18 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 			change_colour: function(duration, rgba) {
 				settings.colour.to = rgba;
 
-				if (duration === 0 || duration === undefined) {
-					tick_colour(0, 1.0);
-				} else {
-					add_temporary_effect(duration, tick_colour);
-				}
+				add_temporary_effect(duration, tick_colour);
 			},
 			fade_in: function(duration, final_opacity) {
 				final_opacity = final_opacity || 1.0;
 				settings.colour.to[3] = final_opacity;
 
-				if (duration === 0 || duration === undefined) {
-					tick_colour(0, 1.0);
-				} else {
-					add_temporary_effect(duration, tick_colour);
-				}
+				add_temporary_effect(duration, tick_colour);
 			},
 		    fade_out: function(duration) {
 		        settings.colour.to[3] = 0.0;
 
-		        if (duration === 0 || duration === undefined) {
-					tick_colour(0, 1.0);
-				} else {
-		        	add_temporary_effect(duration, tick_colour);
-		        }
+	        	add_temporary_effect(duration, tick_colour);
 		    },
 		    run_transitions: function(dt) {
 		    	_.each(transitions, function(t) { t.tick(dt); });
