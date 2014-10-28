@@ -1,9 +1,8 @@
 //TODO: the fonts should be loaded in some other way –perhaps in a fonts file (like entities)
-define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetiker_regular', "lib/ui/circle", "lib/ui/colours"], function(_, orthographic_display, text, helvetiker_regular, circle, colours) {
+define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetiker_regular', "lib/ui/circle", "lib/ui/colours", "lib/ui/position_helper"], function(_, orthographic_display, text, helvetiker_regular, circle, colours, position_helper) {
     "use strict";
 
     return function(element, width, height, options) {
-
         var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
             title.fade_in();
             challenge.fade_out();
@@ -41,59 +40,15 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             score.update_text(model + "ms");
         }
 
-        var screen_width = function() { return level.width; };
-        var screen_height = function() { return level.height; };
-        var game_width = function() { level.width * level.width / level.the('dimensions').width; };
-        var game_height = function() { level.height * level.height / level.the('dimensions').height; };
-
-        var position = function() {
-            var div = function(dim, slices) {
-                return function(p) {
-                    return dim * (p / slices);
-                }
-            };
-
-            var build_coordinate_helpers = function(width, height) {
-                return {
-                    left: function() {
-                        return div(width(), 2)(0);
-                    },
-                    centre_x: function() {
-                        return div(width(), 2)(1);
-                    },
-                    right: function() {
-                        return div(width(), 2)(2);
-                    },
-                    gridNx: function(n, p) {
-                        return div(width(), n)(p);
-                    },
-                    top: function() {
-                        return div(height(), 2)(0);
-                    },
-                    centre_y: function() {
-                        return div(height(), 2)(1);
-                    },
-                    bottom: function() {
-                        return div(height(), 2)(2);
-                    },
-                    gridNy: function(n, p) {
-                        return div(height(), n)(p);
-                    }
-                }
-            };
-
-            return {
-                ss: build_coordinate_helpers(screen_width, screen_height),
-                gsc: build_coordinate_helpers(game_width, game_height)
-            };
-        };
+        // var position = position_helper(level.width, level.height, level.the('dimensions').width, level.the('dimensions').height);
+        var position = position_helper(width, height, 0, 0);
 
         var setup = function() {
             var title = new text("CHALLENGE:RESPONSE", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.gridNy(4, 1),
+                    x: position.ss.centre_x(),
+                    y: position.ss.gridNy(4, 1),
                     z: 0
                 },
                 start_hidden: true
@@ -103,8 +58,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var challenge = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.centre_y(),
+                    x: position.ss.centre_x(),
+                    y: position.ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -114,8 +69,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
                 size: 160,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.centre_y(),
+                    x: position.ss.centre_x(),
+                    y: position.ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -125,8 +80,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var false_start = new text("False Start", level.scene_manager().add, level.scene_manager().remove, {
                 size: 80,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.gridNy(4, 1),
+                    x: position.ss.centre_x(),
+                    y: position.ss.gridNy(4, 1),
                     z: 0
                 },
                 start_hidden: true
@@ -136,8 +91,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var restart = new text("Please R to try again.", level.scene_manager().add, level.scene_manager().remove, {
                 size: 20,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.gridNy(4, 3),
+                    x: position.ss.centre_x(),
+                    y: position.ss.gridNy(4, 3),
                     z: 0
                 },
                 start_hidden: true
@@ -148,8 +103,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
                 radius: 100,
                 segments: 32,
                 position: {
-                    x: position().ss.centre_x(),
-                    y: position().ss.centre_y(),
+                    x: position.ss.centre_x(),
+                    y: position.ss.centre_y(),
                     z: -100
                 },
             });
