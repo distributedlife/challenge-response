@@ -1,106 +1,69 @@
-define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/math/lerp", "lib/util/supports_transitions"], function(THREE, a_temporary_effect, alignment, lerp, supports_transitions) {
+define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/math/lerp", "lib/util/supports_transitions", "lib/ui/apply_defaults"], function(THREE, a_temporary_effect, alignment, lerp, supports_transitions, apply_defaults) {
   "use strict";
 
-  return function(initialText, on_create, on_destroy, options) {
-    options = options || {};
-    
-    //TODO: bring in these defaults from elsewhere
-    _.defaults(options, {
-      transparent: false,
-      alphaTest: 0.1,
-      blending: THREE.AdditiveBlending,
-      size: 20,
-      duration: 0,
-      alignment: {
-        horizontal: "centre",
-        vertical: "centre"
-      },
-      scale: {
-        from: 1.0,
-        to: 1.0
-      },
-      colour: {
-        from: [1.0, 1.0, 1.0, 1.0],
-        to: [1.0, 1.0, 1.0, 1.0]
-      },
-      position: {x: 0, y: 0, z: 0},
-      start_hidden: false
-    });
+  return function(initialText, on_create, on_destroy, settings) {
+    var current = {};
+    _.defaults(current, apply_defaults(settings));
 
-    if (options.start_hidden) {
-      options.transparent = true;
-      options.colour.from[3] = 0.0;
-    }
-
-    //put mesh in the closure
     var createMeshFromText = function(textToDisplay) {
-      var shape = THREE.FontUtils.generateShapes(textToDisplay, options);
+      var shape = THREE.FontUtils.generateShapes(textToDisplay, current);
       
       var geometry = new THREE.ShapeGeometry(shape);
       geometry.computeBoundingBox();
 
       var material = new THREE.MeshBasicMaterial({
-        transparent: options.transparent,
-        alphaTest: options.alphaTest,
-        blending: options.blending,
-        opacity: options.colour.from[3]
+        transparent: current.transparent,
+        alphaTest: current.alphaTest,
+        blending: current.blending,
+        opacity: current.colour.current[3]
       });
-      material.color.setRGB(options.colour.from[0], options.colour.from[1], options.colour.from[2]);  
+      material.color.setRGB(current.colour.current[0], current.colour.current[1], current.colour.current[2]);  
       
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position = alignment.align_to_self(options.position, mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x, mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y, options.alignment);
-      mesh.rotation.x = -90; 
-      mesh.scale.set(options.scale.from, options.scale.from, options.scale.from);
+      var new_mesh = new THREE.Mesh(geometry, material);
+      new_mesh.position = alignment.align_to_self(current.position, new_mesh.geometry.boundingBox.max.x - new_mesh.geometry.boundingBox.min.x, new_mesh.geometry.boundingBox.max.y - new_mesh.geometry.boundingBox.min.y, current.alignment);
+      new_mesh.rotation.x = -90; 
+      new_mesh.scale.set(current.scale.current, current.scale.current, current.scale.current);
 
-      on_create(mesh);
+      on_create(new_mesh);
 
-      return mesh; 
+      return new_mesh; 
     };
 
-    var orthographic_text = {
-      mesh: createMeshFromText(initialText),
-      position: options.position,
+    var mesh = createMeshFromText(initialText);
 
-      width: function() { return this.mesh.geometry.boundingBox.max.x - this.mesh.geometry.boundingBox.min.x; },
-      height: function() { return this.mesh.geometry.boundingBox.max.y - this.mesh.geometry.boundingBox.min.y; },
+    var orthographic_text = {
+      width: function() { return mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x; },
+      height: function() { return mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y; },
 
       update_from_model: function(updated_model) {
-        this.position = {x: updated_model.x, y: updated_model.y, z: 0};
-        this.mesh.position = alignment.align_to_self(this.position, this.width(), this.height(), options.alignment);
-        this.mesh.visible = updated_model.active || true;
+        current.position = {x: updated_model.x, y: updated_model.y, z: 0};
+        mesh.position = alignment.align_to_self(current.position, this.width(), this.height(), current.alignment);
+        mesh.visible = updated_model.active || true;
       },
 
       update_text: function(updatedText) {
-        var is_visible = this.mesh.visible;
+        var is_visible = mesh.visible;
 
-        options.transparent = this.mesh.material.transparent;
-        options.alphaTest = this.mesh.material.alphaTest;
-        options.blending = this.mesh.material.blending;
-        options.colour.from[0] = this.mesh.material.color.r;
-        options.colour.from[1] = this.mesh.material.color.g;
-        options.colour.from[2] = this.mesh.material.color.b;
-        options.colour.from[3] = this.mesh.material.opacity;
+        on_destroy(mesh);
 
-        on_destroy(this.mesh);
+        mesh = createMeshFromText(updatedText);
+        mesh.position = alignment.align_to_self(current.position, this.width(), this.height(), current.alignment);
+        mesh.visible = is_visible;
 
-        this.mesh = createMeshFromText(updatedText);
-        this.mesh.position = alignment.align_to_self(this.position, this.width(), this.height(), options.alignment);
-        this.mesh.visible = is_visible;
-
-        this.update_mesh(this.mesh);
+        this.update_mesh(mesh);
       },
 
 
       on_tick: function(dt) {
         if (!this.is_alive()) {
-          this.mesh.visible = false;
+          mesh.visible = false;
         }
 
         this.run_transitions(dt);
       }
     };
-    _.extend(orthographic_text, supports_transitions(orthographic_text.mesh, options));
-    _.extend(orthographic_text, a_temporary_effect(options.duration, orthographic_text.on_tick.bind(orthographic_text)));
+    _.extend(orthographic_text, supports_transitions(mesh, current));
+    _.extend(orthographic_text, a_temporary_effect(current.duration, orthographic_text.on_tick.bind(orthographic_text)));
 
     return orthographic_text;
   }

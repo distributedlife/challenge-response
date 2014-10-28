@@ -1,15 +1,16 @@
 define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effect, lerp) {
 	"use strict";
 
-	return function(mesh, options) {
+	return function(mesh, settings) {
 		var transitions = [];
 	    var current_mesh = mesh;
 
 		var tick_colour = function(dt, progress) {
-	        var rgba = lerp.lerpRGBA(options.colour.from, options.colour.to, progress);
-	        this.current_mesh.material.color.setRGB(rgba[0], rgba[1], rgba[2]);  
-	        this.current_mesh.material.opacity = rgba[3];
-	        this.current_mesh.material.needsUpdate = true;
+	        settings.colour.current = lerp.lerpRGBA(settings.colour.from, settings.colour.to, progress);
+	        
+	        current_mesh.material.color.setRGB(settings.colour.current[0], settings.colour.current[1], settings.colour.current[2]);  
+	        current_mesh.material.opacity = settings.colour.current[3];
+	        current_mesh.material.needsUpdate = true;
 	    };
 
 	    var add_temporary_effect = function(duration, callback) {
@@ -21,22 +22,21 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 	    };
 
 		return {
-			current_mesh: mesh,
 			update_mesh: function(new_mesh) {
-				this.current_mesh = new_mesh;
+				current_mesh = new_mesh;
 			},
 			fade_in: function(duration, final_opacity) {
 				duration = duration || 0;
 				final_opacity = final_opacity || 1.0;
 
-				options.colour.to[3] = final_opacity;
-				add_temporary_effect(duration, tick_colour.bind(this));
+				settings.colour.to[3] = final_opacity;
+				add_temporary_effect(duration, tick_colour);
 			},
 		    fade_out: function(duration) {
 		    	duration = duration || 0;
 		    	
-		        options.colour.to[3] = 0.0;
-		        add_temporary_effect(duration, tick_colour.bind(this));
+		        settings.colour.to[3] = 0.0;
+		        add_temporary_effect(duration, tick_colour);
 		    },
 		    run_transitions: function(dt) {
 		    	_.each(transitions, function(t) { t.tick(dt); });

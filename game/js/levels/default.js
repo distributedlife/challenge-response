@@ -152,6 +152,18 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             if (level.value(the_game_state) === 'ready') {
                 show_instructions(undefined, undefined, title, challenge, score, false_start, restart);
             }
+            if (level.value(the_game_state) === 'waiting') {
+                hide_instructions(undefined, undefined, title);
+            }
+            if (level.value(the_game_state) === "challenge_started") {
+                show_challenge(undefined, undefined, challenge);
+            }
+            if (level.value(the_game_state) === "complete") {
+                show_results(undefined, undefined, challenge, score, restart);
+            }
+            if (level.value(the_game_state) === "false_start") {
+                false_start(undefined, undefined, false_start, score, restart);
+            }
         };
 
         var level = Object.create(orthographic_display(element, width, height, options, setup));
