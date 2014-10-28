@@ -1,11 +1,11 @@
-define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/math/lerp", "lib/util/supports_transitions", "lib/ui/apply_defaults"], function(THREE, a_temporary_effect, alignment, lerp, supports_transitions, apply_defaults) {
+define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/util/supports_transitions", "lib/ui/apply_defaults"], function(THREE, a_temporary_effect, alignment, supports_transitions, apply_defaults) {
   "use strict";
 
   return function(initialText, on_create, on_destroy, settings) {
     var current = {};
     _.defaults(current, apply_defaults(settings));
 
-    var createMeshFromText = function(textToDisplay) {
+    var create_mesh = function(textToDisplay) {
       var shape = THREE.FontUtils.generateShapes(textToDisplay, current);
       
       var geometry = new THREE.ShapeGeometry(shape);
@@ -29,7 +29,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
       return new_mesh; 
     };
 
-    var mesh = createMeshFromText(initialText);
+    var mesh = create_mesh(initialText);
 
     var orthographic_text = {
       width: function() { return mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x; },
@@ -46,7 +46,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/
 
         on_destroy(mesh);
 
-        mesh = createMeshFromText(updatedText);
+        mesh = create_mesh(updatedText);
         mesh.position = alignment.align_to_self(current.position, this.width(), this.height(), current.alignment);
         mesh.visible = is_visible;
 

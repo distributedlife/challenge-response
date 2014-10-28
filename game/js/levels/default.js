@@ -1,35 +1,40 @@
 //TODO: the fonts should be loaded in some other way –perhaps in a fonts file (like entities)
-define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetiker_regular'], function(_, orthographic_display, text, helvetiker_regular) {
+define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetiker_regular', "lib/ui/circle", "lib/ui/colours"], function(_, orthographic_display, text, helvetiker_regular, circle, colours) {
     "use strict";
 
     return function(element, width, height, options) {
 
-        var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart) {
+        var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
             title.fade_in();
             challenge.fade_out();
             score.fade_out();
             false_start.fade_out();
             restart.fade_out();
+            status_indicator.change_colour(0, colours.grey50.rgba());
         };
 
-        var hide_instructions = function(model, prior_model, title) {
+        var hide_instructions = function(model, prior_model, title, status_indicator) {
             title.fade_out(0.25);
+            status_indicator.change_colour(0, colours.red.rgba());
         };
 
-        var show_challenge = function(model, prior_model, challenge) {
+        var show_challenge = function(model, prior_model, challenge, status_indicator) {
             challenge.fade_in();
             level.acknowledge('show-challenge');   
+            status_indicator.change_colour(0, colours.green.rgba());
         };
 
-        var show_results = function(model, prior_model, challenge, score, restart) {
+        var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
             challenge.fade_out();
             score.fade_in();
             restart.fade_in();
+            status_indicator.change_colour(0, colours.black.rgba());
         };
 
-        var show_false_start = function(model, prior_model, false_start, score, restart) {
+        var show_false_start = function(model, prior_model, false_start, score, restart, status_indicator) {
             false_start.fade_in();
             restart.fade_in();
+            status_indicator.change_colour(0, colours.orange.rgba());
         }
 
         var update_score = function(model, prior_model, score) {
@@ -139,30 +144,41 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(restart);
 
+            var status_indicator = new circle(level.scene_manager().add, level.scene_manager().remove, {
+                radius: 100,
+                segments: 32,
+                position: {
+                    x: position().ss.centre_x(),
+                    y: position().ss.centre_y(),
+                    z: -100
+                },
+            });
+            level.permanent_effects.push(status_indicator)
+
             var the_game_state = function(state) { return state['controller']['state']; };
             var the_score = function(state) { return state['controller']['score']; };
         	
-            level.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart]);
-            level.on_property_changed_to(the_game_state, 'waiting', hide_instructions, title);
-            level.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, challenge);
-            level.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart]);
-            level.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart]);
+            level.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, status_indicator]);
             level.on_property_change(the_score, update_score, score);
 
             if (level.value(the_game_state) === 'ready') {
-                show_instructions(undefined, undefined, title, challenge, score, false_start, restart);
+                show_instructions(undefined, undefined, title, challenge, score, false_start, restart, status_indicator);
             }
             if (level.value(the_game_state) === 'waiting') {
-                hide_instructions(undefined, undefined, title);
+                hide_instructions(undefined, undefined, title, status_indicator);
             }
             if (level.value(the_game_state) === "challenge_started") {
-                show_challenge(undefined, undefined, challenge);
+                show_challenge(undefined, undefined, challenge, status_indicator);
             }
             if (level.value(the_game_state) === "complete") {
-                show_results(undefined, undefined, challenge, score, restart);
+                show_results(undefined, undefined, challenge, score, restart, status_indicator);
             }
             if (level.value(the_game_state) === "false_start") {
-                false_start(undefined, undefined, false_start, score, restart);
+                false_start(undefined, undefined, false_start, score, restart, status_indicator);
             }
         };
 

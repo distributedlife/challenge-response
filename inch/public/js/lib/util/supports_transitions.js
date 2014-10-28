@@ -25,18 +25,33 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 			update_mesh: function(new_mesh) {
 				current_mesh = new_mesh;
 			},
-			fade_in: function(duration, final_opacity) {
-				duration = duration || 0;
-				final_opacity = final_opacity || 1.0;
+			change_colour: function(duration, rgba) {
+				settings.colour.to = rgba;
 
+				if (duration === 0 || duration === undefined) {
+					tick_colour(0, 1.0);
+				} else {
+					add_temporary_effect(duration, tick_colour);
+				}
+			},
+			fade_in: function(duration, final_opacity) {
+				final_opacity = final_opacity || 1.0;
 				settings.colour.to[3] = final_opacity;
-				add_temporary_effect(duration, tick_colour);
+
+				if (duration === 0 || duration === undefined) {
+					tick_colour(0, 1.0);
+				} else {
+					add_temporary_effect(duration, tick_colour);
+				}
 			},
 		    fade_out: function(duration) {
-		    	duration = duration || 0;
-		    	
 		        settings.colour.to[3] = 0.0;
-		        add_temporary_effect(duration, tick_colour);
+
+		        if (duration === 0 || duration === undefined) {
+					tick_colour(0, 1.0);
+				} else {
+		        	add_temporary_effect(duration, tick_colour);
+		        }
 		    },
 		    run_transitions: function(dt) {
 		    	_.each(transitions, function(t) { t.tick(dt); });
