@@ -37,10 +37,10 @@ define(["lib/math/alignment"], function(alignment) {
 	var mesh = {
 		width: width,
 		height: height,
-		assemble: function(geometry_callback, material_callback, on_create, options) {
+		assemble: function(geometry_callback, material_callback, position_callback, on_create, options) {
     		var new_mesh = new THREE.Mesh(geometry_callback(options), material_callback(options));
 
-			new_mesh.position = alignment.align_to_self(options.position, width(new_mesh), height(new_mesh), options.alignment);
+			new_mesh.position = alignment.align_to_self(position_callback(), width(new_mesh), height(new_mesh), options.alignment);
       		new_mesh.rotation.x = -90; 
       		new_mesh.scale.set(options.scale.current, options.scale.current, options.scale.current);
 

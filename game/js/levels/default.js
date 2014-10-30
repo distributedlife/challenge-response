@@ -39,15 +39,12 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             score.update_text(model + "ms");
         }
 
-        // var position = position_helper(level.width, level.height, level.the('dimensions').width, level.the('dimensions').height);
-        var position = position_helper(width, height, 0, 0);
-
         var setup = function() {
             var title = new text("CHALLENGE:RESPONSE", level.scene_manager().add, level.scene_manager().remove, {
-                size: 80,
+                size: level.font_size(9),
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.gridNy(4, 1),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -55,10 +52,10 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             level.permanent_effects.push(title);
 
             var challenge = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
-                size: 80,
+                size: level.font_size(20),
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.centre_y(),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -66,10 +63,10 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             level.permanent_effects.push(challenge);
 
             var score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
-                size: 160,
+                size: level.font_size(10),
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.centre_y(),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.centre_y(),
                     z: 0
                 },
                 start_hidden: true
@@ -77,21 +74,21 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             level.permanent_effects.push(score);
 
             var false_start = new text("False Start", level.scene_manager().add, level.scene_manager().remove, {
-                size: 80,
+                size: level.font_size(10),
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.gridNy(4, 1),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.gridNy(4, 1),
                     z: 0
                 },
                 start_hidden: true
             });
             level.permanent_effects.push(false_start);
 
-            var restart = new text("Please R to try again.", level.scene_manager().add, level.scene_manager().remove, {
-                size: 20,
+            var restart = new text("Press `R' to try again.", level.scene_manager().add, level.scene_manager().remove, {
+                size: level.font_size(8),
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.gridNy(4, 3),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.gridNy(4, 3),
                     z: 0
                 },
                 start_hidden: true
@@ -102,12 +99,12 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
                 radius: 100,
                 segments: 32,
                 position: {
-                    x: position.ss.centre_x(),
-                    y: position.ss.centre_y(),
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.gridNy(4,0),
                     z: -100
                 },
             });
-            level.permanent_effects.push(status_indicator)
+            level.permanent_effects.push(status_indicator);
 
             var the_game_state = function(state) { return state['controller']['state']; };
             var the_score = function(state) { return state['controller']['score']; };

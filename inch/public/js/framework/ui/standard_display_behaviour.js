@@ -30,6 +30,10 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
         	changes: [],
         	position_helper: position_helper(initial_width, initial_height, initial_width, initial_height),
 
+        	ratio: 1.0,
+        	font_size: function(size) {
+        		return size * this.ratio;
+        	},
         	acknowledge: function(name) {
         		pending_acknowledgements[pending_acknowledgements.length - 1].names.push(name);
         	},
@@ -122,9 +126,10 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 
 	            this.update_state(packet.game_state);
 
-	            if (this.changed(this.the('dimensions'))) { 
-	            	this.resize(this.width, this.height); 
-	            }
+	            //TODO: fix this with the match board size to screen size
+	            // if (this.changed(this.the('dimensions'))) {
+	            // 	this.resize(this.width, this.height); 
+	            // }
 
 	            if (this.changed(this.the('paused')) && this.value(this.is('paused'))) { 
 	            	this.pause(); 

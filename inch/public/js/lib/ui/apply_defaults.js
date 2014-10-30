@@ -35,6 +35,7 @@ define(["vendor/three", "lodash"], function(THREE, _) {
 
     	options.colour.current = options.colour.from;
     	options.scale.current = options.scale.from;
+    	options.size *= 10.0;
 
     	return options;
     }

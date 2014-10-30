@@ -1,11 +1,18 @@
-define(["vendor/three", "lib/util/temporary_effect", "lib/util/supports_transitions", "lib/ui/apply_defaults", "lib/ui/base"], function(THREE, a_temporary_effect, supports_transitions, apply_defaults, base) {
+define(["vendor/three", "lib/util/temporary_effect", "lib/util/supports_transitions", "lib/ui/apply_defaults", "lib/ui/base", "lib/math/alignment"], function(THREE, a_temporary_effect, supports_transitions, apply_defaults, base, alignment) {
 	"use strict";
 
 	return function(on_create, on_destroy, settings) {
 		var current = {};
     	_.defaults(current, apply_defaults(settings));
+		
+		var position_callback = function() {
+			var adjusted = current.position;
+			adjusted.x += settings.radius;
+
+			return adjusted;
+		};
     
-		var mesh = base.mesh.assemble(base.geometries.circle, base.materials.basic, on_create, current);
+		var mesh = base.mesh.assemble(base.geometries.circle, base.materials.basic, position_callback, on_create, current);
 
 		var circle = {
 			update_from_model: function(updated_model) {
