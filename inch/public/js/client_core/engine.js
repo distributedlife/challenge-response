@@ -1,12 +1,10 @@
 define(["vendor/window", "framework/stats"], function(window, stats) {
   "use strict";
 
-  return function(display, width, height) {
+  return function(display) {
     return {
-      resize: function(width, height) {
-        display.resize(width, height);
-      },
-      run: function() {
+      resize: function(dims) { display.resize(dims); },
+      run: function(time) {
         stats( 'frame' ).start();
         stats( 'rAF' ).tick();
         stats( 'FPS' ).frame();

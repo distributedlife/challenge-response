@@ -1,5 +1,5 @@
-define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/keyboard_controller", "framework/sound_manager", "framework/track_state_changes", "framework/stats", 'framework/text_format', 'lib/util/sequence'], 
-	function($, _, io, screenfull, keyboard_controller, SoundManager, tracks_state_changes, stats, format, sequence) {
+define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/keyboard_controller", "framework/sound_manager", "framework/track_state_changes", "framework/stats", 'framework/text_format', 'lib/util/sequence', "lib/ui/position_helper"], 
+	function($, _, io, screenfull, keyboard_controller, SoundManager, tracks_state_changes, stats, format, sequence, position_helper) {
 		
 	"use strict";
 
@@ -18,18 +18,17 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 		return pending;
 	};
 
-	return function(element, width, height, options, setup_func) {
+	return function(element, initial_width, initial_height, options, setup_func) {
 		var display = {};
 		_.extend(display, tracks_state_changes);
 		_.extend(display, {
         	sound_manager: new SoundManager(),
-        	width: width,
-        	height: height,
         	setup_complete: false,
         	prior_step: Date.now(),
         	temporary_effects: [],
         	permanent_effects: [],
         	changes: [],
+        	position_helper: position_helper(initial_width, initial_height, initial_width, initial_height),
 
         	acknowledge: function(name) {
         		pending_acknowledgements[pending_acknowledgements.length - 1].names.push(name);
@@ -88,19 +87,24 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	            if (this.value(this.is('paused'))) {
 	            	display.sound_manager.pauseAll();
 	            }
+	            // console.log(state.dimensions.width, state.dimensions.height)
+	            this.position_helper.update_level_dims(state.dimensions.width, state.dimensions.height);
 
 	            this.setup_complete = true;
 	        },
 
-	        resize: function(width, height) {
-	        	this.width = width;
-	        	this.height = height;
+	        resize: function(dims) {
+	        	this.position_helper.update_screen_dims(dims.usable_width, dims.usable_height);
+	        	this.ratio = dims.usable_width / dims.screen_width;
+	        	// if (this.the('dimensions') !== undefined) {
+	        	// 	this.position_helper.update_level_dims(this.the('dimensions').width, this.the('dimensions').height);
+	        	// }
 	        },
 
 	        //TODO: can we make this callback function?
-	        dimensions: function(width, height) {
-	        	return {width: width, height: height};
-	        },
+	        // dimensions: function(width, height) {
+	        // 	return {width: width, height: height};
+	        // },
 
 	        update: function(packet) {
 	        	stats( 'update-inch' ).start();

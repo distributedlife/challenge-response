@@ -9,8 +9,14 @@ define([], function() {
 
 		var screen_width = function() { return current_screen_width; };
 	    var screen_height = function() { return current_screen_height; };
-	    var game_width = function() { current_screen_width * current_screen_width / current_level_width; };
-	    var game_height = function() { current_screen_height * current_screen_height / current_level_height; };
+	    var game_width = function() { 
+	    	return (current_level_width / current_screen_width) * current_level_width;
+	    	// return current_screen_width * current_screen_width / current_level_width; 
+	    };
+	    var game_height = function() { 
+	    	return (current_level_height / current_screen_height) * current_level_height; 
+	    	// return current_screen_height * current_screen_height / current_level_height; 
+	    };
 
         var div = function(dim, slices) {
             return function(p) {
@@ -49,7 +55,8 @@ define([], function() {
 
         return {
             ss: build_coordinate_helpers(screen_width, screen_height),
-            gsc: build_coordinate_helpers(game_width, game_height),
+            gs: build_coordinate_helpers(game_width, game_height),
+
             update_screen_dims: function(sw, sh) {
 	    		current_screen_width = sw;
 	    		current_screen_height = sh;

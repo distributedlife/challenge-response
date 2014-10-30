@@ -8,8 +8,8 @@
         layout_icons(dims.orientation);
 
         config.canvas = config.canvas || "canvas";
-        config.width = config.width || dims.width;
-        config.height = config.height || dims.height;
+        config.width = config.width || dims.usable_width;
+        config.height = config.height || dims.usable_height;
         config.display_config = config.display_config || {};
         config.display_config.controls = config.display_config.controls || [];
 
@@ -30,16 +30,12 @@
                     layout_icons(dims.orientation);
 
                     $("#"+config.canvas).css("margin-top", dims.margin);
-                    $("#"+config.canvas).css("width", dims.width);
-                    $("#"+config.canvas).css("height", dims.height);
+                    $("#"+config.canvas).css("width", dims.usable_width);
+                    $("#"+config.canvas).css("height", dims.usable_height);
                     
-                    this.engine.resize(dims.width, dims.height);
+                    this.engine.resize(dims);
                 },
-                engine: rendering_engine(
-                    display,
-                    config.width, 
-                    config.height
-                ),
+                engine: rendering_engine(display),
                 run: function() { this.engine.run(); }
             };
         }

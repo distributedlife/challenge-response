@@ -34,6 +34,13 @@ define(["vendor/window"], function(window) {
 
         var margin = Math.round(window.innerHeight - height)/2;
 
-        return {width: width, height: height, margin: margin, orientation: orientation};
+        return {
+            usable_width: width, 
+            usable_height: height, 
+            margin: margin, 
+            orientation: orientation,
+            screen_width: window.innerWidth,
+            screen_height: window.innerHeight
+        };
     };
 });

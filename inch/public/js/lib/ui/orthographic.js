@@ -2,11 +2,11 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
   function(_, THREE, config, grid_view, standard_display_behaviour, axes, window) {
   "use strict";
 
-  return function(element, width, height, options, setup_func) {
+  return function(element, initial_width, initial_height, options, setup_func) {
     var setup_camera = function() {
-      var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
+      var camera = new THREE.OrthographicCamera(0, initial_width, 0, initial_height, -2000, 1000);
       camera.position.z = 1;
-      camera.aspect = width / height;
+      camera.aspect = initial_width / initial_height;
       camera.updateProjectionMatrix();
       return camera;
     };
@@ -15,7 +15,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
       var scene = new THREE.Scene();
       
       if (config.grid.enabled) {        
-        scene.add(Object.create(grid_view(width, height, config.grid)).grid);
+        scene.add(Object.create(grid_view(initial_width, initial_height, config.grid)).grid);
       }
 
       return scene;
@@ -23,7 +23,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
 
     var build_scene_renderer = function(scene, camera) {
       var renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(width, height);
+      renderer.setSize(initial_width, initial_height);
       window.document.getElementById(element).appendChild(renderer.domElement);
 
       return renderer;
@@ -61,7 +61,7 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
     };
 
 
-    var display = Object.create(standard_display_behaviour(element, width, height, options, setup_func));
+    var display = Object.create(standard_display_behaviour(element, initial_width, initial_height, options, setup_func));
     _.extend(display, {
       expired_effects_func: function(expired_effects) {
         _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
@@ -88,12 +88,12 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
           this.tick(dt); 
         }
       },
-      resize: function(width, height) {
-        display.__proto__.resize(width, height);
+      resize: function(dims) {
+        display.__proto__.resize(dims);
         
-        renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
+        renderer.setSize(dims.usable_width, dims.usable_height);
 
-        camera.aspect = width / height;
+        camera.aspect = dims.usable_width / dims.usable_height;
         camera.updateProjectionMatrix();
 
         // _.each(this.permanent_effects, function(permanent_effect) { permanent_effect.reposition(); });

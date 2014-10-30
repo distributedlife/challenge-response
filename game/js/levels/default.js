@@ -1,8 +1,7 @@
-//TODO: the fonts should be loaded in some other way –perhaps in a fonts file (like entities)
 define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetiker_regular', "lib/ui/circle", "lib/ui/colours", "lib/ui/position_helper"], function(_, orthographic_display, text, helvetiker_regular, circle, colours, position_helper) {
     "use strict";
 
-    return function(element, width, height, options) {
+    return function(element, initial_width, initial_height, options) {
         var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
             title.fade_in();
             challenge.fade_out();
@@ -137,7 +136,7 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             }
         };
 
-        var level = Object.create(orthographic_display(element, width, height, options, setup));
+        var level = Object.create(orthographic_display(element, initial_width, initial_height, options, setup));
         return level;
     };
 });
