@@ -21,8 +21,9 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             challenge.fade_in();
             level.acknowledge('show-challenge');   
             status_indicator.change_colour(0, colours.green1.rgba());
-            challenge_effect.transition_colour(0.5, colours.white.rgba(), colours.transparent(colours.white.rgba()));
-            challenge_effect.scale(0.5, 1, 5);
+            // challenge_effect.transition_colour(0.5, colours.white.rgba(), colours.transparent(colours.white.rgba()));
+            // challenge_effect.fade_in();
+            // challenge_effect.scale(0.5, 1, 5);
         };
 
         var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
@@ -43,7 +44,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
         }
 
         var setup = function() {
-            var title = new text("CHALLENGE:RESPONSE", level.scene_manager().add, level.scene_manager().remove, {
+            var title = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "CHALLENGE:RESPONSE",
                 size: level.font_size(9),
                 position: {
                     x: level.position_helper.ss.centre_x(),
@@ -54,7 +56,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(title);
 
-            var challenge = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
+            var challenge = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "GO!",
                 size: level.font_size(20),
                 position: {
                     x: level.position_helper.ss.centre_x(),
@@ -65,7 +68,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(challenge);
 
-            var challenge_effect = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
+            var challenge_effect = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "GO!",
                 size: level.font_size(20),
                 position: {
                     x: level.position_helper.ss.centre_x(),
@@ -76,7 +80,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(challenge_effect);
 
-            var score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
+            var score = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "unset",
                 size: level.font_size(10),
                 position: {
                     x: level.position_helper.ss.centre_x(),
@@ -87,7 +92,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(score);
 
-            var false_start = new text("False Start", level.scene_manager().add, level.scene_manager().remove, {
+            var false_start = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "False Start",
                 size: level.font_size(10),
                 position: {
                     x: level.position_helper.ss.centre_x(),
@@ -98,7 +104,8 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             });
             level.permanent_effects.push(false_start);
 
-            var restart = new text("Press `R' to try again.", level.scene_manager().add, level.scene_manager().remove, {
+            var restart = new text(level.scene_manager().add, level.scene_manager().remove, {
+                text: "Press `R' to try again.",
                 size: level.font_size(8),
                 position: {
                     x: level.position_helper.ss.centre_x(),

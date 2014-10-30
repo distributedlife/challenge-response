@@ -32,6 +32,14 @@ define(["lib/math/alignment"], function(alignment) {
 	var geometries = {
 		circle: function(options) {
 			return new THREE.CircleGeometry(options.radius, options.segments);	
+		},
+		text: function(options) {
+			var shape = THREE.FontUtils.generateShapes(options.text, options);
+      
+	      	var geometry = new THREE.ShapeGeometry(shape);
+      		geometry.computeBoundingBox();
+
+      		return geometry;
 		}
 	};
 	var mesh = {
@@ -40,7 +48,7 @@ define(["lib/math/alignment"], function(alignment) {
 		assemble: function(geometry_callback, material_callback, position_callback, on_create, options) {
     		var new_mesh = new THREE.Mesh(geometry_callback(options), material_callback(options));
 
-			new_mesh.position = alignment.align_to_self(position_callback(), width(new_mesh), height(new_mesh), options.alignment);
+			new_mesh.position = alignment.align_to_self(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
       		new_mesh.rotation.x = -90; 
       		new_mesh.scale.set(options.scale.current, options.scale.current, options.scale.current);
 

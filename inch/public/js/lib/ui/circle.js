@@ -5,7 +5,7 @@ define(["vendor/three", "lib/util/temporary_effect", "lib/util/supports_transiti
 		var current = {};
     	_.defaults(current, apply_defaults(settings));
 		
-		var position_callback = function() {
+		var position_callback = function(mesh) {
 			var adjusted = current.position;
 			adjusted.x += settings.radius;
 
