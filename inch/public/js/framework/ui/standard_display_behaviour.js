@@ -113,11 +113,7 @@ define(["zepto", "lodash", 'socket.io-client', "vendor/screenfull", "framework/k
 	        update: function(packet) {
 	        	stats( 'update-inch' ).start();
 
-	        	pending_acknowledgements.push({
-	        		id: packet.id,
-	        		rcvd_timestamp: Date.now(),
-	        		names: []
-	        	});
+	        	pending_acknowledgements.push({ id: packet.id, rcvd_timestamp: Date.now(), names: [] });
 
 	        	if (packet.id <= last_received_id) {
 	        		return;
