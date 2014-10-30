@@ -115,22 +115,6 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             level.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, status_indicator]);
             level.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, status_indicator]);
             level.on_property_change(the_score, update_score, score);
-
-            if (level.value(the_game_state) === 'ready') {
-                show_instructions(undefined, undefined, title, challenge, score, false_start, restart, status_indicator);
-            }
-            if (level.value(the_game_state) === 'waiting') {
-                hide_instructions(undefined, undefined, title, status_indicator);
-            }
-            if (level.value(the_game_state) === "challenge_started") {
-                show_challenge(undefined, undefined, challenge, status_indicator);
-            }
-            if (level.value(the_game_state) === "complete") {
-                show_results(undefined, undefined, challenge, score, restart, status_indicator);
-            }
-            if (level.value(the_game_state) === "false_start") {
-                false_start(undefined, undefined, false_start, score, restart, status_indicator);
-            }
         };
 
         var level = Object.create(orthographic_display(element, initial_width, initial_height, options, setup));

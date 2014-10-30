@@ -131,68 +131,89 @@ define(["lodash"], function(_) {
         prior_element: prior_element,
 
         on_change: function(model, callback, data) {
-            changes.push({
+            var change = {
                 type: 'object',
                 focus: model, 
                 callback: callback,
                 data: data
-            });
+            };
+
+            handle_objects(change);
+            changes.push(change);
         },
         on_property_change: function(property, callback, data) {
-            changes.push({
+            var change = {
                 type: 'property',
                 focus: property, 
                 callback: callback,
                 data: data
-            });
+            };
+
+            handle_object_property(change);
+            changes.push(change);
         },
         on_property_changed_to: function(property, condition, callback, data) {
-            changes.push({
+            var change = {
                 type: 'property',
                 focus: property,
                 'when': equals(condition),
                 callback: callback,
                 data: data
-            });
+            };
+
+            handle_object_property(change);
+            changes.push(change);
         },
         on_conditional_change: function(model, condition, callback, data) {
-            changes.push({
+            var change = {
                 type: 'object',
                 focus: model, 
                 'when': condition, 
                 callback: callback,
                 data: data
-            });
+            };
+
+            handle_objects(change);
+            changes.push(change);
         },
         on_element_change: function(model_array, callback, data) {
-            changes.push({
+            var change = {
                 type: 'array',
                 focus: model_array,
                 callback: callback,
                 detection_func: element_changed,
                 operates_on: value,
                 data: data
-            });
+            };
+
+            handle_arrays(change);
+            changes.push(change);
         },
         on_element_arrival: function(model_array, callback, data) {
-            changes.push({
+            var change = {
                 type: 'array',
                 focus: model_array,  
                 callback: callback,
                 detection_func: element_added,
                 operates_on: value,
                 data: data
-            });
+            };
+
+            handle_arrays(change);
+            changes.push(change);
         },
         on_element_removal: function(model_array, callback, data) {
-            changes.push({
+            var change = {
                 type: 'array',
                 focus: model_array, 
                 callback: callback,
                 detection_func: element_removed,
                 operates_on: prior_value,
                 data: data
-            });
+            };
+
+            handle_arrays(change);
+            changes.push(change);
         },
         detect_changes_and_notify_observers: function() {
             _.each(changes, function(change) {
