@@ -3,6 +3,9 @@ define([], function() {
 
 	//from: http://www.cloford.com/resources/colours/500col.htm
 	return {
+		transparent: function(colour) {
+			return [colour[0], colour[1], colour[2], 0];
+		},
 		aliceblue: {hex: "#F0F8FF", rgba: function() { return[240/255,248/255,255/255, 1.0]; }},
 		antiquewhite1: {hex: "#FFEFDB", rgba: function() { return[255/255,239/255,219/255, 1.0]; }},
 		antiquewhite2: {hex: "#EEDFCC", rgba: function() { return[238/255,223/255,204/255, 1.0]; }},
@@ -29,10 +32,11 @@ define([], function() {
 		bisque: {hex: "#FFE4C4", rgba: function() { return[255/255,228/255,196/255, 1.0]; }},
 		black: {hex: "#000000", rgba: function() { return[0/255,0/255,0/255, 1.0]; }},
 		blanchedalmond: {hex: "#FFEBCD", rgba: function() { return[255/255,235/255,205/255, 1.0]; }},
+		blue1: {hex: "#0000EE", rgba: function() { return[0/255,0/255,255/255, 1.0]; }},
 		blue2: {hex: "#0000EE", rgba: function() { return[0/255,0/255,238/255, 1.0]; }},
 		blue3: {hex: "#0000CD", rgba: function() { return[0/255,0/255,205/255, 1.0]; }},
 		blue4: {hex: "#00008B", rgba: function() { return[0/255,0/255,139/255, 1.0]; }},
-		blue: {hex: "#0000FF", rgba: function() { return[0/255,0/255,255/255, 1.0]; }},
+		blue: {hex: "#0000FF", rgba: function() { return[0/255,0/255,128/255, 1.0]; }},
 		blueviolet: {hex: "#8A2BE2", rgba: function() { return[138/255,43/255,226/255, 1.0]; }},
 		brick: {hex: "#9C661F", rgba: function() { return[156/255,102/255,31/255, 1.0]; }},
 		brown1: {hex: "#FF4040", rgba: function() { return[255/255,64/255,64/255, 1.0]; }},
@@ -577,7 +581,7 @@ define([], function() {
 		red2: {hex: "#EE0000", rgba: function() { return[238/255,0/255,0/255, 1.0]; }},
 		red3: {hex: "#CD0000", rgba: function() { return[205/255,0/255,0/255, 1.0]; }},
 		red4: {hex: "#8B0000", rgba: function() { return[139/255,0/255,0/255, 1.0]; }},
-		red: {hex: "#FF0000", rgba: function() { return[255/255,0/255,0/255, 1.0]; }},
+		red: {hex: "#FF0000", rgba: function() { return[128/255,0/255,0/255, 1.0]; }},
 		rosybrown1: {hex: "#FFC1C1", rgba: function() { return[255/255,193/255,193/255, 1.0]; }},
 		rosybrown2: {hex: "#EEB4B4", rgba: function() { return[238/255,180/255,180/255, 1.0]; }},
 		rosybrown3: {hex: "#CD9B9B", rgba: function() { return[205/255,155/255,155/255, 1.0]; }},

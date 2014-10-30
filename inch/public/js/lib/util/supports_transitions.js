@@ -13,6 +13,12 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 	        current_mesh.material.needsUpdate = true;
 	    };
 
+	    var tick_scale = function(dt, progress) {
+	    	settings.scale.current = lerp.lerp(settings.scale.from, settings.scale.to, progress);
+
+	    	current_mesh.scale.set(settings.scale.current, settings.scale.current, settings.scale.current);
+	    };
+
 	    var add_temporary_effect = function(duration, callback) {
 	    	if (duration === 0 || duration === undefined) {
 				callback(undefined, 1.0);
@@ -30,6 +36,12 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 
 				add_temporary_effect(duration, tick_colour);
 			},
+			transition_colour: function(duration, from, to) {
+				settings.colour.from = from;
+				settings.colour.to = to;
+
+				add_temporary_effect(duration, tick_colour);
+			},
 			fade_in: function(duration, final_opacity) {
 				final_opacity = final_opacity || 1.0;
 				settings.colour.to[3] = final_opacity;
@@ -40,6 +52,12 @@ define(["lib/util/temporary_effect", "lib/math/lerp"], function(a_temporary_effe
 		        settings.colour.to[3] = 0.0;
 
 	        	add_temporary_effect(duration, tick_colour);
+		    },
+		    scale: function(duration, from, to) {
+		    	settings.scale.from = from;
+		    	settings.scale.to = to;
+
+		    	add_temporary_effect(duration, tick_scale);
 		    },
 		    run_transitions: function(dt) {
 		    	_.each(transitions, function(t) { t.tick(dt); });

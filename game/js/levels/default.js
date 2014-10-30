@@ -2,9 +2,10 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
     "use strict";
 
     return function(element, initial_width, initial_height, options) {
-        var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
+        var show_instructions = function(model, prior_model, title, challenge, challenge_effect, score, false_start, restart, status_indicator) {
             title.fade_in();
             challenge.fade_out();
+            challenge_effect.fade_out();
             score.fade_out();
             false_start.fade_out();
             restart.fade_out();
@@ -16,10 +17,12 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             status_indicator.change_colour(0, colours.red.rgba());
         };
 
-        var show_challenge = function(model, prior_model, challenge, status_indicator) {
+        var show_challenge = function(model, prior_model, challenge, challenge_effect, status_indicator) {
             challenge.fade_in();
             level.acknowledge('show-challenge');   
             status_indicator.change_colour(0, colours.green1.rgba());
+            challenge_effect.transition_colour(0.5, colours.white.rgba(), colours.transparent(colours.white.rgba()));
+            challenge_effect.scale(0.5, 1, 5);
         };
 
         var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
@@ -61,6 +64,17 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
                 start_hidden: true
             });
             level.permanent_effects.push(challenge);
+
+            var challenge_effect = new text("GO!", level.scene_manager().add, level.scene_manager().remove, {
+                size: level.font_size(20),
+                position: {
+                    x: level.position_helper.ss.centre_x(),
+                    y: level.position_helper.ss.centre_y(),
+                    z: 0
+                },
+                start_hidden: true
+            });
+            level.permanent_effects.push(challenge_effect);
 
             var score = new text("unset", level.scene_manager().add, level.scene_manager().remove, {
                 size: level.font_size(10),
@@ -109,9 +123,9 @@ define(["lodash", "lib/ui/orthographic", "lib/text/orthographic", 'font/helvetik
             var the_game_state = function(state) { return state['controller']['state']; };
             var the_score = function(state) { return state['controller']['score']; };
         	
-            level.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, challenge_effect, score, false_start, restart, status_indicator]);
             level.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, status_indicator]);
-            level.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, status_indicator]);
+            level.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, challenge_effect, status_indicator]);
             level.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, status_indicator]);
             level.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, status_indicator]);
             level.on_property_change(the_score, update_score, score);
