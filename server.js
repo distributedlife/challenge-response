@@ -1,35 +1,45 @@
 "use strict";
 
-var inch_files = "./inch";
-var framework_files = inch_files+'/public/js/server_core';
-var game_files = "./game/js";
-
-var _ = require('lodash');
 var express = require('express');
 var app = express();
-require(inch_files+'/configure_express')(app, express, require('consolidate'));
-
+require('./inch/configure_express')(app, express, require('consolidate'));
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
 
-var entities = require(framework_files+'/entities');
-var game_state = require(framework_files+'/initial_state');
-_.extend(game_state, require(game_files+'/state')(entities));
 
-var game_logic = require(game_files+'/logic')(game_state, entities);
-var action_map = require(game_files+'/action_map');
 
-var watchjs = require('watchjs');
-var user_input = {
-	raw_data: {}
+var entities = require('inch-entity-loader').loadFromPath(process.cwd() + "/game/js/entities/");
+var state = require('inch-game-state').andExtendWith({
+  	controller: new entities.controller()
+});
+
+var actionMap = {
+	'space': [{target: state.controller.response, keypress: true}],
+	'r': [{target: state.controller.reset, keypress: true}]
 };
-require(framework_files+'/socket_routes')(io, game_state, user_input, watchjs, action_map.acks);
-require(game_files+'/routes')(app, game_state);
+var inputHandler = require('inch-input-handler')(actionMap);
 
-var input_bindings = require(framework_files+'/input_bindings')(game_state, user_input, action_map.input, watchjs);
-var game_engine = require(framework_files+'/engine')(game_state, game_logic, input_bindings);
+var ackMap = {
+	'show-challenge': [state.controller.challenge_seen]
+};
+var callbacks = require('inch-standard-socket-support-callbacks')(state, inputHandler);
+require('inch-socket-support')(server, callbacks, ackMap);
 
-game_engine.run();
 
-require(inch_files+'/requirejs_node_config')(require('requirejs'));
+
+
+
+require('./game/js/routes')(app, state);
+var game_logic = require('./game/js/logic')(state, entities);
+
+var engine = require('inch-game-engine')(state.isPaused.bind(state), [
+	state.update.bind(state), 
+	inputHandler.update, 
+	game_logic.update
+]);
+engine.run(120);
+
+
+
+
+require('./inch/requirejs_node_config')(require('requirejs'));
 server.listen(process.env.PORT || 3000);

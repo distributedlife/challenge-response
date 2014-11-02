@@ -11,6 +11,13 @@
     "consolidate": "^0.10.0",
     "express": "^4.10.1",
     "hamljs": "^0.6.2",
+    "inch-entity-loader": "^1.0.2",
+    "inch-game-engine": "^1.0.0",
+    "inch-game-state": "^1.0.1",
+    "inch-input-handler": "^1.0.0",
+    "inch-sequence": "^1.0.0",
+    "inch-socket-support": "^1.0.2",
+    "inch-standard-socket-support-callbacks": "^1.0.0",
     "javascript-state-machine": "~2.3.2",
     "lodash": "^2.4.1",
     "microtime": "^1.0.1",
@@ -34,8 +41,10 @@
     "gulp": "~3.8.8",
     "gulp-develop-server": "~0.2.4",
     "gulp-livereload": "~2.1.1",
+    "gulp-mocha": "^1.1.1",
     "jasmine-node": "~1.14.5",
-    "jsdom": "^1.1.0"
+    "jsdom": "^1.1.0",
+    "mocha": "^2.0.1"
   },
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit",
