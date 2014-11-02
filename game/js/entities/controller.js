@@ -42,6 +42,7 @@ module.exports = function() {
 	_.extend(controller, {
 		score: 0,
 		state: 'ready',
+		priorScores: [],
 		challenge_seen: function(ack) {
 			start = ack.rcvd_timestamp;
 		},
@@ -67,6 +68,7 @@ module.exports = function() {
 		reset: function(force, data) {
 			if (controller.state === 'complete' || controller.state === "false_start") {
 				state_machine.reset();
+				priorScores.push(controller.score);
 				controller.score = 0;
 			}
 		},

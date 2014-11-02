@@ -48,9 +48,9 @@
   },
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit",
-    "start": "node server.js"
+    "start": "node game.js"
   },
-  "main": "server.js",
+  "main": "game.js",
   "author": "Ryan Boucher",
   "license": "BSD"
 }

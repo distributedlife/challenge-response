@@ -9,7 +9,7 @@ gulp.task('default', function () {
 });
 
 gulp.task( 'server:start', function() {
-    server.listen( { path: './server.js' }, livereload.listen );
+    server.listen( { path: './game.js' }, livereload.listen );
 });
 
 gulp.task( 'server:restart', [ 'server:start' ], function() {
@@ -20,5 +20,5 @@ gulp.task( 'server:restart', [ 'server:start' ], function() {
         });
     }
 
-    gulp.watch( [ './server.js', "game/js/**/*.js", "inch/public/js/**/*.js" ] ).on( 'change', restart );
+    gulp.watch( [ './game.js', "game/js/**/*.js", "inch/public/js/**/*.js" ] ).on( 'change', restart );
 });
