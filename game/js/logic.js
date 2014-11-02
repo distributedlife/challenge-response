@@ -1,7 +1,6 @@
 var rek = require('rekuire');
 var filter = rek('inch/public/js/lib/filters/common');
 var logic = rek('inch/public/js/lib/logic/common');
-var collision_detection = rek('inch/public/js/lib/math/collision_detection');
 
 module.exports = function(game_state, entities) {
   "use strict";
