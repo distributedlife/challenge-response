@@ -17,6 +17,7 @@
     "inch-input-handler": "^1.0.0",
     "inch-sequence": "^1.0.0",
     "inch-socket-support": "^1.0.2",
+    "inch-standard-socket-support-callbacks": "^1.0.0",
     "javascript-state-machine": "~2.3.2",
     "lodash": "^2.4.1",
     "microtime": "^1.0.1",
