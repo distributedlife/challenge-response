@@ -3,7 +3,6 @@
 var inch_files = "./inch";
 var game_files = "./game/js";
 
-var _ = require('lodash');
 var express = require('express');
 var app = express();
 require(inch_files+'/configure_express')(app, express, require('consolidate'));
