@@ -11,7 +11,7 @@
     "consolidate": "^0.10.0",
     "express": "^4.10.1",
     "hamljs": "^0.6.2",
-    "inch-entity-loader": "^1.0.0",
+    "inch-entity-loader": "^1.0.2",
     "inch-game-engine": "^1.0.0",
     "inch-game-state": "^1.0.1",
     "inch-input-handler": "^1.0.0",
