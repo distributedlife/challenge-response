@@ -4,7 +4,14 @@ module.exports = function(callbacks) {
 	return {
 		configure: function(app, server) {
 			app.get('/', function(req, res) { res.render('index.haml'); });
-			app.get('/:mode/', function(req, res) { res.render('index.haml'); });
+			app.get('/:mode/', function(req, res) { 
+				// if(req.params.mode === 'socket.io') { 
+				// 	return next(err); 
+				// } 
+
+				console.log('splurgg')
+				res.render('index.haml'); 
+			});
 
 			app.get('/:mode/observer', function(req, res) { res.render('observer.haml'); });
 			app.get('/:mode/primary', function(req, res) { 
@@ -14,7 +21,6 @@ module.exports = function(callbacks) {
 					console.log('attempted to visit mode', mode);
 					res.redirect('/');
 				}
-				console.log('THIS IS HAPPENING');
 				callbacks[mode](server);
 
 				res.render('primary.haml'); 
