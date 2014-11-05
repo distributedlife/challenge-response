@@ -1,49 +1,49 @@
-define(["vendor/three"], function(THREE) {
-  "use strict";
+var THREE = require('three');
 
-  return function(width, height, config) {
-    var build_grid = function() {
-      var geometry = new THREE.Geometry();
-      var vertical_lines = width / config.size;
-      var horizontal_lines = height / config.size;
+"use strict";
 
-      for(var w = 0; w < vertical_lines / 2; w++) {
-        var x = w * config.size;
+module.exports = function(width, height, config) {
+  var build_grid = function() {
+    var geometry = new THREE.Geometry();
+    var vertical_lines = width / config.size;
+    var horizontal_lines = height / config.size;
 
-        geometry.vertices.push(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, height, 0));
-        geometry.colors.push(new THREE.Color(), new THREE.Color());
-      }
-      for (var h = 0; h < horizontal_lines / 2; h++) {
-        var y = h * config.size;
+    for(var w = 0; w < vertical_lines / 2; w++) {
+      var x = w * config.size;
 
-        geometry.vertices.push(new THREE.Vector3(0, y, 0), new THREE.Vector3(width, y, 0));
-        geometry.colors.push(new THREE.Color(), new THREE.Color());
-      }
+      geometry.vertices.push(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, height, 0));
+      geometry.colors.push(new THREE.Color(), new THREE.Color());
+    }
+    for (var h = 0; h < horizontal_lines / 2; h++) {
+      var y = h * config.size;
 
-      for(var w = vertical_lines; w >= vertical_lines / 2; w--) {
-        var x = w * config.size;
+      geometry.vertices.push(new THREE.Vector3(0, y, 0), new THREE.Vector3(width, y, 0));
+      geometry.colors.push(new THREE.Color(), new THREE.Color());
+    }
 
-        geometry.vertices.push(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, height, 0));
-        geometry.colors.push(new THREE.Color(), new THREE.Color());
-      }
-      for (var h = horizontal_lines; h >= horizontal_lines / 2; h--) {
-        var y = h * config.size;
+    for(var w = vertical_lines; w >= vertical_lines / 2; w--) {
+      var x = w * config.size;
 
-        geometry.vertices.push(new THREE.Vector3(0, y, 0), new THREE.Vector3(width, y, 0));
-        geometry.colors.push(new THREE.Color(), new THREE.Color());
-      }
+      geometry.vertices.push(new THREE.Vector3(x, 0, 0), new THREE.Vector3(x, height, 0));
+      geometry.colors.push(new THREE.Color(), new THREE.Color());
+    }
+    for (var h = horizontal_lines; h >= horizontal_lines / 2; h--) {
+      var y = h * config.size;
 
-      var material = new THREE.LineBasicMaterial({ color: config.colour});
+      geometry.vertices.push(new THREE.Vector3(0, y, 0), new THREE.Vector3(width, y, 0));
+      geometry.colors.push(new THREE.Color(), new THREE.Color());
+    }
 
-      var line = new THREE.Line(geometry, material);
-      line.visible = true;
-      line.type = THREE.LinePieces;
+    var material = new THREE.LineBasicMaterial({ color: config.colour});
 
-      return line;
-    };
+    var line = new THREE.Line(geometry, material);
+    line.visible = true;
+    line.type = THREE.LinePieces;
 
-    return {
-      grid: build_grid()
-    };
+    return line;
   };
-});
+
+  return {
+    grid: build_grid()
+  };
+};

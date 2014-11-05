@@ -68,7 +68,7 @@ module.exports = function() {
 		reset: function(force, data) {
 			if (controller.state === 'complete' || controller.state === "false_start") {
 				state_machine.reset();
-				priorScores.push(controller.score);
+				this.priorScores.push(controller.score);
 				controller.score = 0;
 			}
 		},

@@ -1,21 +1,21 @@
-define(["vendor/window", "framework/stats"], function(window, stats) {
-  "use strict";
+"use strict";
 
-  return function(display) {
-    return {
-      resize: function(dims) { display.resize(dims); },
-      run: function(time) {
-        stats( 'frame' ).start();
-        stats( 'rAF' ).tick();
-        stats( 'FPS' ).frame();
+var stats = require("../framework/stats");
+var window = require("window");
 
-        display.update_display();
+module.exports = function(update_display) {
+  return {
+    run: function(time) {
+      stats( 'frame' ).start();
+      stats( 'rAF' ).tick();
+      stats( 'FPS' ).frame();
 
-        stats( 'frame' ).end();
-        stats().update();
+      update_display();
 
-        window.requestAnimationFrame(this.run.bind(this));
-      }
-    };
+      stats( 'frame' ).end();
+      stats().update();
+
+      window.requestAnimationFrame(this.run.bind(this));
+    }
   };
-});
+};

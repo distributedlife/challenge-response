@@ -5,35 +5,36 @@
 window = (typeof window === 'undefined') ? global : window;
 window.SM2_DEFER = true;
 
-define(['vendor/soundmanager2-nodebug-jsmin', 'framework/config'], function (just_by_requiring_it_we_load_it, config) {
-  "use strict";
+var just_by_requiring_it_we_load_it = require('../vendor/soundmanager2-nodebug-jsmin');
+var config = require('../framework/config')
 
-  return function() {
-    var soundmanager = new SoundManager();
-    soundmanager.url = config.swf_path;
-    soundmanager.flashVersion = 9;
-    soundmanager.debugMode = false;
-    soundmanager.debugFlash = false;
-    soundmanager.preferFlash = false;
-    soundmanager.useHTML5Audio = true;
-    soundmanager.HTML5Only = true;
-    soundmanager.beginDelayedInit();
+"use strict";
 
-    soundmanager.ontimeout = function() {
-      // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
-      console.log(arguments)
-    };
+module.exports = function() {
+  var soundmanager = new SoundManager();
+  soundmanager.url = config.swf_path;
+  soundmanager.flashVersion = 9;
+  soundmanager.debugMode = false;
+  soundmanager.debugFlash = false;
+  soundmanager.preferFlash = false;
+  soundmanager.useHTML5Audio = true;
+  soundmanager.HTML5Only = true;
+  soundmanager.beginDelayedInit();
 
-    soundmanager.disable_sound = function() {
-      soundmanager.mute();
-      soundmanager.volume(0);
-    };
-
-    soundmanager.enable_sound = function() {
-      soundmanager.unmute();
-      soundmanager.volume(100);
-    }
-
-    return soundmanager;
+  soundmanager.ontimeout = function() {
+    // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
+    console.log(arguments)
   };
-});
+
+  soundmanager.disable_sound = function() {
+    soundmanager.mute();
+    soundmanager.volume(0);
+  };
+
+  soundmanager.enable_sound = function() {
+    soundmanager.unmute();
+    soundmanager.volume(100);
+  }
+
+  return soundmanager;
+};

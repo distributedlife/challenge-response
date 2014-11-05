@@ -1,11 +1,11 @@
-define(["vendor/three"], function(THREE) {
-	"use strict";
+var THREE = require('three');
 
-	return function(fontData) {
-		if (_typeface_js && _typeface_js.loadFace) {
-			_typeface_js.loadFace(fontData);
-		};
+"use strict";
 
-		return fontData;
-	}
-});
+module.exports = function(fontData) {
+	if (_typeface_js && _typeface_js.loadFace) {
+		_typeface_js.loadFace(fontData);
+	};
+
+	return fontData;
+}

@@ -1,51 +1,56 @@
-define(["vendor/three", "lib/util/temporary_effect", "lib/math/alignment", "lib/util/supports_transitions", "lib/ui/apply_defaults", "lib/ui/base"], function(THREE, a_temporary_effect, alignment, supports_transitions, apply_defaults, base) {
-  "use strict";
+var _ = require('lodash');
+var a_temporary_effect = require("../util/temporary_effect");
+var alignment = require("../math/alignment");
+var supports_transitions = require("../util/supports_transitions");
+var apply_defaults = require("../ui/apply_defaults");
+var base = require("../ui/base");
 
-  return function(on_create, on_destroy, settings) {
-    var current = {};
-    _.defaults(current, apply_defaults(settings));
+"use strict";
 
-    var position_callback = function(mesh) {
-      var position = current.position;
-      position.x += (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x) / 2;
+module.exports = function(on_create, on_destroy, settings) {
+  var current = {};
+  _.defaults(current, apply_defaults(settings));
 
-      return position;
-    };
+  var position_callback = function(mesh) {
+    var position = current.position;
+    position.x += (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x) * 0.1;
 
-    var mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
+    return position;
+  };
 
-    var orthographic_text = {
-      update_from_model: function(updated_model) {
-        current.position = {x: updated_model.x, y: updated_model.y, z: 0};
-        mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
-        mesh.visible = updated_model.active || true;
-      },
+  var mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
 
-      update_text: function(updatedText) {
-        current.visible = mesh.visible;
-        current.text = updatedText;
+  var orthographic_text = {
+    update_from_model: function(updated_model) {
+      current.position = {x: updated_model.x, y: updated_model.y, z: 0};
+      mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
+      mesh.visible = updated_model.active || true;
+    },
 
-        on_destroy(mesh);
+    update_text: function(updatedText) {
+      current.visible = mesh.visible;
+      current.text = updatedText;
 
-        mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
-        mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
-        mesh.visible = current.visible;
+      on_destroy(mesh);
 
-        this.update_mesh(mesh);
-      },
+      mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
+      mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
+      mesh.visible = current.visible;
 
-      on_tick: function(dt) {
-        if (!this.is_alive()) {
-          mesh.visible = false;
-        }
+      this.update_mesh(mesh);
+    },
 
-        this.run_transitions(dt);
+    on_tick: function(dt) {
+      if (!this.is_alive()) {
+        mesh.visible = false;
       }
-    };
 
-    _.extend(orthographic_text, supports_transitions(mesh, current));
-    _.extend(orthographic_text, a_temporary_effect(current.duration, orthographic_text.on_tick.bind(orthographic_text)));
+      this.run_transitions(dt);
+    }
+  };
 
-    return orthographic_text;
-  }
-});
+  _.extend(orthographic_text, supports_transitions(mesh, current));
+  _.extend(orthographic_text, a_temporary_effect(current.duration, orthographic_text.on_tick.bind(orthographic_text)));
+
+  return orthographic_text;
+};

@@ -4,11 +4,6 @@
     %meta{charset: "UTF-8"}
     %link{rel: "stylesheet", type: "text/css", href: "/inch/css/lib.css"}
     %link{rel: "stylesheet", type: "text/css", href: "/game/css/game.css"}
-    %meta#level{name: "data", 'data-level': level}
-    :javascript
-      var level = document.querySelector('#level').dataset.level
-    %script{'data-main': "/inch/js/primary.js", src: "/inch/js/vendor/require.js"}
-    %script{src: "/inch/js/requirejs-config.js"}
   %body
     .icons
       .icon.fullscreen
@@ -31,3 +26,4 @@
         %img{src: "/inch/images/site/observers.png"}
     #paused
     #canvas
+    %script{src: "/game/js/gen/primary.js", type: "text/javascript"}
