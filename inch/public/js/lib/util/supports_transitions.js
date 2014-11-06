@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var a_temporary_effect = require('../util/temporary_effect');
+var temporary_effect = require('../util/temporary_effect');
 var lerp = require('../math/lerp');
 
 "use strict";
@@ -11,8 +11,14 @@ module.exports = function(mesh, settings) {
 	var tick_colour = function(dt, progress) {
         settings.colour.current = lerp.lerpRGBA(settings.colour.from, settings.colour.to, progress);
         
-        current_mesh.material.color.setRGB(settings.colour.current[0], settings.colour.current[1], settings.colour.current[2]);  
-        current_mesh.material.opacity = settings.colour.current[3];
+        current_mesh.material.color.setRGB(settings.colour.current);
+        current_mesh.material.needsUpdate = true;
+    };
+
+    var tick_alpha = function(dt, progress) {
+        settings.opacity.current = lerp.lerp(settings.opacity.from, settings.opacity.to, progress);
+        
+        current_mesh.material.opacity = settings.opacity.current;
         current_mesh.material.needsUpdate = true;
     };
 
@@ -26,7 +32,7 @@ module.exports = function(mesh, settings) {
     	if (duration === 0 || duration === undefined) {
 			callback(undefined, 1.0);
 		} else {
-			transitions.push(Object.create(a_temporary_effect(duration, callback)));
+			transitions.push(Object.create(temporary_effect(duration, callback)));
 		}
     };
 
@@ -47,14 +53,14 @@ module.exports = function(mesh, settings) {
 		},
 		fade_in: function(duration, final_opacity) {
 			final_opacity = final_opacity || 1.0;
-			settings.colour.to[3] = final_opacity;
+			settings.opacity.to = final_opacity;
 
-			add_temporary_effect(duration, tick_colour);
+			add_temporary_effect(duration, tick_alpha);
 		},
 	    fade_out: function(duration) {
-	        settings.colour.to[3] = 0.0;
+	        settings.opacity.to = 0.0;
 
-        	add_temporary_effect(duration, tick_colour);
+        	add_temporary_effect(duration, tick_alpha);
 	    },
 	    scale: function(duration, from, to) {
 	    	settings.scale.from = from;

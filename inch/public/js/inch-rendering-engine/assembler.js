@@ -1,7 +1,7 @@
 "use strict";
 
-var dimensions = require("../client_core/dimensions");
-var layout_icons = require("../client_core/layout_icons");
+var dimensions = require("./dimensions");
+var layout_icons = require("./layout_icons");
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
 
@@ -18,6 +18,7 @@ module.exports = function(config) {
         },
         width: dims.usable_width,
         height: dims.usable_height,
+        renderer: require("./inch-threejs-renderer"),
         element: "canvas"
     });
 

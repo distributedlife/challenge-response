@@ -1,7 +1,5 @@
-var window = require("../vendor/window");
-
 "use strict";
-    
+var window = require("window");
 var min_margin = 32;
 
 module.exports = function(ratio) {

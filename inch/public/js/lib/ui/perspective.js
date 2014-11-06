@@ -3,34 +3,34 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
   "use strict";
 
   return function(element, width, height, options, setup_func) {
-    var setup_camera = function() {
-      var camera = new THREE.PerspectiveCamera(60, width / height, 1, 1000);
-      camera.position.z = 100;
-      return camera;
-    };
+    // var setup_camera = function() {
+    //   var camera = new THREE.PerspectiveCamera(60, width / height, 1, 1000);
+    //   camera.position.z = 100;
+    //   return camera;
+    // };
 
-    var create_a_scene = function() {
-      var scene = new THREE.Scene();
+    // var create_a_scene = function() {
+    //   var scene = new THREE.Scene();
 
-      if (config.axes.enabled) {
-        var scene_axes = axes.build(100);
-        scene.add(scene_axes);
-      }
+    //   if (config.axes.enabled) {
+    //     var scene_axes = axes.build(100);
+    //     scene.add(scene_axes);
+    //   }
 
-      return scene;
-    };
+    //   return scene;
+    // };
 
-    var build_scene_renderer = function(scene, camera) {
-      var renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(width, height);
-      window.document.getElementById(element).appendChild(renderer.domElement);
+    // var build_scene_renderer = function(scene, camera) {
+    //   var renderer = new THREE.WebGLRenderer({ antialias: true });
+    //   renderer.setSize(width, height);
+    //   window.document.getElementById(element).appendChild(renderer.domElement);
 
-      return renderer;
-    };
+    //   return renderer;
+    // };
 
-    var camera = setup_camera();
-    var scene = create_a_scene();
-    var renderer = build_scene_renderer(scene, camera);
+    // var camera = setup_camera();
+    // var scene = create_a_scene();
+    // var renderer = build_scene_renderer(scene, camera);
 
     var wrapped_setup_func = function() {
       display.on_element_arrival(display.all('wireframes'), display.add_wireframe);
@@ -42,14 +42,14 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
 
     var display = Object.create(standard_display_behaviour(element, width, height, options, wrapped_setup_func));
     _.extend(display, {
-      camera: camera,
-      scene: scene,
-      things_in_scene: [],
-      renderer: renderer,
+      // camera: camera,
+      // scene: scene,
+      // things_in_scene: [],
+      // renderer: renderer,
 
-      expired_effects_func: function(expired_effects) {
-        _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
-      },
+      // expired_effects_func: function(expired_effects) {
+      //   _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
+      // },
 
       dimensions: function(width, height) {
         if (this.has_no_current_state()) {
@@ -91,44 +91,44 @@ define(["lodash", "vendor/three", "framework/config", "framework/ui/grid_view", 
 
           display.wireframes[model.id].hide();  
       },
-      add_to_scene: function() {
-        _.each(arguments, function(mesh) { 
-          display.scene.add(mesh); 
-          display.things_in_scene.push(mesh);
-        }.bind(display)); 
-      },
-      remove_from_scene: function() {
-        _.each(arguments, function(mesh) { 
-          display.scene.remove(mesh); 
+      // add_to_scene: function() {
+      //   _.each(arguments, function(mesh) { 
+      //     display.scene.add(mesh); 
+      //     display.things_in_scene.push(mesh);
+      //   }.bind(display)); 
+      // },
+      // remove_from_scene: function() {
+      //   _.each(arguments, function(mesh) { 
+      //     display.scene.remove(mesh); 
 
-          var i = display.things_in_scene.indexOf(mesh);
-          display.things_in_scene.splice(i, 1);
+      //     var i = display.things_in_scene.indexOf(mesh);
+      //     display.things_in_scene.splice(i, 1);
 
-        }.bind(display));
-      },
-      reset: function() {
-        _.each(display.things_in_scene, function(thing_in_scene) {
-          display.scene.remove(thing_in_scene);
-        });
+      //   }.bind(display));
+      // },
+      // reset: function() {
+      //   _.each(display.things_in_scene, function(thing_in_scene) {
+      //     display.scene.remove(thing_in_scene);
+      //   });
 
-        display.things_in_scene = [];
-      },
+      //   display.things_in_scene = [];
+      // },
 
       
-      animate: function(dt) {
-        this.renderer.render(display.scene, display.camera); 
+      // animate: function(dt) {
+      //   this.renderer.render(display.scene, display.camera); 
 
-        if (this.setup_complete) {
-          this.tick(dt); 
-        }
-      },
-      resize: function(width, height) {
-        display.__proto__.resize(width, height);
-        display.renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
+      //   if (this.setup_complete) {
+      //     this.tick(dt); 
+      //   }
+      // },
+      // resize: function(width, height) {
+      //   display.__proto__.resize(width, height);
+      //   display.renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
 
-        display.camera.aspect = width / height;
-        display.camera.updateProjectionMatrix();
-      }
+      //   display.camera.aspect = width / height;
+      //   display.camera.updateProjectionMatrix();
+      // }
     });    
 
     return display;

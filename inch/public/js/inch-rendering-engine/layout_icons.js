@@ -1,6 +1,6 @@
-var $ = require('zepto-browserify').$;
-
 "use strict";
+
+var $ = require('zepto-browserify').$;
 
 var icon_size = 32;
 var position = function(slot) { return slot * icon_size; };

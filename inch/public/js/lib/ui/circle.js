@@ -1,11 +1,11 @@
+"use strict";
+
 var _ = require('lodash');
-var a_temporary_effect = require("../util/temporary_effect");
+var temporary_effect = require("../util/temporary_effect");
 var supports_transitions = require("../util/supports_transitions");
 var apply_defaults = require("../ui/apply_defaults");
 var base = require("../ui/base");
 var alignment = require("../math/alignment");
-
-"use strict";
 
 module.exports = function(on_create, on_destroy, settings) {
 	var current = {};
@@ -36,7 +36,7 @@ module.exports = function(on_create, on_destroy, settings) {
 	};		
 
 	_.extend(circle, supports_transitions(mesh, current));
-	_.extend(circle, a_temporary_effect(current.duration, circle.on_tick.bind(circle)));
+	_.extend(circle, temporary_effect(current.duration, circle.on_tick.bind(circle)));
 
 	return circle;
 };

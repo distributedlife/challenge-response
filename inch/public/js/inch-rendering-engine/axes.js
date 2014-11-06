@@ -1,4 +1,4 @@
-var three = require('three');
+var THREE = require('inch-threejs');
 
 "use strict";
 

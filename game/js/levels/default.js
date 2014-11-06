@@ -1,51 +1,52 @@
 var _ = require('lodash');
-var orthographic_display = require("../../../inch/public/js/lib/ui/orthographic");
-var text = require("../../../inch/public/js/lib/text/orthographic");
-var helvetiker_regular = require("../../../inch/public/js/font/helvetiker_regular");
-var circle = require("../../../inch/public/js/lib/ui/circle");
-var colours = require("../../../inch/public/js/lib/ui/colours");
+// var colours = require("../../../inch/public/js/lib/ui/colours");
+var colour = require('color');
+var circle = require('../../../inch/public/js/inch-2d-geometry-support').circle;
+var text = require('../../../inch/public/js/inch-2d-geometry-support').text;
+// var circle = require('inch-geometry-support').circle;
+// var text = require('inch-geometry-support').text;
 
 "use strict";
 
-module.exports = function(sceneManager, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
+module.exports = function(scene, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
     var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
         title.fade_in();
         challenge.fade_out();
         score.fade_out();
         false_start.fade_out();
         restart.fade_out();
-        status_indicator.change_colour(0, colours.grey50.rgba());
+        status_indicator.change_colour(0, colour("grey").rgbArray());
     };
 
     var hide_instructions = function(model, prior_model, title, status_indicator) {
         title.fade_out(0.25);
-        status_indicator.change_colour(0, colours.red.rgba());
+        status_indicator.change_colour(0, colour("red").rgbArray());
     };
 
     var show_challenge = function(model, prior_model, challenge, status_indicator) {
         challenge.fade_in();
         ackLastRequest('show-challenge');   
-        status_indicator.change_colour(0, colours.green1.rgba());
+        status_indicator.change_colour(0, colour("green").rgbArray());
     };
 
     var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
         challenge.fade_out();
         score.fade_in();
         restart.fade_in();
-        status_indicator.change_colour(0, colours.black.rgba());
+        status_indicator.change_colour(0, colour("black").rgbArray());
     };
 
     var show_false_start = function(model, prior_model, false_start, score, restart, status_indicator) {
         false_start.fade_in();
         restart.fade_in();
-        status_indicator.change_colour(0, colours.orange.rgba());
+        status_indicator.change_colour(0, colour("orange").rgbArray());
     }
 
     var update_score = function(model, prior_model, score) {
         score.update_text(model + "ms");
     }
 
-    var title = new text(sceneManager.add, sceneManager.remove, {
+    var title = new text(scene.add, scene.remove, {
         text: "CHALLENGE:RESPONSE",
         size: font_size(9),
         position: {
@@ -57,7 +58,7 @@ module.exports = function(sceneManager, ackLastRequest, positionHelper, permanen
     });
     permanent_effects.push(title);
 
-    var challenge = new text(sceneManager.add, sceneManager.remove, {
+    var challenge = new text(scene.add, scene.remove, {
         text: "GO!",
         size: font_size(20),
         position: {
@@ -69,7 +70,7 @@ module.exports = function(sceneManager, ackLastRequest, positionHelper, permanen
     });
     permanent_effects.push(challenge);
 
-    var score = new text(sceneManager.add, sceneManager.remove, {
+    var score = new text(scene.add, scene.remove, {
         text: "unset",
         size: font_size(10),
         position: {
@@ -81,7 +82,7 @@ module.exports = function(sceneManager, ackLastRequest, positionHelper, permanen
     });
     permanent_effects.push(score);
 
-    var false_start = new text(sceneManager.add, sceneManager.remove, {
+    var false_start = new text(scene.add, scene.remove, {
         text: "False Start",
         size: font_size(10),
         position: {
@@ -93,7 +94,7 @@ module.exports = function(sceneManager, ackLastRequest, positionHelper, permanen
     });
     permanent_effects.push(false_start);
 
-    var restart = new text(sceneManager.add, sceneManager.remove, {
+    var restart = new text(scene.add, scene.remove, {
         text: "Press `R' to try again.",
         size: font_size(8),
         position: {
@@ -105,7 +106,7 @@ module.exports = function(sceneManager, ackLastRequest, positionHelper, permanen
     });
     permanent_effects.push(restart);
 
-    var status_indicator = new circle(sceneManager.add, sceneManager.remove, {
+    var status_indicator = new circle(scene.add, scene.remove, {
         radius: 100,
         segments: 32,
         position: {
