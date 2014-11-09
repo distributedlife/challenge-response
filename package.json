@@ -23,6 +23,7 @@
     "inch-standard-socket-support-callbacks": "^1.0.0",
     "inch-temporary-effect": "^1.0.1",
     "inch-threejs": "^0.69.0",
+    "inch-unfurl": "^1.0.0",
     "javascript-state-machine": "^2.3.2",
     "lerp": "^1.0.0",
     "lodash": "^2.4.1",

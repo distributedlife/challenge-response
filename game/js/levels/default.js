@@ -8,37 +8,37 @@ var text = require('../../../inch/public/js/inch-2d-geometry-support').text;
 "use strict";
 
 module.exports = function(scene, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
-    var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
+    var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, statusIndicator) {
         title.fadeIn();
         challenge.fadeOut();
         score.fadeOut();
         false_start.fadeOut();
         restart.fadeOut();
-        status_indicator.changeColour(0, colour("grey").rgbArray());
+        statusIndicator.changeColour(0, colour("grey").rgbArray());
     };
 
-    var hide_instructions = function(model, prior_model, title, status_indicator) {
+    var hide_instructions = function(model, prior_model, title, statusIndicator) {
         title.fadeOut(0.25);
-        status_indicator.changeColour(0, colour("red").rgbArray());
+        statusIndicator.changeColour(0, colour("red").rgbArray());
     };
 
-    var show_challenge = function(model, prior_model, challenge, status_indicator) {
+    var show_challenge = function(model, prior_model, challenge, statusIndicator) {
         challenge.fadeIn();
         ackLastRequest('show-challenge');   
-        status_indicator.changeColour(0, colour("green").rgbArray());
+        statusIndicator.changeColour(0, colour("green").rgbArray());
     };
 
-    var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
+    var show_results = function(model, prior_model, challenge, score, restart, statusIndicator) {
         challenge.fadeOut();
         score.fadeIn();
         restart.fadeIn();
-        status_indicator.changeColour(0, colour("black").rgbArray());
+        statusIndicator.changeColour(0, colour("black").rgbArray());
     };
 
-    var show_false_start = function(model, prior_model, false_start, score, restart, status_indicator) {
+    var show_false_start = function(model, prior_model, false_start, score, restart, statusIndicator) {
         false_start.fadeIn();
         restart.fadeIn();
-        status_indicator.changeColour(0, colour("orange").rgbArray());
+        statusIndicator.changeColour(0, colour("orange").rgbArray());
     }
 
     var update_score = function(model, prior_model, score) {
@@ -105,7 +105,7 @@ module.exports = function(scene, ackLastRequest, positionHelper, permanent_effec
     });
     permanent_effects.push(restart);
 
-    var status_indicator = new circle(scene.add, scene.remove, {
+    var statusIndicator = new circle(scene.add, scene.remove, {
         radius: 100,
         segments: 32,
         position: {
@@ -114,15 +114,15 @@ module.exports = function(scene, ackLastRequest, positionHelper, permanent_effec
             z: -100
         },
     });
-    permanent_effects.push(status_indicator);
+    permanent_effects.push(statusIndicator);
 
     var the_game_state = function(state) { return state['controller']['state']; };
     var the_score = function(state) { return state['controller']['score']; };
 	
-    stateChanges.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, status_indicator]);
-    stateChanges.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, status_indicator]);
-    stateChanges.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, status_indicator]);
-    stateChanges.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, status_indicator]);
-    stateChanges.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, status_indicator]);
+    stateChanges.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, statusIndicator]);
+    stateChanges.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, statusIndicator]);
+    stateChanges.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, statusIndicator]);
+    stateChanges.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, statusIndicator]);
+    stateChanges.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, statusIndicator]);
     stateChanges.on_property_change(the_score, update_score, score);
 };

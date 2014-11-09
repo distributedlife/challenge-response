@@ -4,55 +4,48 @@ var TemporaryEffect = require('inch-temporary-effect');
 var supports_transitions = require("../util/supports_transitions");
 var apply_defaults = require("../ui/apply_defaults");
 var base = require("../ui/base");
-var alignment = require("../math/alignment");
+var inch_3js_mesh = require("../ui/threejs-mesh-helper")
 
 "use strict";
 
-module.exports = function(on_create, on_destroy, settings) {
+module.exports = function(onCreate, onDestroy, settings) {
   var current = {};
   _.defaults(current, apply_defaults(settings));
 
-  var position_callback = function(mesh) {
+  var positionCallback = function(mesh) {
     var position = current.position;
     position.x += (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x) * 0.1;
 
     return position;
   };
 
-  var mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
+  var mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, positionCallback, onCreate, current);
 
   var orthographic_text = {
-    update_from_model: function(updated_model) {
-      current.position = {x: updated_model.x, y: updated_model.y, z: updated_model.z || 0};
-      mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
-      mesh.visible = updated_model.active || true;
+    updateFromModel: function(updatedModel) {
+      inch_3js_mesh.updateFromModel(updatedModel, current, mesh);
     },
 
-    update_text: function(updatedText) {
-      current.visible = mesh.visible;
+    updateText: function(updatedText) {
       current.text = updatedText;
 
-      on_destroy(mesh);
+      onDestroy(mesh);
 
-      mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, position_callback, on_create, current);
-      mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
-      mesh.visible = current.visible;
+      mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, positionCallback, onCreate, current);
 
-      this.update_mesh(mesh);
+      this.updateMesh(mesh);
     },
-    on_death: function() {
-      mesh.visible = false;
-    },
-    on_tick: function(dt) {
-      this.run_transitions(dt);
+
+    onDeath: function() {
+      this.fadeOut();
     }
   };
 
   _.extend(orthographic_text, supports_transitions(mesh, current));
   _.extend(orthographic_text, TemporaryEffect(
     current.duration, 
-    orthographic_text.on_tick.bind(orthographic_text),
-    orthographic_text.on_death
+    orthographic_text.run,
+    orthographic_text.onDeath.bind(orthographic_text)
   ));
 
   return orthographic_text;

@@ -4,27 +4,27 @@ var lerp = require('lerp');
 
 "use strict";
 
-module.exports = function(mesh) {
+module.exports = function(mesh, current) {
 	var transitions = [];
 
     createTickColourFunction = function(from, to) {
     	return function(dt, progress) {
-    		var current = [
+    		current.colour = [
     			lerp(from[0], to[0], progress),
     			lerp(from[1], to[1], progress),
     			lerp(from[2], to[2], progress)
     		];
         
-        	mesh.material.color.setRGB(current[0], current[1], current[2]);
+        	mesh.material.color.setRGB(current.colour[0], current.colour[1], current.colour[2]);
         	mesh.material.needsUpdate = true;
         };
     };
 
     createTickScaleFunction = function(from, to) {
     	return function(dt, progress) {
-    		var current = lerp(from, to, progress);
+    		current.scale = lerp(from, to, progress);
 
-    		mesh.scale.set(current, current, current);
+    		mesh.scale.set(current.scale, current.scale, current.scale);
     	};
     };
 
@@ -32,8 +32,9 @@ module.exports = function(mesh) {
     	var initialOpacity = mesh.material.opacity;
 
     	return function(dt, progress) {
+    		current.opacity = lerp(initialOpacity, finalOpacity, progress);
 	        mesh.transparent = true;
-	        mesh.material.opacity = lerp(initialOpacity, finalOpacity, progress);
+	        mesh.material.opacity = current.opacity;
 	        mesh.material.needsUpdate = true;
     	};
     };
@@ -58,7 +59,8 @@ module.exports = function(mesh) {
 			addTemporaryEffect(duration, createTickColourFunction(from, to));
 		},
 		fadeIn: function(duration, finalOpacity) {
-			addTemporaryEffect(duration, createTickAlphaFunction(finalOpacity || 1.0));
+			var finalOpacity = finalOpacity || 1.0;
+			addTemporaryEffect(duration, createTickAlphaFunction(finalOpacity));
 		},
 	    fadeOut: function(duration) {
         	addTemporaryEffect(duration, createTickAlphaFunction(0.0));
