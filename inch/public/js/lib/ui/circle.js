@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require('lodash');
-var temporary_effect = require("../util/temporary_effect");
+var TemporaryEffect = require('inch-temporary-effect');
 var supports_transitions = require("../util/supports_transitions");
 var apply_defaults = require("../ui/apply_defaults");
 var base = require("../ui/base");
@@ -26,17 +26,20 @@ module.exports = function(on_create, on_destroy, settings) {
 	        mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
 	        mesh.visible = updated_model.active || true;
       	},
+      	on_death: function() {
+      		mesh.visible = false;
+    	},
       	on_tick: function(dt) {
-		    if (!this.is_alive()) {
-				mesh.visible = false;
-		    }
-
 		    this.run_transitions(dt);
 	  	}
 	};		
 
 	_.extend(circle, supports_transitions(mesh, current));
-	_.extend(circle, temporary_effect(current.duration, circle.on_tick.bind(circle)));
+	_.extend(circle, TemporaryEffect(
+		current.duration, 
+		circle.on_tick.bind(circle),
+		circle.on_death
+	));
 
 	return circle;
 };

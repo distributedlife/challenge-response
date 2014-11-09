@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var temporary_effect = require("../util/temporary_effect");
+var TemporaryEffect = require('inch-temporary-effect');
 
 var supports_transitions = require("../util/supports_transitions");
 var apply_defaults = require("../ui/apply_defaults");
@@ -40,18 +40,20 @@ module.exports = function(on_create, on_destroy, settings) {
 
       this.update_mesh(mesh);
     },
-
+    on_death: function() {
+      mesh.visible = false;
+    },
     on_tick: function(dt) {
-      if (!this.is_alive()) {
-        mesh.visible = false;
-      }
-
       this.run_transitions(dt);
     }
   };
 
   _.extend(orthographic_text, supports_transitions(mesh, current));
-  _.extend(orthographic_text, temporary_effect(current.duration, orthographic_text.on_tick.bind(orthographic_text)));
+  _.extend(orthographic_text, TemporaryEffect(
+    current.duration, 
+    orthographic_text.on_tick.bind(orthographic_text),
+    orthographic_text.on_death
+  ));
 
   return orthographic_text;
 };

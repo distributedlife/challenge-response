@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var temporary_effect = require('../util/temporary_effect');
+var temporary_effect = require('inch-temporary-effect');
 var lerp = require('../math/lerp');
 
 "use strict";
@@ -73,7 +73,7 @@ module.exports = function(mesh, settings) {
 	    },
 	    run_transitions: function(dt) {
 	    	_.each(transitions, function(t) { t.tick(dt); });
-    		transitions = _.reject(transitions, function(t) { !t.is_alive(); });
+    		transitions = _.reject(transitions, function(t) { !t.isAlive(); });
 	    }
 	};
 };
