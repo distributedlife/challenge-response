@@ -1,5 +1,5 @@
 var THREE = require('inch-threejs');
-var alignment = require('../math/alignment');
+var alignment = require("inch-geometry-alignment");
 
 "use strict";
 
@@ -53,7 +53,7 @@ var mesh = {
     assemble: function(geometry_callback, material_callback, position_callback, on_create, options) {
         var new_mesh = new THREE.Mesh(geometry_callback(options), material_callback(options));
 
-        var new_position = alignment.align_to_self(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
+        var new_position = alignment.toSelf2d(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
         new_mesh.position.set(new_position.x, new_position.y, new_position.z);
         new_mesh.rotation.x = -90; 
         new_mesh.scale.set(options.scale, options.scale, options.scale);
