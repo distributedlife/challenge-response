@@ -9,7 +9,7 @@ var configuration = {
 	display_config: {
 		controls: ['keyboard', 'gamepad']
 	},
-	setup: require("./levels/default")
+	setup: require("./levels/default")(THREE)
 };
 
 //require('inch-client-engine');	
