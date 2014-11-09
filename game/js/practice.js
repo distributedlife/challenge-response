@@ -2,7 +2,7 @@
 
 //TODO: this another way
 var THREE = require('inch-threejs');
-require("../../inch/public/js/font/helvetiker_regular");
+require("inch-font-helvetiker_regular")(THREE);
 
 var configuration = {
 	camera: require('inch-orthographic-camera')(THREE),
