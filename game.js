@@ -6,6 +6,7 @@ var newPracticeGame = function (server) {
 
 var hideAllTheExpressStuff = function (assetPath, routes) {
     var express = require('express');
+    var favicon = require('serve-favicon');
 
     var app = express();
     app.use('/game', express.static(assetPath));
@@ -15,6 +16,7 @@ var hideAllTheExpressStuff = function (assetPath, routes) {
     app.use(require('body-parser').urlencoded({extended: true }));
     app.use(require('body-parser').json());
     app.set('view options', {layout: false});
+    app.use(favicon(__dirname + '/game/favicon.ico'));
     app.engine('haml', require('consolidate').haml);
 
     var server = require('http').createServer(app);
