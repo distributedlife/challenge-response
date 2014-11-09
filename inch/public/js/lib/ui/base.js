@@ -25,9 +25,9 @@ var materials = {
             transparent: options.transparent,
             alphaTest: options.alphaTest,
             blending: options.blending,
-            opacity: options.opacity.current
+            opacity: options.opacity
         });
-        material.color.setRGB(options.colour.current[0], options.colour.current[1], options.colour.current[2]);  
+        material.color.setRGB(options.colour[0], options.colour[1], options.colour[2]);  
 
         return material;
     }
@@ -56,7 +56,8 @@ var mesh = {
         var new_position = alignment.align_to_self(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
         new_mesh.position.set(new_position.x, new_position.y, new_position.z);
         new_mesh.rotation.x = -90; 
-        new_mesh.scale.set(options.scale.current, options.scale.current, options.scale.current);
+        new_mesh.scale.set(options.scale, options.scale, options.scale);
+        new_mesh.visible = true;
 
         on_create(new_mesh);
 

@@ -1,77 +1,72 @@
 var _ = require('lodash');
-var temporary_effect = require('inch-temporary-effect');
-var lerp = require('../math/lerp');
+var TemporaryEffect = require('inch-temporary-effect');
+var lerp = require('lerp');
 
 "use strict";
 
-module.exports = function(mesh, settings) {
+module.exports = function(mesh) {
 	var transitions = [];
-    var current_mesh = mesh;
 
-	var tick_colour = function(dt, progress) {
-        settings.colour.current = lerp.lerpRGBA(settings.colour.from, settings.colour.to, progress);
+    createTickColourFunction = function(from, to) {
+    	return function(dt, progress) {
+    		var current = [
+    			lerp(from[0], to[0], progress),
+    			lerp(from[1], to[1], progress),
+    			lerp(from[2], to[2], progress)
+    		];
         
-        current_mesh.material.color.setRGB(settings.colour.current[0], settings.colour.current[1], settings.colour.current[2]);
-        current_mesh.material.needsUpdate = true;
+        	mesh.material.color.setRGB(current[0], current[1], current[2]);
+        	mesh.material.needsUpdate = true;
+        };
     };
 
-    var tick_alpha = function(dt, progress) {
-        settings.opacity.current = lerp.lerp(settings.opacity.from, settings.opacity.to, progress);
+    createTickScaleFunction = function(from, to) {
+    	return function(dt, progress) {
+    		var current = lerp(from, to, progress);
 
-        current_mesh.transparent = settings.transparent;
-        current_mesh.material.opacity = settings.opacity.current;
-        current_mesh.material.needsUpdate = true;
+    		mesh.scale.set(current, current, current);
+    	};
     };
 
-    var tick_scale = function(dt, progress) {
-    	settings.scale.current = lerp.lerp(settings.scale.from, settings.scale.to, progress);
+    var createTickAlphaFunction = function(finalOpacity) {
+    	var initialOpacity = mesh.material.opacity;
 
-    	current_mesh.scale.set(settings.scale.current, settings.scale.current, settings.scale.current);
+    	return function(dt, progress) {
+	        mesh.transparent = true;
+	        mesh.material.opacity = lerp(initialOpacity, finalOpacity, progress);
+	        mesh.material.needsUpdate = true;
+    	};
     };
 
-    var add_temporary_effect = function(duration, callback) {
+    var addTemporaryEffect = function(duration, callback) {
     	if (duration === 0 || duration === undefined) {
 			callback(undefined, 1.0);
 		} else {
-			transitions.push(Object.create(temporary_effect(duration, callback)));
+			transitions.push(Object.create(TemporaryEffect(duration, callback)));
 		}
     };
 
 	return {
-		update_mesh: function(new_mesh) {
-			current_mesh = new_mesh;
+		updateMesh: function(newMesh) {
+			mesh = newMesh;
 		},
-		change_colour: function(duration, rgba) {
-			settings.colour.to = rgba;
-
-			add_temporary_effect(duration, tick_colour);
+		changeColour: function(duration, to) {
+			var currentColor = mesh.material.color;
+			addTemporaryEffect(duration, createTickColourFunction([currentColor.r, currentColor.g, currentColor.b], to));
 		},
-		transition_colour: function(duration, from, to) {
-			settings.colour.from = from;
-			settings.colour.to = to;
-
-			add_temporary_effect(duration, tick_colour);
+		transitionColour: function(duration, from, to) {
+			addTemporaryEffect(duration, createTickColourFunction(from, to));
 		},
-		fade_in: function(duration, final_opacity) {
-			final_opacity = final_opacity || 1.0;
-			settings.opacity.to = final_opacity;
-			settings.transparent = true;
-
-			add_temporary_effect(duration, tick_alpha);
+		fadeIn: function(duration, finalOpacity) {
+			addTemporaryEffect(duration, createTickAlphaFunction(finalOpacity || 1.0));
 		},
-	    fade_out: function(duration) {
-	        settings.opacity.to = 0.0;
-	        settings.transparent = true;
-
-        	add_temporary_effect(duration, tick_alpha);
+	    fadeOut: function(duration) {
+        	addTemporaryEffect(duration, createTickAlphaFunction(0.0));
 	    },
 	    scale: function(duration, from, to) {
-	    	settings.scale.from = from;
-	    	settings.scale.to = to;
-
-	    	add_temporary_effect(duration, tick_scale);
+	    	addTemporaryEffect(duration, createTickScaleFunction(from, to));
 	    },
-	    run_transitions: function(dt) {
+	    run: function(dt) {
 	    	_.each(transitions, function(t) { t.tick(dt); });
     		transitions = _.reject(transitions, function(t) { !t.isAlive(); });
 	    }

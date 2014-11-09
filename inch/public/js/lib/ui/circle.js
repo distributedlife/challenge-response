@@ -2,43 +2,42 @@
 
 var _ = require('lodash');
 var TemporaryEffect = require('inch-temporary-effect');
-var supports_transitions = require("../util/supports_transitions");
+var transitions_3js = require("../util/supports_transitions");
 var apply_defaults = require("../ui/apply_defaults");
 var base = require("../ui/base");
-var alignment = require("../math/alignment");
+var inch_3js_mesh = require("./threejs-mesh-helper")
 
 module.exports = function(on_create, on_destroy, settings) {
 	var current = {};
 	_.defaults(current, apply_defaults(settings));
 	
-	var position_callback = function(mesh) {
+	var positionCallback = function(mesh) {
 		var adjusted = current.position;
-		adjusted.x += settings.radius;
+		adjusted.x += current.radius;
 
 		return adjusted;
 	};
 
-	var mesh = base.mesh.assemble(base.geometries.circle, base.materials.basic, position_callback, on_create, current);
+	var mesh = base.mesh.assemble(base.geometries.circle, base.materials.basic, positionCallback, on_create, current);
+	var transitions = transitions_3js(mesh);
 
 	var circle = {
-		update_from_model: function(updated_model) {
-	        current.position = {x: updated_model.x, y: updated_model.y, z: updated_model.z || 0};
-	        mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
-	        mesh.visible = updated_model.active || true;
+		updateFromModel: function(updated_model) {
+	        inch_3js_mesh.updateFromModel(updated_model, current, mesh);
       	},
-      	on_death: function() {
-      		mesh.visible = false;
-    	},
-      	on_tick: function(dt) {
-		    this.run_transitions(dt);
-	  	}
+      	onDeath: function() {
+			transitions_3js.fadeOut();
+	    },
+	    onTick: function(dt, progress) {
+			transitions.run(dt);
+	    }
 	};		
 
-	_.extend(circle, supports_transitions(mesh, current));
+	_.extend(circle, transitions_3js(mesh, current));
 	_.extend(circle, TemporaryEffect(
 		current.duration, 
-		circle.on_tick.bind(circle),
-		circle.on_death
+		circle.onTick,
+		circle.onDeath
 	));
 
 	return circle;

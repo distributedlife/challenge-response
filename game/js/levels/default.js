@@ -2,47 +2,47 @@ var _ = require('lodash');
 var colour = require('color');
 var circle = require('../../../inch/public/js/inch-2d-geometry-support').circle;
 var text = require('../../../inch/public/js/inch-2d-geometry-support').text;
-// var circle = require('inch-geometry-support').circle;
-// var text = require('inch-geometry-support').text;
+// var circle = require('inch-geometry-circle').circle;
+// var text = require('inch-geometry-gltext').text;
 
 "use strict";
 
 module.exports = function(scene, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
     var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, status_indicator) {
-        title.fade_in();
-        challenge.fade_out();
-        score.fade_out();
-        false_start.fade_out();
-        restart.fade_out();
-        status_indicator.change_colour(0, colour("grey").rgbArray());
+        title.fadeIn();
+        challenge.fadeOut();
+        score.fadeOut();
+        false_start.fadeOut();
+        restart.fadeOut();
+        status_indicator.changeColour(0, colour("grey").rgbArray());
     };
 
     var hide_instructions = function(model, prior_model, title, status_indicator) {
-        title.fade_out(0.25);
-        status_indicator.change_colour(0, colour("red").rgbArray());
+        title.fadeOut(0.25);
+        status_indicator.changeColour(0, colour("red").rgbArray());
     };
 
     var show_challenge = function(model, prior_model, challenge, status_indicator) {
-        challenge.fade_in();
+        challenge.fadeIn();
         ackLastRequest('show-challenge');   
-        status_indicator.change_colour(0, colour("green").rgbArray());
+        status_indicator.changeColour(0, colour("green").rgbArray());
     };
 
     var show_results = function(model, prior_model, challenge, score, restart, status_indicator) {
-        challenge.fade_out();
-        score.fade_in();
-        restart.fade_in();
-        status_indicator.change_colour(0, colour("black").rgbArray());
+        challenge.fadeOut();
+        score.fadeIn();
+        restart.fadeIn();
+        status_indicator.changeColour(0, colour("black").rgbArray());
     };
 
     var show_false_start = function(model, prior_model, false_start, score, restart, status_indicator) {
-        false_start.fade_in();
-        restart.fade_in();
-        status_indicator.change_colour(0, colour("orange").rgbArray());
+        false_start.fadeIn();
+        restart.fadeIn();
+        status_indicator.changeColour(0, colour("orange").rgbArray());
     }
 
     var update_score = function(model, prior_model, score) {
-        score.update_text(model + "ms");
+        score.updateText(model + "ms");
     }
 
     var title = new text(scene.add, scene.remove, {
