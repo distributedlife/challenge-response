@@ -36,9 +36,8 @@ module.exports = function(width, height, config) {
 
     var material = new THREE.LineBasicMaterial({ color: config.colour});
 
-    var line = new THREE.Line(geometry, material);
+    var line = new THREE.Line(geometry, material, THREE.LinePieces);
     line.visible = true;
-    line.type = THREE.LinePieces;
 
     return line;
   };

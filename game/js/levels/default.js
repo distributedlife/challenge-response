@@ -1,5 +1,4 @@
 var _ = require('lodash');
-// var colours = require("../../../inch/public/js/lib/ui/colours");
 var colour = require('color');
 var circle = require('../../../inch/public/js/inch-2d-geometry-support').circle;
 var text = require('../../../inch/public/js/inch-2d-geometry-support').text;

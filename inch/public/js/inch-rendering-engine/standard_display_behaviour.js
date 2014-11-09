@@ -29,8 +29,10 @@ module.exports = function(element, initial_width, initial_height, options, setup
     var stateChanges = require("./track_state_changes");
     var position_helper = PositionHelper(initial_width, initial_height, initial_width, initial_height);
     var prior_step = Date.now();
+    //TODO: merge temp and permanent effects as they are not managed by the developer anymore
     var temporary_effects = [];
     var permanent_effects = [];
+    //TODO: can we drop changes?
     var changes = [];
     var ratio = 1.0;
 
