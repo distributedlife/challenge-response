@@ -17,7 +17,8 @@ module.exports = function(mesh, settings) {
 
     var tick_alpha = function(dt, progress) {
         settings.opacity.current = lerp.lerp(settings.opacity.from, settings.opacity.to, progress);
-        
+
+        current_mesh.transparent = settings.transparent;
         current_mesh.material.opacity = settings.opacity.current;
         current_mesh.material.needsUpdate = true;
     };
@@ -54,11 +55,13 @@ module.exports = function(mesh, settings) {
 		fade_in: function(duration, final_opacity) {
 			final_opacity = final_opacity || 1.0;
 			settings.opacity.to = final_opacity;
+			settings.transparent = true;
 
 			add_temporary_effect(duration, tick_alpha);
 		},
 	    fade_out: function(duration) {
 	        settings.opacity.to = 0.0;
+	        settings.transparent = true;
 
         	add_temporary_effect(duration, tick_alpha);
 	    },
