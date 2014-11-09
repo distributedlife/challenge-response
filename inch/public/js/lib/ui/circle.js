@@ -22,7 +22,7 @@ module.exports = function(on_create, on_destroy, settings) {
 
 	var circle = {
 		update_from_model: function(updated_model) {
-	        current.position = {x: updated_model.x, y: updated_model.y, z: updated_model.z};
+	        current.position = {x: updated_model.x, y: updated_model.y, z: updated_model.z || 0};
 	        mesh.position = alignment.align_to_self(current.position, base.mesh.width(mesh), base.mesh.height(mesh), current.alignment);
 	        mesh.visible = updated_model.active || true;
       	},

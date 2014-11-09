@@ -27,7 +27,7 @@ var materials = {
             blending: options.blending,
             opacity: options.opacity.current
         });
-        material.color.setRGB(options.colour.current);  
+        material.color.setRGB(options.colour.current[0], options.colour.current[1], options.colour.current[2]);  
 
         return material;
     }
@@ -53,7 +53,8 @@ var mesh = {
     assemble: function(geometry_callback, material_callback, position_callback, on_create, options) {
         var new_mesh = new THREE.Mesh(geometry_callback(options), material_callback(options));
 
-        new_mesh.position = alignment.align_to_self(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
+        var new_position = alignment.align_to_self(position_callback(new_mesh), width(new_mesh), height(new_mesh), options.alignment);
+        new_mesh.position.set(new_position.x, new_position.y, new_position.z);
         new_mesh.rotation.x = -90; 
         new_mesh.scale.set(options.scale.current, options.scale.current, options.scale.current);
 

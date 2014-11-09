@@ -110,7 +110,7 @@ module.exports = function(scene, ackLastRequest, positionHelper, permanent_effec
         segments: 32,
         position: {
             x: positionHelper.ss.centre_x(),
-            y: positionHelper.ss.gridNy(4,0),
+            y: positionHelper.ss.centre_y(),
             z: -100
         },
     });

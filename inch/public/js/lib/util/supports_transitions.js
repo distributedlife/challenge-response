@@ -11,7 +11,7 @@ module.exports = function(mesh, settings) {
 	var tick_colour = function(dt, progress) {
         settings.colour.current = lerp.lerpRGBA(settings.colour.from, settings.colour.to, progress);
         
-        current_mesh.material.color.setRGB(settings.colour.current);
+        current_mesh.material.color.setRGB(settings.colour.current[0], settings.colour.current[1], settings.colour.current[2]);
         current_mesh.material.needsUpdate = true;
     };
 
