@@ -4,7 +4,7 @@ module.exports = function(THREE) {
     var _ = require('lodash');
     var colour = require('color');
     var Circle = require('inch-geometry2d-circle')(THREE);
-    var Text = require('../../../inch/public/js/lib/text/orthographic')(THREE);
+    var GlText = require('inch-geometry2d-gltext')(THREE);
 
     return function(scene, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
         var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, statusIndicator) {
@@ -44,7 +44,7 @@ module.exports = function(THREE) {
             score.updateText(model + "ms");
         }
 
-        var title = new Text(scene.add, scene.remove, {
+        var title = new GlText(scene.add, scene.remove, {
             text: "CHALLENGE:RESPONSE",
             size: font_size(9),
             position: {
@@ -56,7 +56,7 @@ module.exports = function(THREE) {
         });
         permanent_effects.push(title);
 
-        var challenge = new Text(scene.add, scene.remove, {
+        var challenge = new GlText(scene.add, scene.remove, {
             text: "GO!",
             size: font_size(20),
             position: {
@@ -68,7 +68,7 @@ module.exports = function(THREE) {
         });
         permanent_effects.push(challenge);
 
-        var score = new Text(scene.add, scene.remove, {
+        var score = new GlText(scene.add, scene.remove, {
             text: "unset",
             size: font_size(10),
             position: {
@@ -80,7 +80,7 @@ module.exports = function(THREE) {
         });
         permanent_effects.push(score);
 
-        var false_start = new Text(scene.add, scene.remove, {
+        var false_start = new GlText(scene.add, scene.remove, {
             text: "False Start",
             size: font_size(10),
             position: {
@@ -92,7 +92,7 @@ module.exports = function(THREE) {
         });
         permanent_effects.push(false_start);
 
-        var restart = new Text(scene.add, scene.remove, {
+        var restart = new GlText(scene.add, scene.remove, {
             text: "Press `R' to try again.",
             size: font_size(8),
             position: {

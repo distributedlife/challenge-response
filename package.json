@@ -18,6 +18,7 @@
     "inch-geometry-alignment": "^1.0.0",
     "inch-geometry-base": "^1.0.0",
     "inch-geometry-transitions": "^1.0.1",
+    "inch-geometry2d-gltext": "^1.0.0",
     "inch-input-handler": "^1.0.0",
     "inch-orthographic-camera": "^2.0.1",
     "inch-scene": "^1.0.0",
