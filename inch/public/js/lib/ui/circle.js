@@ -1,15 +1,15 @@
 "use strict";
 
 var _ = require('lodash');
-var TemporaryEffect = require('inch-temporary-effect');
-var transitions_3js = require("../util/supports_transitions");
-var apply_defaults = require("../ui/apply_defaults");
+var temporaryEffect = require('inch-temporary-effect');
+var geometryTransitions = require("inch-geometry-transitions");
+
 var base_3js = require("../ui/base");
 var inch_3js_mesh = require("./threejs-mesh-helper")
 
 module.exports = function(on_create, on_destroy, settings) {
 	var current = {};
-	_.defaults(current, apply_defaults(settings));
+	_.defaults(current, base_3js.defaults(settings));
 	
 	var positionCallback = function(mesh) {
 		var adjusted = current.position;
@@ -19,10 +19,10 @@ module.exports = function(on_create, on_destroy, settings) {
 	};
 
 	var mesh = base_3js.mesh.assemble(base_3js.geometries.circle, base_3js.materials.basic, positionCallback, on_create, current);
-	var transitions = transitions_3js(mesh);
+	var transitions = geometryTransitions(mesh);
 
 	var onDeath = function() {
-		transitions_3js.fadeOut();
+		geometryTransitions.fadeOut();
 	};
 
 	var onTick = function(dt) {
@@ -35,8 +35,8 @@ module.exports = function(on_create, on_destroy, settings) {
       	}
 	};		
 
-	_.extend(circle, transitions_3js(mesh, current));
-	_.extend(circle, TemporaryEffect(current.duration, onTick, onDeath));
+	_.extend(circle, geometryTransitions(mesh, current));
+	_.extend(circle, temporaryEffect(current.duration, onTick, onDeath));
 
 	return circle;
 };

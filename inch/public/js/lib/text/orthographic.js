@@ -1,16 +1,15 @@
 var _ = require('lodash');
-var TemporaryEffect = require('inch-temporary-effect');
+var temporaryEffect = require('inch-temporary-effect');
+var geometryTransitions = require("inch-geometry-transitions");
 
-var supports_transitions = require("../util/supports_transitions");
-var apply_defaults = require("../ui/apply_defaults");
-var base = require("../ui/base");
+var base_3js = require("../ui/base");
 var inch_3js_mesh = require("../ui/threejs-mesh-helper")
 
 "use strict";
 
 module.exports = function(onCreate, onDestroy, settings) {
   var current = {};
-  _.defaults(current, apply_defaults(settings));
+  _.defaults(current, base_3js.defaults(settings));
 
   var positionCallback = function(mesh) {
     var position = current.position;
@@ -19,7 +18,7 @@ module.exports = function(onCreate, onDestroy, settings) {
     return position;
   };
 
-  var mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, positionCallback, onCreate, current);
+  var mesh = base_3js.mesh.assemble(base_3js.geometries.text, base_3js.materials.basic, positionCallback, onCreate, current);
 
   var orthographic_text = {
     updateFromModel: function(updatedModel) {
@@ -31,7 +30,7 @@ module.exports = function(onCreate, onDestroy, settings) {
 
       onDestroy(mesh);
 
-      mesh = base.mesh.assemble(base.geometries.text, base.materials.basic, positionCallback, onCreate, current);
+      mesh = base_3js.mesh.assemble(base_3js.geometries.text, base_3js.materials.basic, positionCallback, onCreate, current);
 
       this.updateMesh(mesh);
     },
@@ -41,8 +40,8 @@ module.exports = function(onCreate, onDestroy, settings) {
     }
   };
 
-  _.extend(orthographic_text, supports_transitions(mesh, current));
-  _.extend(orthographic_text, TemporaryEffect(
+  _.extend(orthographic_text, geometryTransitions(mesh, current));
+  _.extend(orthographic_text, temporaryEffect(
     current.duration, 
     orthographic_text.run,
     orthographic_text.onDeath.bind(orthographic_text)

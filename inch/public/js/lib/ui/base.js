@@ -69,4 +69,5 @@ module.exports = {
     materials: materials,
     geometries: geometries,
     mesh: mesh,
+    defaults: require("../ui/apply_defaults")
 };
