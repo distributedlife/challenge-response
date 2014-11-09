@@ -3,7 +3,7 @@
 module.exports = function(THREE) {
     var _ = require('lodash');
     var colour = require('color');
-    var Circle = require('../../../inch/public/js/lib/ui/circle')(THREE);
+    var Circle = require('inch-geometry2d-circle')(THREE);
     var Text = require('../../../inch/public/js/lib/text/orthographic')(THREE);
 
     return function(scene, ackLastRequest, positionHelper, permanent_effects, font_size, stateChanges) {
