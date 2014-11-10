@@ -7,11 +7,11 @@ requirejs.config({ baseUrl: 'inch/public/js' })
 
 var updatable_entity = rek('updatable');
 var StateMachine = rek('state_machine');
-var delayed_effect_owner = requirejs('lib/util/delayed_effect_owner');
 
 module.exports = function() {
-	var controller = Object.create(updatable_entity("controller"));
+	var delayedEffects = require('inch-delayed-effects')();
 	var start = 0;
+	var controller = Object.create(updatable_entity("controller", delayedEffects.update));
 
 	var state_machine = StateMachine({
 	  initial: 'ready',  
@@ -49,13 +49,13 @@ module.exports = function() {
 		response: function(force, data) {
 			if (state_machine.is('ready')) {
 				state_machine.cycle();
-				controller.add_delayed_effect(roll_up_an_unnerving_delay(), delayed)
+				delayedEffects.add(roll_up_an_unnerving_delay(), delayed)
 				return;
 			}
 			if (state_machine.is('waiting')) {
 				state_machine.false_start();
 
-				controller.cancel_all();
+				delayedEffects.cancelAll();
 
 				return;
 			}
@@ -73,8 +73,6 @@ module.exports = function() {
 			}
 		},
 	});
-
-	delayed_effect_owner(controller);
 
 	return controller;
 };
