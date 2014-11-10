@@ -1,19 +1,15 @@
 "use strict";
 
-var rek = require('rekuire');
-var _ = rek('lodash');
-var requirejs = rek('requirejs')
-requirejs.config({ baseUrl: 'inch/public/js' })
-
-var updatable_entity = rek('updatable');
-var StateMachine = rek('state_machine');
+var _ = require('lodash');
+var updatable_entity = require('inch-entity-updatable');
+var StateMachine = require('javascript-state-machine');
 
 module.exports = function() {
 	var delayedEffects = require('inch-delayed-effects')();
 	var start = 0;
 	var controller = Object.create(updatable_entity("controller", delayedEffects.update));
 
-	var state_machine = StateMachine({
+	var state_machine = StateMachine.create({
 	  initial: 'ready',  
 	  events: [
 	  	{ name: 'ready', from: 'ready', to: 'waiting' },    
@@ -48,7 +44,7 @@ module.exports = function() {
 		},
 		response: function(force, data) {
 			if (state_machine.is('ready')) {
-				state_machine.cycle();
+				state_machine.ready();
 				delayedEffects.add(roll_up_an_unnerving_delay(), delayed)
 				return;
 			}
@@ -60,7 +56,7 @@ module.exports = function() {
 				return;
 			}
 			if (state_machine.is('challenge_started')) {
-				state_machine.cycle();
+				state_machine.challenge_started();
 				controller.score = data.rcvd_timestamp - start;
 				return;
 			}
