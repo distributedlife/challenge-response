@@ -17,8 +17,8 @@ module.exports = function (config) {
 			config.layoutIcons(dims.orientation);
 
 			$("#"+config.element).css("margin-top", dims.margin);
-			$("#"+config.element).css("width", dims.usable_width);
-			$("#"+config.element).css("height", dims.usable_height);
+			$("#"+config.element).css("width", dims.usableWidth);
+			$("#"+config.element).css("height", dims.usableHeight);
 
 			display.resize(dims);
 		},

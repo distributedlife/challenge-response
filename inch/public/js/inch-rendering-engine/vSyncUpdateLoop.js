@@ -1,8 +1,6 @@
 "use strict";
 
-var window = require("window");
-
-module.exports = function(updateFunc) {
+module.exports = function(window, updateFunc) {
     return {
         run: function(time) {
             updateFunc(time);

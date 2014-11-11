@@ -9,7 +9,6 @@ var Howler = require('howler').Howler;
 var numeral = require('numeral');
 
 var keyboardController = require("./keyboard_controller");
-
 var pendingAcknowledgements = require('./socket-pending_acknowledgements')();
 
 module.exports = function(THREE) {
@@ -31,12 +30,12 @@ module.exports = function(THREE) {
         var dims = config.dimensions(config.ratio);
         config.level.screenResized(dims);
 
-        var camera = config.camera(dims.usable_width, dims.usable_height);
+        var camera = config.camera(dims.usableWidth, dims.usableHeight);
         
-        var threeJsScene = threeJsSupport.createScene(dims.usable_width, dims.usable_height);
+        var threeJsScene = threeJsSupport.createScene(dims.usableWidth, dims.usableHeight);
         var inchScene = InchScene(threeJsScene);
 
-        var renderer = threeJsSupport.createRenderer(dims.usable_width, dims.usable_height);
+        var renderer = threeJsSupport.createRenderer(dims.usableWidth, dims.usableHeight);
         threeJsSupport.attachRenderer(config.element, renderer);
 
         var registerEffect = function(effect) {
@@ -114,9 +113,9 @@ module.exports = function(THREE) {
             },
 
             resize: function(dims) {
-                renderer.setSize(dims.usable_width, dims.usable_height);
+                renderer.setSize(dims.usableWidth, dims.usableHeight);
 
-                camera.aspect = dims.usable_width / dims.usable_height;
+                camera.aspect = dims.usableWidth / dims.usableHeight;
                 camera.updateProjectionMatrix();
 
                 config.level.screenResized(dims);

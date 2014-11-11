@@ -5,9 +5,9 @@ var $ = require('zepto-browserify').$;
 
 module.exports = function(THREE, config) {
     _.defaults(config, {
-        dimensions: require("./dimensions"),
+        dimensions: require('inch-dimensions-widescreen')(require('window')),
         layoutIcons: require("./layout_icons"),
-        updateLoop: require("./vSyncUpdateLoop"),
+        updateLoop: require("./vSyncUpdateLoop")(require('window'),
         display_config: {
             controls: []
         },
