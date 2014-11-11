@@ -1,9 +1,10 @@
 "use strict";
-var window = require("window");
-var min_margin = 32;
 
-module.exports = function(ratio) {
+var window = require("window");
+
+module.exports = function(ratio, min_margin) {
     ratio = ratio || 26/10;
+    min_margin = min_margin || 32;
 
     var width = undefined;
     var height = undefined;
@@ -41,6 +42,7 @@ module.exports = function(ratio) {
         margin: margin, 
         orientation: orientation,
         screen_width: window.innerWidth,
-        screen_height: window.innerHeight
+        screen_height: window.innerHeight,
+        ratio: ratio
     };
 };

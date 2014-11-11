@@ -1,31 +1,29 @@
 "use strict";
 
-var THREE = require('inch-threejs');
 var $ = require('zepto-browserify').$;
-var grid_view = require("./grid_view");
-var axes = require("./axes");
-var config = require("../framework/config");
 
-module.exports = {
-    create_scene: function(initial_width, initial_height) {
-        var threeJsScene = new THREE.Scene();
+module.exports = function(THREE) {
+    return {
+        createScene: function(initialWidth, initialHeight) {
+            var threeJsScene = new THREE.Scene();
 
-        if (config.grid.enabled) {        
-            threeJsScene.add(Object.create(grid_view(initial_width, initial_height, config.grid)).grid);
+            if (true) {        
+                threeJsScene.add(require("./inch-debug-outside-in-grid")(initialWidth, initialHeight, 75));
+            }
+            if (false) {
+                threeJsScene.add(require("./inch-debug-axes")(100));
+            }
+
+            return threeJsScene;
+        },
+        createRenderer: function(initialWidth, initialHeight) {
+            var renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(initialWidth, initialHeight);
+
+            return renderer;
+        },
+        attachRenderer: function(element, renderer) {
+            $("#"+element).append(renderer.domElement);
         }
-        if (config.axes.enabled) {
-            var scene_axes = axes.build(100);
-            threeJsScene.add(scene_axes);
-        }
-
-        return threeJsScene;
-    },
-    create_and_attach_renderer: function(element, initial_width, initial_height) {
-        var renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(initial_width, initial_height);
-
-        $("#"+element).append(renderer.domElement);
-
-        return renderer;
-    }
-}
+    };
+};

@@ -1,10 +1,10 @@
+"use strict";
+
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
 var window = require('window');
 
-"use strict";
-
-module.exports = function(socket, element, flush_pending_acks) {
+module.exports = function(socket, element, flushPendingAcks) {
     var controller = {
         last_sent: {},
         input_data: {
@@ -166,9 +166,6 @@ module.exports = function(socket, element, flush_pending_acks) {
         },
 
         emit: function() {
-            //TODO: make a stats function to wrap anyold function
-            // stats( 'check-input' ).start();
-
             var keys_to_send = [];
             _.each(this.keys, function(value, key) {
                 if (value) { 
@@ -191,12 +188,10 @@ module.exports = function(socket, element, flush_pending_acks) {
             }
 
             this.input_data.sent_timestamp = Date.now();
-            this.input_data.pending_acks = flush_pending_acks();
+            this.input_data.pending_acks = flushPendingAcks();
 
             socket.emit('input', this.input_data);
             this.last_sent = _.clone(this.input_data, true);
-
-            // stats( 'check-input' ).start();
         },
         notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 120); }
     };

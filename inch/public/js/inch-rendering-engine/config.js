@@ -11,16 +11,6 @@ module.exports = {
   nodamage: false,
   nostats: true,
 
-  grid: {
-    enabled: true,
-    size: 75,
-    colour: 0x00FF00
-  },
-
-  axes: {
-    enabled: false
-  },
-
   resolve_lib_image: function(filename) {
     return this.lib_image_path + filename;
   },

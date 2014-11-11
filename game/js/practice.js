@@ -9,9 +9,9 @@ var configuration = {
 	display_config: {
 		controls: ['keyboard', 'gamepad']
 	},
-	setup: require("./levels/default")(THREE)
+	level: require("./levels/default")(THREE)
 };
 
 //require('inch-client-engine');	
-var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(configuration);
+var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, configuration);
 clientSideEngine.run();

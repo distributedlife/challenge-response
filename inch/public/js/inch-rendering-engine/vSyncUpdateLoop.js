@@ -2,10 +2,10 @@
 
 var window = require("window");
 
-module.exports = function(update_func) {
+module.exports = function(updateFunc) {
     return {
         run: function(time) {
-            update_func(time);
+            updateFunc(time);
 
             window.requestAnimationFrame(this.run.bind(this));
         }

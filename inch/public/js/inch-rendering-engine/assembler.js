@@ -1,31 +1,35 @@
 "use strict";
 
-var dimensions = require("./dimensions");
-var layout_icons = require("./layout_icons");
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
 
-module.exports = function(config) {
-    config.ratio = config.ratio || 26/10;
-
-    var dims = dimensions(config.ratio);
-
-    layout_icons(dims.orientation);
-
+module.exports = function(THREE, config) {
     _.defaults(config, {
+        dimensions: require("./dimensions"),
+        layoutIcons: require("./layout_icons"),
+        updateLoop: require("./vSyncUpdateLoop"),
         display_config: {
             controls: []
         },
-        width: dims.usable_width,
-        height: dims.usable_height,
-        renderer: require("./inch-threejs-renderer"),
-        element: "canvas"
+        engine: require("./inch-threejs-engine"),
+        element: "canvas",
+        //level: require("inch-display-welcome")(THREE)
+        camera: require('inch-perspective-camera')(THREE),
+        behaviour: require("./standard_display_behaviour")(THREE),
+        extras: [
+            require("./inch-enable-fullscreen"),
+            require("./inch-extra-toggle-sound")
+        ],
+        debug: {
+            meshes: []
+        }
     });
+    //require('inch-debug-top-left-aligned-grid');
 
-    var engine_assembler = config.renderer(config);
+    var engine = config.engine(config);
+    engine.resize();
+    
+    $(require('window')).on('load resize', engine.resize.bind(engine));
 
-    $(require('window')).on('load resize', engine_assembler.resize.bind(engine_assembler));
-    engine_assembler.resize();
-
-    return engine_assembler;
+    return engine;
 };

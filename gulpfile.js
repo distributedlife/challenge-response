@@ -43,7 +43,7 @@ gulp.task('server:restart', ['browserify', 'server:start'], function () {
         });
     }
 
-    gulp.watch(['./game.js', "game/js/**/*.js", "inch/public/js/**/*.js"], ['browserify']).on('change', restart);
+    gulp.watch(['./game.js', "game/js/**/*.js", "inch/public/js/**/*.js"], { interval: 500 }, ['browserify']).on('change', restart);
 });
 
 
