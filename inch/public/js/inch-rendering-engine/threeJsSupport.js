@@ -7,7 +7,7 @@ module.exports = function(THREE) {
         createScene: function(initialWidth, initialHeight) {
             var threeJsScene = new THREE.Scene();
 
-            if (true) {        
+            if (true) {
                 threeJsScene.add(require("./inch-debug-outside-in-grid")(initialWidth, initialHeight, 75));
             }
             if (false) {

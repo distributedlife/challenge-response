@@ -12,7 +12,7 @@ module.exports = function(THREE) {
     var prior_step = Date.now();
     var last_received_id = 0;
     var stateChanges = require("./track_state_changes");
-    
+
     var value = stateChanges;
     var when = stateChanges;
     stateChanges.of = stateChanges.value;
@@ -28,7 +28,7 @@ module.exports = function(THREE) {
         config.level.screenResized(dims);
 
         var camera = config.camera(dims.usableWidth, dims.usableHeight);
-        
+
         var threeJsScene = threeJsSupport.createScene(dims.usableWidth, dims.usableHeight);
         var inchScene = InchScene(threeJsScene);
 
@@ -41,11 +41,11 @@ module.exports = function(THREE) {
 
         var setup = function(state) {
             stateChanges.update_state(state);
-            
+
             config.level.setup(
                 inchScene,
-                ackLast, 
-                registerEffect, 
+                ackLast,
+                registerEffect,
                 stateChanges
             );
 
@@ -68,18 +68,18 @@ module.exports = function(THREE) {
             stateChanges.update_state(packet.game_state);
 
             //if (value.of('paused').hasChanged() && value.of('paused').is('true')) {
-            if (when.changed(property('paused')) && value.of(stateChanges.is('paused'))) { 
-                require('./play-pause-behaviour').pause(); 
+            if (when.changed(property('paused')) && value.of(stateChanges.is('paused'))) {
+                require('./play-pause-behaviour').pause();
             }
-            if (when.changed(property('paused')) && value.of(stateChanges.isnt('paused'))) { 
-                require('./play-pause-behaviour').resume(); 
+            if (when.changed(property('paused')) && value.of(stateChanges.isnt('paused'))) {
+                require('./play-pause-behaviour').resume();
             }
 
-            if (when.changed(property('players'))) {  
+            if (when.changed(property('players'))) {
                 $('#player-count').text(numeral(value.of(property('players'))).format('0a'));
             }
-            if (when.changed(property('observers'))) {  
-                $('#observer-count').text(numeral(value.of(property('observers'))).format('0a'));  
+            if (when.changed(property('observers'))) {
+                $('#observer-count').text(numeral(value.of(property('observers'))).format('0a'));
             }
 
             stateChanges.detect_changes_and_notify_observers();
@@ -100,14 +100,14 @@ module.exports = function(THREE) {
                 var dt = (now - prior_step) / 1000;
                 prior_step = Date.now();
 
-                renderer.render(inchScene.scene(), camera); 
+                renderer.render(inchScene.scene(), camera);
 
                 if (!setupComplete) {
                     return;
                 }
 
-                _.each(effects, function(effect) { 
-                    effect.tick(dt); 
+                _.each(effects, function(effect) {
+                    effect.tick(dt);
                 });
 
                 effects = _.reject(effects, function(effect) { return !effect.isAlive(); });

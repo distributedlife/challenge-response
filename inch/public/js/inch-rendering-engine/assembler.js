@@ -16,7 +16,7 @@ module.exports = function(THREE, window, config) {
         camera: require('inch-perspective-camera')(THREE),
         behaviour: require("./standard_display_behaviour")(THREE),
         socketBehaviour: require('inch-socket-behaviour-desktop'),
-        connectDisconnectBehaviour: require("./inch-connect-disconnect-behaviour")
+        connectDisconnectBehaviour: require("inch-connect-disconnect-behaviour")
     });
 
     var display = config.behaviour(config, pendingAcknowledgements.ackLast, pendingAcknowledgements.add);
@@ -33,7 +33,7 @@ module.exports = function(THREE, window, config) {
 
         display.resize(dims);
     };
-    
+
     $(require('window')).on('load resize', resizeCanvas);
 
     return {

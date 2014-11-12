@@ -16,49 +16,49 @@ var prior_state = null;
 var current_state = null;
 var changes = [];
 
-var changed = function(f) { 
+var changed = function(f) {
     if (prior_state === null) { return true; }
 
     return !_.isEqual(f(prior_state), f(current_state));
 };
 var property_changed = function(f, p) {
     if (prior_state === null) { return true; }
-    
+
     return p(f(prior_state)) !== p(f(current_state));
 };
 
-var value = function(f) {  
-    if (current_state === null) { 
-        return false; 
+var value = function(f) {
+    if (current_state === null) {
+        return false;
     }
 
-    return f(current_state);  
+    return f(current_state);
 };
-var prior_value = function(f) {  
-    if (prior_state === null) { 
-        return false; 
+var prior_value = function(f) {
+    if (prior_state === null) {
+        return false;
     }
 
-    return f(prior_state);  
+    return f(prior_state);
 };
 
-var element = function(f, model) { 
+var element = function(f, model) {
     return _.where(f(prior_state), {id: model.id});
 };
-var prior_element = function(f, model) {  
-    if (prior_state === null) { 
-        return null; 
+var prior_element = function(f, model) {
+    if (prior_state === null) {
+        return null;
     }
 
     return _.where(f(prior_state), {id: model.id})[0];
 };
-var element_added = function(f, model) { 
+var element_added = function(f, model) {
     return (_.where(f(prior_state), {id: model.id}).length === 0);
 };
-var element_removed = function(f, model) { 
+var element_removed = function(f, model) {
     return (_.where(f(current_state), {id: model.id}).length === 0);
 };
-var element_changed = function(f, model) { 
+var element_changed = function(f, model) {
     if (prior_state === null) { return true; }
 
     return _.where(f(current_state), {id: model.id}) !== _.where(f(prior_state), {id: model.id});
@@ -103,7 +103,7 @@ module.exports = {
     all: function(name) { return function(state) { return state[name]; }; },
     is: function(name) { return function(state) { return state[name] === true; }; },
     isnt: function(name) { return function(state) { return state[name] === false; }; },
-    is2: function(f) { return f(current_state) === true; },   
+    is2: function(f) { return f(current_state) === true; },
 
     screen_width: function(state) { return state.dimensions.width; },
     screen_height: function(state) { return state.dimensions.height; },
@@ -119,7 +119,7 @@ module.exports = {
 
     changed: changed,
     property_changed: property_changed,
-    changed_strict: function(f) { 
+    changed_strict: function(f) {
     	if (prior_state === null) { return false; }
 
         return !_.isEqual(f(prior_state), f(current_state));
@@ -134,7 +134,7 @@ module.exports = {
     on_change: function(model, callback, data) {
         var change = {
             type: 'object',
-            focus: model, 
+            focus: model,
             callback: callback,
             data: data
         };
@@ -145,7 +145,7 @@ module.exports = {
     on_property_change: function(property, callback, data) {
         var change = {
             type: 'property',
-            focus: property, 
+            focus: property,
             callback: callback,
             data: data
         };
@@ -168,8 +168,8 @@ module.exports = {
     on_conditional_change: function(model, condition, callback, data) {
         var change = {
             type: 'object',
-            focus: model, 
-            'when': condition, 
+            focus: model,
+            'when': condition,
             callback: callback,
             data: data
         };
@@ -193,7 +193,7 @@ module.exports = {
     on_element_arrival: function(model_array, callback, data) {
         var change = {
             type: 'array',
-            focus: model_array,  
+            focus: model_array,
             callback: callback,
             detection_func: element_added,
             operates_on: value,
@@ -206,7 +206,7 @@ module.exports = {
     on_element_removal: function(model_array, callback, data) {
         var change = {
             type: 'array',
-            focus: model_array, 
+            focus: model_array,
             callback: callback,
             detection_func: element_removed,
             operates_on: prior_value,
@@ -221,7 +221,7 @@ module.exports = {
             if (change.type === 'array') {
                 handle_arrays(change);
             } else if (change.type === 'object') {
-                handle_objects(change);   
+                handle_objects(change);
             } else {
                 handle_object_property(change);
             }

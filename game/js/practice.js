@@ -14,6 +14,6 @@ var configuration = {
 	level: require("./levels/default")(THREE)
 };
 
-//require('inch-threejs-client-assembler');	
+//require('inch-threejs-client-assembler');
 var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, window, configuration);
 clientSideEngine.run();
