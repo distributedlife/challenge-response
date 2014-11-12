@@ -11,9 +11,6 @@ module.exports = function(THREE, config) {
             _.each(config.debug, function (guide) {
                 threeJsScene.add(guide(initialWidth, initialHeight));
             })
-            if (false) {
-                threeJsScene.add(require("./inch-debug-axes")(THREE, 100)());
-            }
 
             return threeJsScene;
         },
