@@ -29,6 +29,7 @@
     "inch-position2d-helper": "^1.0.0",
     "inch-scene": "^1.0.0",
     "inch-sequence": "^1.0.0",
+    "inch-socket-behaviour-desktop": "^1.0.0",
     "inch-socket-pending-acknowledgements": "^1.0.0",
     "inch-socket-support": "^1.0.2",
     "inch-standard-socket-support-callbacks": "^1.0.0",
