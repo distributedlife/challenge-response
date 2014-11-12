@@ -2,6 +2,7 @@
 
 //TODO: this another way
 var THREE = require('inch-threejs');
+var window = require('window');
 require("inch-font-helvetiker_regular")(THREE);
 
 var configuration = {
@@ -13,5 +14,5 @@ var configuration = {
 };
 
 //require('inch-threejs-client-assembler');	
-var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, configuration);
+var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, window, configuration);
 clientSideEngine.run();

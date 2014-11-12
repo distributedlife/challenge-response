@@ -2,9 +2,9 @@
 
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
-var window = require('window');
+var pendingAcknowledgements = require('inch-socket-pending-acknowledgements')();
 
-module.exports = function(THREE, config) {
+module.exports = function(THREE, window, config) {
     _.defaults(config, {
         dimensions: require('inch-dimensions-widescreen')(require('window')),
         layoutIcons: require("inch-widescreen-icons"),
@@ -12,7 +12,6 @@ module.exports = function(THREE, config) {
         display_config: {
             controls: []
         },
-        engine: require("./inch-threejs-engine"),
         element: "canvas",
         camera: require('inch-perspective-camera')(THREE),
         behaviour: require("./standard_display_behaviour")(THREE),
@@ -20,10 +19,24 @@ module.exports = function(THREE, config) {
         connectDisconnectBehaviour: require("./inch-connect-disconnect-behaviour")
     });
 
-    var engine = config.engine(config, window);
-    engine.resize();
-    
-    $(require('window')).on('load resize', engine.resize.bind(engine));
+    var display = config.behaviour(config, pendingAcknowledgements.ackLast, pendingAcknowledgements.add);
+    var socket = config.socketBehaviour(window, config, pendingAcknowledgements.flush);
+    socket.connect(display.setup, display.update);
 
-    return engine;
+    var resizeCanvas = function () {
+        var dims = config.dimensions(config.ratio);
+        config.layoutIcons(dims.orientation);
+
+        $("#" + config.element).css("margin-top", dims.margin);
+        $("#" + config.element).css("width", dims.usableWidth);
+        $("#" + config.element).css("height", dims.usableHeight);
+
+        display.resize(dims);
+    };
+    
+    $(require('window')).on('load resize', resizeCanvas);
+
+    return {
+        run: config.updateLoop(display.updateDisplay).run
+    };
 };
