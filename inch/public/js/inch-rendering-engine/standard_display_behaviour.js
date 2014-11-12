@@ -2,17 +2,8 @@
 
 var $ = require("zepto-browserify").$;
 var _ = require("lodash");
-var io = require('socket.io-client');
-var sequence = require('inch-sequence');
 var InchScene = require('inch-scene');
-var Howler = require('howler').Howler;
 var numeral = require('numeral');
-
-var keyboardController = require("./keyboard_controller");
-var pendingAcknowledgements = require('./socket-pending_acknowledgements')();
-
-require("./inch-enable-fullscreen"),
-require("./inch-extra-toggle-sound")
 
 module.exports = function(THREE) {
     var threeJsSupport = require('./threeJsSupport')(THREE);
@@ -29,7 +20,10 @@ module.exports = function(THREE) {
 
     var setupComplete = false;
 
-    return function(config) {
+    require("./inch-enable-fullscreen")();
+    require("./inch-extra-toggle-sound")();
+
+    return function(config, ackLast, addAck) {
         var dims = config.dimensions(config.ratio);
         config.level.screenResized(dims);
 
@@ -50,12 +44,13 @@ module.exports = function(THREE) {
             
             config.level.setup(
                 inchScene,
-                pendingAcknowledgements.ackLast, 
+                ackLast, 
                 registerEffect, 
                 stateChanges
             );
 
-            if (stateChanges.value(stateChanges.is('paused'))) {
+            // if (value.of('paused').is(true)) {}
+            if (value.of(stateChanges.is('paused'))) {
                 require('./play-pause-behaviour').pause();
             }
 
@@ -63,7 +58,7 @@ module.exports = function(THREE) {
         };
 
         var update = function(packet) {
-            pendingAcknowledgements.add(packet.id);
+            addAck(packet.id);
 
             if (packet.id <= last_received_id) {
                 return;
@@ -72,6 +67,7 @@ module.exports = function(THREE) {
 
             stateChanges.update_state(packet.game_state);
 
+            //if (value.of('paused').hasChanged() && value.of('paused').is('true')) {
             if (when.changed(property('paused')) && value.of(stateChanges.is('paused'))) { 
                 require('./play-pause-behaviour').pause(); 
             }
@@ -90,6 +86,8 @@ module.exports = function(THREE) {
         };
 
         return {
+            setup: setup,
+            update: update,
             updateDisplay: function() {
                 if (value.of(stateChanges.is('paused'))) {
                     prior_step = Date.now();
@@ -122,26 +120,6 @@ module.exports = function(THREE) {
                 camera.updateProjectionMatrix();
 
                 config.level.screenResized(dims);
-            },
-
-            connect_to_server: function() {
-                var socket = io.connect('/desktop');
-
-                //TODO: the observer code should be in the observer only display behaviour
-                var observer = false;
-                if (window.document.hasFocus() && !observer) { 
-                    socket.emit('unpause'); 
-                }
-                
-                socket.on('disconnect', require('./connect-disconnect-behaviour').disconnected);
-                socket.on('connect', require('./connect-disconnect-behaviour').connected);
-                socket.on('game_state/setup', setup);
-                socket.on('game_state/update', update);
-                socket.on('error', function(data) { throw Error(data); });
-
-                if (!config.display_config.controls.indexOf("keyboard") !== -1) {
-                    keyboardController(socket, config.element, pendingAcknowledgements.flush);
-                }
             }
         };
     };

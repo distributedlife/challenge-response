@@ -40,7 +40,7 @@ module.exports = function() {
 		state: 'ready',
 		priorScores: [],
 		challenge_seen: function(ack) {
-			start = ack.rcvd_timestamp;
+			start = ack.rcvdTimestamp;
 		},
 		response: function(force, data) {
 			if (state_machine.is('ready')) {

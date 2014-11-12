@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
+var window = require('window');
 
 module.exports = function(THREE, config) {
     _.defaults(config, {
@@ -13,13 +14,13 @@ module.exports = function(THREE, config) {
         },
         engine: require("./inch-threejs-engine"),
         element: "canvas",
-        //level: require("inch-display-welcome")(THREE)
         camera: require('inch-perspective-camera')(THREE),
-        behaviour: require("./standard_display_behaviour")(THREE)
+        behaviour: require("./standard_display_behaviour")(THREE),
+        socketBehaviour: require('./inch-socket-behaviour-desktop'),
+        connectDisconnectBehaviour: require("./inch-connect-disconnect-behaviour")
     });
-    //require('inch-debug-top-left-aligned-grid');
 
-    var engine = config.engine(config);
+    var engine = config.engine(config, window);
     engine.resize();
     
     $(require('window')).on('load resize', engine.resize.bind(engine));

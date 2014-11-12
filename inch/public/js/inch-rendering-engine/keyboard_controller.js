@@ -4,18 +4,13 @@ var _ = require('lodash');
 var $ = require('zepto-browserify').$;
 var window = require('window');
 
-module.exports = function(socket, element, flushPendingAcks) {
-    var controller = {
-        last_sent: {},
-        input_data: {
-            x: 0,
-            y: 0,
-            touches: [],
-            keys: [],
-            single_press_keys: [],
-            sent_timestamp: undefined
-        },
+module.exports = function(socket, config, flushPendingAcks) {
+    var element = config.element;
 
+    var controller = {
+        x: 0,
+        y: 0,
+        touches: [],
         keys: {},
         single_press_keys: {},
 
@@ -102,15 +97,15 @@ module.exports = function(socket, element, flushPendingAcks) {
             // }.bind(this));
 
             $("#"+element).on('mousemove', function(e) {
-                this.input_data.x = e.layerX;
-                this.input_data.y = e.layerY;
+                this.x = e.layerX;
+                this.y = e.layerY;
             }.bind(this));
 
             $("#"+element).on('touchstart', function(e) {
                 _.each(e.touches, function(touch) {
                     var x = touch.clientX - touch.target.offsetLeft;
                     var y = touch.clientY - touch.target.offsetTop;
-                    this.input_data.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
+                    this.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
                 }.bind(this));
             }.bind(this));
 
@@ -118,23 +113,23 @@ module.exports = function(socket, element, flushPendingAcks) {
                 _.each(e.touches, function(touch) {
                     var x = touch.clientX - touch.target.offsetLeft;
                     var y = touch.clientY - touch.target.offsetTop;
-                    this.input_data.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
+                    this.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
                 }.bind(this));
             }.bind(this));
 
             $("#"+element).on('touchend', function(e) {
                 var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
-                this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                this.touches = _.reject(this.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
             }.bind(this));
 
             $("#"+element).on('touchleave', function(e) {
                 var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
-                this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                this.touches = _.reject(this.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
             }.bind(this));
 
             $("#"+element).on('touchcancel', function(e) {
                 var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
-                this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                this.touches = _.reject(this.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
             }.bind(this));
 
 
@@ -164,15 +159,20 @@ module.exports = function(socket, element, flushPendingAcks) {
             $(window).on('mousedown', function() { socket.emit('unpause'); }.bind(this));
             $(window).on('mouseup', function() { socket.emit('unpause'); }.bind(this));
         },
+        getCurrentState: function () {
+            var input_data = {
+                x: this.x,
+                y: this.y,
+                touches: this.touches
+            };
 
-        emit: function() {
             var keys_to_send = [];
             _.each(this.keys, function(value, key) {
                 if (value) { 
                     keys_to_send.push(key); 
                 }
             });
-            this.input_data.keys = keys_to_send;
+            input_data.keys = keys_to_send;
 
             var single_press_keys_to_send = [];
             _.each(this.single_press_keys, function(value, key) {
@@ -181,24 +181,14 @@ module.exports = function(socket, element, flushPendingAcks) {
                 }
                 this.single_press_keys[key] = false
             }.bind(this));
-            this.input_data.single_press_keys = single_press_keys_to_send;
+            input_data.single_press_keys = single_press_keys_to_send;
             
-            if (_.isEqual(this.input_data, this.last_sent)) {
-                return;
-            }
-
-            this.input_data.sent_timestamp = Date.now();
-            this.input_data.pending_acks = flushPendingAcks();
-
-            socket.emit('input', this.input_data);
-            this.last_sent = _.clone(this.input_data, true);
-        },
-        notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 120); }
+            return input_data;
+        }
     };
 
     controller.detectButtonsMappingToKeys();
     controller.bindToWindowEvents();
-    controller.notifyServerOfInput();
 
     return controller;
 };

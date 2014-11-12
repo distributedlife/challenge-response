@@ -6,12 +6,12 @@ require("inch-font-helvetiker_regular")(THREE);
 
 var configuration = {
 	camera: require('inch-orthographic-camera')(THREE),
-	display_config: {
-		controls: ['keyboard', 'gamepad']
-	},
+	controls: [
+		require("../../inch/public/js/inch-rendering-engine/keyboard_controller")
+	],
 	level: require("./levels/default")(THREE)
 };
 
-//require('inch-client-engine');	
+//require('inch-threejs-client-assembler');	
 var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, configuration);
 clientSideEngine.run();
