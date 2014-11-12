@@ -6,8 +6,6 @@ var InchScene = require('inch-scene');
 var numeral = require('numeral');
 
 module.exports = function(THREE) {
-    var threeJsSupport = require('./threeJsSupport')(THREE);
-
     var effects = [];
     var prior_step = Date.now();
     var last_received_id = 0;
@@ -29,6 +27,7 @@ module.exports = function(THREE) {
 
         var camera = config.camera(dims.usableWidth, dims.usableHeight);
 
+        var threeJsSupport = require('./threeJsSupport')(THREE, config);
         var threeJsScene = threeJsSupport.createScene(dims.usableWidth, dims.usableHeight);
         var inchScene = InchScene(threeJsScene);
 

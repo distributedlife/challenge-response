@@ -11,7 +11,8 @@ var configuration = {
 	controls: [
 		require("inch-input-keyboard")
 	],
-	level: require("./levels/default")(THREE)
+	level: require("./levels/default")(THREE),
+	debug: [require("inch-debug-outside-in-grid")(THREE, 75)]
 };
 
 //require('inch-threejs-client-assembler');

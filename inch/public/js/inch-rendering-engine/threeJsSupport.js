@@ -1,17 +1,18 @@
 "use strict";
 
 var $ = require('zepto-browserify').$;
+var _ = require('lodash');
 
-module.exports = function(THREE) {
+module.exports = function(THREE, config) {
     return {
         createScene: function(initialWidth, initialHeight) {
             var threeJsScene = new THREE.Scene();
 
-            if (true) {
-                threeJsScene.add(require("./inch-debug-outside-in-grid")(initialWidth, initialHeight, 75));
-            }
+            _.each(config.debug, function (guide) {
+                threeJsScene.add(guide(initialWidth, initialHeight));
+            })
             if (false) {
-                threeJsScene.add(require("./inch-debug-axes")(100));
+                threeJsScene.add(require("./inch-debug-axes")(THREE, 100)());
             }
 
             return threeJsScene;

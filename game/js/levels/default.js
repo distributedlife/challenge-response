@@ -28,7 +28,7 @@ module.exports = function(THREE) {
 
             var show_challenge = function(model, prior_model, challenge, statusIndicator) {
                 challenge.fadeIn();
-                ackLastRequest('show-challenge');   
+                ackLastRequest('show-challenge');
                 statusIndicator.changeColour(0, colour("green").rgbArray());
             };
 
@@ -122,7 +122,7 @@ module.exports = function(THREE) {
 
             var the_game_state = function(state) { return state['controller']['state']; };
             var the_score = function(state) { return state['controller']['score']; };
-        	
+
             state.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, statusIndicator]);
             state.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, statusIndicator]);
             state.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, statusIndicator]);

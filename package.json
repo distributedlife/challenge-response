@@ -14,6 +14,7 @@
     "hamljs": "^0.6.2",
     "howler": "^1.1.25",
     "inch-connect-disconnect-behaviour": "^1.0.0",
+    "inch-debug-outside-in-grid": "^1.0.0",
     "inch-delayed-effects": "^1.0.0",
     "inch-dimensions-widescreen": "^1.0.2",
     "inch-entity-loader": "^1.0.2",
