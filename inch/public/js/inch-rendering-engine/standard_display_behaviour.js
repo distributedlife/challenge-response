@@ -11,6 +11,9 @@ var numeral = require('numeral');
 var keyboardController = require("./keyboard_controller");
 var pendingAcknowledgements = require('./socket-pending_acknowledgements')();
 
+require("./inch-enable-fullscreen"),
+require("./inch-extra-toggle-sound")
+
 module.exports = function(THREE) {
     var threeJsSupport = require('./threeJsSupport')(THREE);
 

@@ -7,10 +7,6 @@ module.exports = function (config) {
 	var display = config.behaviour(config);
 	display.connect_to_server();
 
-    _.each(config.extras, function(extra) {
-        extra();
-    })
-
 	return {
 		resize: function () {
 			var dims = config.dimensions(config.ratio);
