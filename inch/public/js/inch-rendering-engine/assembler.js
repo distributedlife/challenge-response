@@ -14,7 +14,7 @@ module.exports = function(THREE, window, config) {
         },
         element: "canvas",
         camera: require('inch-perspective-camera')(THREE),
-        behaviour: require("./standard_display_behaviour")(THREE),
+        behaviour: require("inch-standard-display-behaviour")(THREE),
         socketBehaviour: require('inch-socket-behaviour-desktop'),
         connectDisconnectBehaviour: require("inch-connect-disconnect-behaviour"),
         debug: [
