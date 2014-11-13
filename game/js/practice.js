@@ -15,6 +15,5 @@ var configuration = {
 	debug: [require("inch-debug-outside-in-grid")(THREE, 75)]
 };
 
-//require('inch-threejs-client-assembler');
-var clientSideEngine = require('../../inch/public/js/inch-rendering-engine/assembler')(THREE, window, configuration);
+var clientSideEngine = require('inch-threejs-client-assembler')(THREE, window, configuration);
 clientSideEngine.run();
