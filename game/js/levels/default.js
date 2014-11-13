@@ -2,16 +2,19 @@
 
 module.exports = function(THREE) {
     var _ = require('lodash');
+    var $ = require('zepto-browserify').$;
+    var Howler = require('howler').Howler;
     var colour = require('color');
     var Circle = require('inch-geometry2d-circle')(THREE);
     var GlText = require('inch-geometry2d-gltext')(THREE);
     var PositionHelper = require("inch-position2d-helper");
+    var equals = require("inch-state-tracker").Equals;
 
     return {
         screenResized: function(dimensions) {
             PositionHelper.updateScreenDims(dimensions.screenWidth, dimensions.screenHeight, dimensions.orientation, dimensions.margin);
         },
-        setup: function(scene, ackLastRequest, register, state) {
+        setup: function(scene, ackLastRequest, register, tracker) {
             var show_instructions = function(model, prior_model, title, challenge, score, false_start, restart, statusIndicator) {
                 title.fadeIn();
                 challenge.fadeOut();
@@ -123,12 +126,12 @@ module.exports = function(THREE) {
             var the_game_state = function(state) { return state['controller']['state']; };
             var the_score = function(state) { return state['controller']['score']; };
 
-            state.on_property_changed_to(the_game_state, 'ready', show_instructions, [title, challenge, score, false_start, restart, statusIndicator]);
-            state.on_property_changed_to(the_game_state, 'waiting', hide_instructions, [title, statusIndicator]);
-            state.on_property_changed_to(the_game_state, 'challenge_started', show_challenge, [challenge, statusIndicator]);
-            state.on_property_changed_to(the_game_state, 'complete', show_results, [challenge, score, restart, statusIndicator]);
-            state.on_property_changed_to(the_game_state, 'false_start', show_false_start, [false_start, score, restart, statusIndicator]);
-            state.on_property_change(the_score, update_score, score);
+            tracker.onChangeTo(the_game_state, equals('ready'), show_instructions, [title, challenge, score, false_start, restart, statusIndicator]);
+            tracker.onChangeTo(the_game_state, equals('waiting'), hide_instructions, [title, statusIndicator]);
+            tracker.onChangeTo(the_game_state, equals('challenge_started'), show_challenge, [challenge, statusIndicator]);
+            tracker.onChangeTo(the_game_state, equals('complete'), show_results, [challenge, score, restart, statusIndicator]);
+            tracker.onChangeTo(the_game_state, equals('false_start'), show_false_start, [false_start, score, restart, statusIndicator]);
+            tracker.onChangeOf(the_score, update_score, score);
         }
     };
 };

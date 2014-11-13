@@ -9,17 +9,15 @@ module.exports = function(THREE) {
     var effects = [];
     var prior_step = Date.now();
     var last_received_id = 0;
-    var stateChanges = require("./track_state_changes");
 
-    var value = stateChanges;
-    var when = stateChanges;
-    stateChanges.of = stateChanges.value;
-    var property = stateChanges.the;
+    var tracker = require("inch-state-tracker").Tracker();
+    var the = require("inch-state-tracker").The;
+    var equals = require("inch-state-tracker").Equals;
 
     var setupComplete = false;
 
-    require("./inch-enable-fullscreen")();
-    require("./inch-extra-toggle-sound")();
+    require("./enable-fullscreen")();
+    require("./toggle-sound")();
 
     return function(config, ackLast, addAck) {
         var dims = config.dimensions(config.ratio);
@@ -27,7 +25,7 @@ module.exports = function(THREE) {
 
         var camera = config.camera(dims.usableWidth, dims.usableHeight);
 
-        var threeJsSupport = require('./threeJsSupport')(THREE, config);
+        var threeJsSupport = require('./threejs-support')(THREE, config);
         var threeJsScene = threeJsSupport.createScene(dims.usableWidth, dims.usableHeight);
         var inchScene = InchScene(threeJsScene);
 
@@ -38,20 +36,40 @@ module.exports = function(THREE) {
             effects.push(effect);
         };
 
+        var paused = true;
+        var pause = function() {
+            paused = true;
+            $('.paused').show();
+            $('#paused').show();
+            Howler.pauseAll();
+        };
+        var resume = function() {
+            paused = false;
+            $('.paused').hide();
+            $('#paused').hide();
+            Howler.resumeAll();
+        };
+        var updatePlayerCount = function(currentValue, priorValue) {
+            $('#player-count').text(numeral(currentValue).format('0a'));
+        };
+        var updateObserverCount = function(currentValue, priorValue) {
+            $('#observer-count').text(numeral(currentValue).format('0a'));
+        };
+
         var setup = function(state) {
-            stateChanges.update_state(state);
+            tracker.updateState(state);
+
+            tracker.onChangeTo(the('paused'), equals(true), pause)
+            tracker.onChangeTo(the('paused'), equals(false), resume)
+            tracker.onChangeOf(the('players'), updatePlayerCount);
+            tracker.onChangeOf(the('observers'), updateObserverCount);
 
             config.level.setup(
                 inchScene,
                 ackLast,
                 registerEffect,
-                stateChanges
+                tracker
             );
-
-            // if (value.of('paused').is(true)) {}
-            if (value.of(stateChanges.is('paused'))) {
-                require('./play-pause-behaviour').pause();
-            }
 
             setupComplete = true;
         };
@@ -64,31 +82,14 @@ module.exports = function(THREE) {
             }
             last_received_id = packet.id;
 
-            stateChanges.update_state(packet.game_state);
-
-            //if (value.of('paused').hasChanged() && value.of('paused').is('true')) {
-            if (when.changed(property('paused')) && value.of(stateChanges.is('paused'))) {
-                require('./play-pause-behaviour').pause();
-            }
-            if (when.changed(property('paused')) && value.of(stateChanges.isnt('paused'))) {
-                require('./play-pause-behaviour').resume();
-            }
-
-            if (when.changed(property('players'))) {
-                $('#player-count').text(numeral(value.of(property('players'))).format('0a'));
-            }
-            if (when.changed(property('observers'))) {
-                $('#observer-count').text(numeral(value.of(property('observers'))).format('0a'));
-            }
-
-            stateChanges.detect_changes_and_notify_observers();
+            tracker.updateState(packet.game_state);
         };
 
         return {
             setup: setup,
             update: update,
             updateDisplay: function() {
-                if (value.of(stateChanges.is('paused'))) {
+                if (paused) {
                     prior_step = Date.now();
                     return;
                 }
