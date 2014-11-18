@@ -54,10 +54,10 @@ module.exports = function(THREE) {
 
             var title = new GlText(scene.add, scene.remove, {
                 text: "CHALLENGE:RESPONSE",
-                size: 9,
+                size: 5,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.centreY(),
+                    x: 0,
+                    y: 0,
                     z: 0
                 },
                 start_hidden: true
@@ -68,8 +68,8 @@ module.exports = function(THREE) {
                 text: "GO!",
                 size: 20,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.centreY(),
+                    x: 0,
+                    y: 0,
                     z: 0
                 },
                 start_hidden: true
@@ -80,8 +80,8 @@ module.exports = function(THREE) {
                 text: "unset",
                 size: 10,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.centreY(),
+                    x: 0,
+                    y: 0,
                     z: 0
                 },
                 start_hidden: true
@@ -90,10 +90,10 @@ module.exports = function(THREE) {
 
             var false_start = new GlText(scene.add, scene.remove, {
                 text: "False Start",
-                size: 10,
+                size: 5,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.gridNy(4, 1),
+                    x: 0,
+                    y: -100,
                     z: 0
                 },
                 start_hidden: true
@@ -102,10 +102,10 @@ module.exports = function(THREE) {
 
             var restart = new GlText(scene.add, scene.remove, {
                 text: "Press `R' to try again.",
-                size: 8,
+                size: 3,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.gridNy(4, 3),
+                    x: 0,
+                    y: 100,
                     z: 0
                 },
                 start_hidden: true
@@ -114,10 +114,10 @@ module.exports = function(THREE) {
 
             var statusIndicator = new Circle(scene.add, scene.remove, {
                 radius: 100,
-                segments: 32,
+                segments: 80,
                 position: {
-                    x: PositionHelper.ss.centreX(),
-                    y: PositionHelper.ss.centreY(),
+                    x: 0,
+                    y: 0,
                     z: -100
                 },
             });

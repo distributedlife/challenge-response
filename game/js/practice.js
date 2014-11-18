@@ -14,7 +14,7 @@ var configuration = function(THREE) {
 
 var pluginManager = require('inch-plugins');
 pluginManager.use(require('inch-plugin-render-engine-adapter-threejs'));
-pluginManager.set('Window', window);
-pluginManager.use(require('inch-plugin-camera-orthographic'));
-var clientSideEngine = require('inch-threejs-client-assembler')(pluginManager, configuration);
+pluginManager.set('Window', require('window'));
+pluginManager.use(require('inch-plugin-camera-orthographic-centred'));
+var clientSideEngine = require('inch-client-assembler')(pluginManager, configuration);
 clientSideEngine.run();
