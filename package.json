@@ -17,7 +17,6 @@
     "inch-debug-outside-in-grid": "^1.0.0",
     "inch-default-routes-no-auth": "^1.0.0",
     "inch-delayed-effects": "^1.0.0",
-    "inch-dimensions-widescreen": "^1.0.2",
     "inch-entity-loader": "^1.0.2",
     "inch-entity-updatable": "^1.0.0",
     "inch-express-server": "^1.0.1",
@@ -31,8 +30,12 @@
     "inch-geometry2d-gltext": "^1.0.0",
     "inch-input-handler": "^1.0.0",
     "inch-input-keyboard": "^1.0.0",
-    "inch-orthographic-camera": "^2.0.1",
     "inch-perspective-camera": "^2.0.0",
+    "inch-plugin-camera-orthographic": "^1.0.1",
+    "inch-plugin-dimensions-widescreen": "^2.0.0",
+    "inch-plugin-orthographic-camera": "^4.0.0",
+    "inch-plugin-render-engine-adapter-threejs": "^1.0.0",
+    "inch-plugins": "^1.0.4",
     "inch-position2d-helper": "^1.0.0",
     "inch-scene": "^1.0.0",
     "inch-sequence": "^1.0.0",
@@ -43,7 +46,7 @@
     "inch-state-tracker": "^1.0.0",
     "inch-temporary-effect": "^1.0.1",
     "inch-threejs": "^0.69.0",
-    "inch-threejs-client-assembler": "^1.0.1",
+    "inch-threejs-client-assembler": "^2.0.1",
     "inch-unfurl": "^1.0.0",
     "inch-vsync-update-loop": "^1.0.0",
     "inch-widescreen-icons": "^1.0.0",
@@ -87,7 +90,6 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit",
     "start": "node game.js"
   },
   "browserify": {

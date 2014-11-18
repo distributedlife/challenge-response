@@ -20,7 +20,7 @@ gulp.task('lint', function () {
             node: true,
             vars: true
         }));
-    gulp.src('**/css/**/*.css')
+    gulp.src('game/**/*.css')
         .pipe(csslint())
         .pipe(csslint.reporter());
 });
