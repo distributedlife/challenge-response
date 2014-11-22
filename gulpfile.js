@@ -15,10 +15,12 @@ gulp.task('server:start', function () {
 });
 
 gulp.task('lint', function () {
-    gulp.src('**/*.js')
+    gulp.src(['game/**/*.js', 'game.js', '!game/js/gen/**'])
         .pipe(jslint({
             node: true,
-            vars: true
+            vars: true,
+            nomen: true,
+            unparam: true
         }));
     gulp.src('game/**/*.css')
         .pipe(csslint())
