@@ -4,7 +4,6 @@ module.exports = {
     deps: ["RenderEngineAdapter"],
     type: "Level",
     func: function (adapter) {
-        // var Howler = require('howler').Howler;
         var colour = require('color');
         var PositionHelper = require("inch-position2d-helper");
         var equals = require("inch-state-tracker").Equals;
