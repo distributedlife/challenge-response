@@ -1,6 +1,7 @@
 "use strict";
 
-module.exports = function(THREE) {
+module.exports = function(adapter) {
+    var THREE = adapter.getUnderlyingObject();
     var _ = require('lodash');
     var $ = require('zepto-browserify').$;
     var Howler = require('howler').Howler;
