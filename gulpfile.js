@@ -6,7 +6,7 @@ var livereload = require('gulp-livereload');
 var mocha = require('gulp-mocha');
 var jslint = require('gulp-jslint');
 var source = require('vinyl-source-stream');
-var browserify = require('gulp-browatchify');
+var browatchify = require('gulp-browatchify');
 var reactify = require('reactify');
 var csslint = require('gulp-csslint');
 
@@ -27,9 +27,9 @@ gulp.task('lint', function () {
         .pipe(csslint.reporter());
 });
 
-gulp.task('browserify', function () {
+gulp.task('browatchify', function () {
     gulp.src('./game/js/practice.js')
-        .pipe(browserify({
+        .pipe(browatchify({
             debug: true,
             transforms: [reactify]
         }))
@@ -37,16 +37,15 @@ gulp.task('browserify', function () {
         .pipe(gulp.dest('./game/js/gen'));
 });
 
-
-gulp.task('server:restart', ['browserify', 'server:start'], function () {
+gulp.task('server:restart', ['browatchify', 'server:start'], function () {
     function restart(file) {
         server.changed(function (error) {
             if (!error) { livereload.changed(file.path); }
         });
     }
 
-    gulp.watch(['./game.js', "game/js/**/*.js", "inch/public/js/**/*.js"], { interval: 500 }, ['browserify']).on('change', restart);
+    gulp.watch(['./game.js', "game/js/**/*.js", "inch/public/js/**/*.js"], { interval: 500 }, ['browatchify']).on('change', restart);
 });
 
 
-gulp.task('default', ['lint', 'browserify']);
+gulp.task('default', ['lint', 'browatchify']);

@@ -8,9 +8,8 @@ module.exports = {
         var PositionHelper = require("inch-position2d-helper");
         var equals = require("inch-state-tracker").Equals;
 
-        var THREE = adapter.getUnderlyingObject();
-        var Circle = require('inch-geometry2d-circle')(THREE);
-        var GlText = require('inch-geometry2d-gltext')(THREE);
+        var Circle = require('inch-geometry2d-circle')(adapter);
+        var GlText = require('inch-geometry2d-gltext')(adapter);
 
         return {
             screenResized: function (dimensions) {
