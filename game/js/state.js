@@ -1,7 +1,7 @@
-module.exports = function(entities) {
-  "use strict";
+"use strict";
 
-  return {
-  	controller: new entities.controller()
-  };
+module.exports = function (entities) {
+    return {
+        controller: new entities.controller()
+    };
 };

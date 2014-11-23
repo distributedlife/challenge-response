@@ -7,50 +7,63 @@
     "npm": "latest"
   },
   "dependencies": {
-    "body-parser": "^1.9.2",
-    "consolidate": "^0.10.0",
-    "express": "^4.10.1",
-    "hamljs": "^0.6.2",
+    "color": "^0.7.3",
+    "gulp-browserify": "^0.5.0",
+    "howler": "^1.1.25",
+    "inch-client-assembler": "^4.0.0",
+    "inch-default-routes-no-auth": "^1.0.0",
+    "inch-delayed-effects": "^1.0.0",
     "inch-entity-loader": "^1.0.2",
+    "inch-entity-updatable": "^1.0.0",
+    "inch-express-server": "^1.0.1",
+    "inch-font-helvetiker_regular": "^2.0.1",
     "inch-game-engine": "^1.0.0",
     "inch-game-state": "^1.0.1",
+    "inch-geometry2d-circle": "^2.0.0",
+    "inch-geometry2d-gltext": "^2.0.0",
     "inch-input-handler": "^1.0.0",
-    "inch-sequence": "^1.0.0",
+    "inch-plugin-camera-orthographic-centred": "^1.1.1",
+    "inch-plugin-debug-outside-in-grid": "^1.0.2",
+    "inch-plugin-input-mode-keyboard": "^1.0.0",
+    "inch-plugin-render-engine-adapter-threejs": "^1.5.0",
+    "inch-plugins": "^2.0.0",
+    "inch-position2d-helper": "^1.0.0",
     "inch-socket-support": "^1.0.2",
     "inch-standard-socket-support-callbacks": "^1.0.0",
-    "javascript-state-machine": "~2.3.2",
+    "inch-state-tracker": "^1.1.1",
+    "javascript-state-machine": "^2.3.2",
     "lodash": "^2.4.1",
-    "microtime": "^1.0.1",
-    "morgan": "^1.4.1",
-    "nodemon": "^1.2.1",
-    "parseuri": "0.0.4",
-    "passport": "~0.2.1",
-    "passport-local": "~1.0.0",
-    "qs": "^2.3.2",
-    "rekuire": "^0.1.5",
-    "requirejs": "^2.1.15",
-    "screenfull": "^1.2.1",
-    "socket.io": "^1.2.0",
-    "socket.io-client": "^1.2.0",
-    "tween.js": "^0.14.0",
-    "watchjs": "0.0.0",
-    "wrench": "^1.5.8"
+    "nodemon": "^1.2.1"
   },
   "devDependencies": {
-    "amdefine": "^0.1.0",
-    "gulp": "~3.8.8",
-    "gulp-develop-server": "~0.2.4",
-    "gulp-livereload": "~2.1.1",
+    "browserify": "^6.2.0",
+    "browserify-shim": "^3.8.0",
+    "gulp": "^3.8.8",
+    "gulp-browatchify": "0.0.0",
+    "gulp-csslint": "^0.1.5",
+    "gulp-develop-server": "^0.2.4",
+    "gulp-ignore": "^1.2.1",
+    "gulp-jslint": "^0.1.9",
+    "gulp-livereload": "^2.1.1",
     "gulp-mocha": "^1.1.1",
-    "jasmine-node": "~1.14.5",
+    "jasmine-node": "^1.14.5",
     "jsdom": "^1.1.0",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "reactify": "^0.15.2",
+    "vinyl-source-stream": "^1.0.0"
   },
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec/ --verbose --forceexit",
-    "start": "node server.js"
+    "start": "node game.js"
   },
-  "main": "server.js",
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "window": "global:window"
+  },
+  "main": "game.js",
   "author": "Ryan Boucher",
   "license": "BSD"
 }
