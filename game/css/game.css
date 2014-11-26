@@ -1,1 +1,29 @@
+.centre-box {
+	position: relative;
+	width: 100%;
+	text-align: center;
+}
 
+.large {
+	font-size: 100px;
+}
+
+.super-large {
+	font-size: 200px;
+}
+
+.left {
+	text-align: left;
+	position: relative;
+	width: 50%;
+	margin: 0 auto;
+}
+
+#instructions {
+	.left {}
+}
+
+/*TODO: move this up to inch.css*/
+.start-hidden {
+	display: none;
+}
