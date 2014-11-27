@@ -23,7 +23,15 @@
 	.left {}
 }
 
-/*TODO: move this up to inch.css*/
+/*TODO: move this up to lib.css*/
 .start-hidden {
 	display: none;
+}
+
+#overlays {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
