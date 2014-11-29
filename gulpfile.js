@@ -50,6 +50,9 @@ gulp.task('test', function () {
         .pipe(mocha({reporter: 'nyan'}));
 });
 
+gulp.task('build-code', function() {
+    return gulp.src('./game/js/practice.js');
+});
 gulp.task('build-styles', function() {
     return gulp.src(paths.scss)
         .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css' }))
@@ -59,7 +62,7 @@ gulp.task('build-styles', function() {
         .pipe(flatten())
         .pipe(gulp.dest('game/css'));
 });
-gulp.task('build', ['build-styles'])
+gulp.task('build', ['build-styles', 'build-code'])
 
 
 gulp.task('server:start', function () {
@@ -87,8 +90,9 @@ gulp.task('server:restart', ['browatchify', 'server:start'], function () {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(paths.js, ['lint-code', 'test']);
-  gulp.watch(paths.scss, ['clean', 'lint-scss', 'build']);
+  gulp.watch(paths.js, ['lint-code', 'test', 'build-code']);
+  gulp.watch(paths.scss, ['clean', 'lint-scss', 'build-styles']);
 });
 
-gulp.task('default', ['clean', 'lint', 'test', 'build', 'browatchify']);
+gulp.task('default', ['clean', 'lint', 'test', 'build']);
+gulp.task('local', ['clean', 'lint', 'test', 'build', 'watch']);

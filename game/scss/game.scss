@@ -1,24 +1,20 @@
 .centre-box {
-	position: relative;
-	width: 100%;
-	text-align: center;
+  position: relative;
+  text-align: center;
+  width: 100%;
 }
 
 .large {
-	font-size: 10em;
+  font-size: 10em;
 }
 
 .super-large {
-	font-size: 20em;
+  font-size: 20em;
 }
 
 .left {
-	text-align: left;
-	position: relative;
-	width: 50%;
-	margin: 0 auto;
-}
-
-#instructions {
-	.left {}
+  margin: 0 auto;
+  position: relative;
+  text-align: left;
+  width: 50%;
 }
