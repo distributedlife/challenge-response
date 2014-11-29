@@ -8,5 +8,5 @@ var overlays = {
     'practice': process.cwd() + "/game/jade/primary.jade"
 };
 
-var server = require("inch-express-server").Server("./game", modes, overlays);
+var server = require("inch-server-express").Server("./game", modes, overlays);
 server.start();
