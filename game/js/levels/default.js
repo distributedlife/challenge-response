@@ -75,11 +75,11 @@ module.exports = {
                     var score = $("#score");
 
                     //TODO: replace with dims changes
-                    var marginWidth = Math.round(dims.screenWidth - dims.usableWidth) / 2;
-                    var marginHeight = Math.round(dims.screenHeight - dims.usableHeight) / 2;
+                    // var marginWidth = Math.round(dims.screenWidth - dims.usableWidth) / 2;
+                    // var marginHeight = Math.round(dims.screenHeight - dims.usableHeight) / 2;
 
-                    score.css('left', (left - score.width() / 2) + marginWidth + 'px');
-                    score.css('top', (top - score.height() / 2) + marginHeight + 'px');
+                    score.css('left', (left - score.width() / 2) + dims.marginSides + 'px');
+                    score.css('top', (top - score.height() / 2) + dims.marginTopBottom + 'px');
                     score.show();
                 };
 

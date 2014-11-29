@@ -67,7 +67,7 @@ gulp.task('build-code', function() {
             debug: false,
             transform: [reactify]
         }))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(rename('primary.js'))
         .pipe(gulp.dest(paths.genjs));
 });
