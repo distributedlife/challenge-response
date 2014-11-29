@@ -17,13 +17,21 @@ var del = require('del');
 var scsslint = require('gulp-scss-lint');
 var flatten = require('gulp-flatten');
 
+var paths = {
+  js: ['game/**/*.js', 'game.js', '!game/js/gen/**'],
+  scss: ['game/**/*.scss'],
+  css: ['game/css'],
+  tests: ['tests/**/*.js']
+};
+
+
 gulp.task('delete-generated', function (cb) {
-    del('game/css', cb);
+    del(paths.css, cb);
 });
 gulp.task('clean', ['delete-generated']);
 
 gulp.task('lint-code', function () {
-    gulp.src(['game/**/*.js', 'game.js', '!game/js/gen/**'])
+    gulp.src(paths.js)
         .pipe(jslint({
             node: true,
             vars: true,
@@ -32,18 +40,18 @@ gulp.task('lint-code', function () {
         }));
 });
 gulp.task('lint-scss', function () {
-    return gulp.src('src/**/*.scss')
+    return gulp.src(paths.scss)
         .pipe(scsslint());
 });
 gulp.task('lint', ['lint-code', 'lint-scss']);
 
 gulp.task('test', function () {
-    return gulp.src('tests/**/*.js', {read: false})
+    return gulp.src(paths.tests, {read: false})
         .pipe(mocha({reporter: 'nyan'}));
 });
 
 gulp.task('build-styles', function() {
-    return gulp.src('game/**/*.scss')
+    return gulp.src(paths.scss)
         .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css' }))
         // .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1'))
         .pipe(rename({suffix: '.min'}))
@@ -78,5 +86,9 @@ gulp.task('server:restart', ['browatchify', 'server:start'], function () {
     gulp.watch(['./game.js', "game/js/**/*.js", "inch/public/js/**/*.js"], { interval: 500 }, ['browatchify']).on('change', restart);
 });
 
+gulp.task('watch', function() {
+  gulp.watch(paths.js, ['lint-code', 'test']);
+  gulp.watch(paths.scss, ['clean', 'lint-scss', 'build']);
+});
 
 gulp.task('default', ['clean', 'lint', 'test', 'build', 'browatchify']);
