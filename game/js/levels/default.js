@@ -1,23 +1,20 @@
 "use strict";
 
 module.exports = {
-    deps: ["RenderEngineAdapter", "Window", "Dimensions"],
+    deps: ["RenderEngineAdapter", "Window", "Dimensions", "PositionHelper"],
     type: "Level",
-    func: function (adapter, window, Dimensions) {
+    func: function (adapter, window, Dimensions, PositionHelper) {
         var colour = require('color');
-        var PositionHelper = require("inch-position2d-helper");
         var equals = require("inch-state-tracker").Equals;
-
         var Circle = require('inch-geometry2d-circle')(adapter);
 
         var $ = require('zepto-browserify').$;
 
         return {
             screenResized: function (dimensions) {
-                PositionHelper.updateScreenDims(dimensions.screenWidth, dimensions.screenHeight, dimensions.orientation, dimensions.margin);
+                //TODO: do we need to reposition all the things?
             },
             setup: function (scene, ackLastRequest, register, tracker, camera) {
-                //TODO: should we allow the passing of the camera in?
                 var show_instructions = function (model, prior_model, statusIndicator) {
                     $("#instructions").show();
                     $("#challenge").hide();
@@ -51,35 +48,11 @@ module.exports = {
                 var update_score = function (model, prior_model) {
                     $("#score")[0].innerText = model;
 
-
-                    //TODO: pull this into positionHelper and reference: http://zachberry.com/blog/tracking-3d-objects-in-2d-with-three-js/
-                    var dims = Dimensions.Dimensions();
-                    var visibleWidth, visibleHeight, p, percX, percY, left, top;
-
-                    visibleWidth = camera.right - camera.left;
-                    visibleHeight = camera.top - camera.bottom;
-
-                    // TODO: this is a param (centre of object in scene)
-                    p = {x: 0, y: 0, z: 0};
-
-                    // determine where in the visible area the sphere is,
-                    // with percX=0 meaning the left edge and 1 meaning the right
-                    // and percY=0 meaning top and 1 meaning bottom
-                    percX = (p.x - camera.left) / visibleWidth;
-                    percY = 1 - ((p.y - camera.bottom) / visibleHeight);
-
-                    // scale these values to our viewport size
-                    left = percX * dims.usableWidth;
-                    top = percY * dims.usableHeight;
-
                     var score = $("#score");
+                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
 
-                    //TODO: replace with dims changes
-                    // var marginWidth = Math.round(dims.screenWidth - dims.usableWidth) / 2;
-                    // var marginHeight = Math.round(dims.screenHeight - dims.usableHeight) / 2;
-
-                    score.css('left', (left - score.width() / 2) + dims.marginSides + 'px');
-                    score.css('top', (top - score.height() / 2) + dims.marginTopBottom + 'px');
+                    score.css('left', centered.left + 'px');
+                    score.css('top', centered.top + "px");
                     score.show();
                 };
 
