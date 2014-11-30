@@ -27,7 +27,7 @@
     "inch-plugin-render-engine-adapter-threejs": "^1.5.0",
     "inch-plugins": "^2.0.2",
     "inch-position2d-helper": "^1.0.0",
-    "inch-server-express": "^0.0.2",
+    "inch-server-express": "^0.1.0",
     "inch-socket-support": "^1.0.2",
     "inch-standard-socket-support-callbacks": "^1.0.0",
     "inch-state-tracker": "^1.1.1",

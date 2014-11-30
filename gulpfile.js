@@ -100,4 +100,4 @@ gulp.task('watch', ['server:start'], function() {
 });
 
 gulp.task('default', ['clean', 'lint', 'test', 'build']);
-gulp.task('local', ['clean', 'lint', 'test', 'build', 'watch']);
+gulp.task('local', ['default', 'watch']);
