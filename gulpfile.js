@@ -74,8 +74,8 @@ gulp.task('build-code', function() {
 gulp.task('build-styles', function() {
     return gulp.src(paths.scss)
         .pipe(plumber({errorHandler: onError}))
-        .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css' }))
         .pipe(autoprefixer({ cascade: false }))
+        .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css' }))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
         .pipe(flatten())
