@@ -71,7 +71,7 @@ module.exports = {
                 register(statusIndicator);
 
                 var waitingSound = new Howl({
-                    urls: ['/game/audio/waiting.ogg', '/game/audio/waiting.mp3']
+                    urls: ['/game/audio/waiting.mp3']
                 });
                 var goSound = new Howl({
                     urls: ['/game/audio/go.mp3']
