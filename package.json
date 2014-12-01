@@ -24,7 +24,7 @@
     "inch-plugin-camera-orthographic-centred": "^1.1.1",
     "inch-plugin-debug-outside-in-grid": "^1.0.2",
     "inch-plugin-input-mode-keyboard": "^1.0.0",
-    "inch-plugin-position-helper-2d": "0.0.1",
+    "inch-plugin-position-helper-2d": "^0.0.1",
     "inch-plugin-render-engine-adapter-threejs": "^1.5.0",
     "inch-plugins": "^2.0.2",
     "inch-position2d-helper": "^1.0.0",
@@ -32,6 +32,7 @@
     "inch-socket-support": "^1.0.2",
     "inch-standard-socket-support-callbacks": "^1.0.0",
     "inch-state-tracker": "^1.1.1",
+    "inch-temporary-effect": "^1.0.1",
     "javascript-state-machine": "^2.3.2",
     "lodash": "^2.4.1",
     "nodemon": "^1.2.1"

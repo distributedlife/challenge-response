@@ -27,7 +27,7 @@ var paths = {
 };
 
 var onError = function (error) {
-    console.log(err);
+    console.log(error);
     this.emit('end');
 };
 
