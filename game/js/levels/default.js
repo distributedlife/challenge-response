@@ -8,7 +8,7 @@ module.exports = {
         var equals = require("inch-state-tracker").Equals;
         var Circle = require('inch-geometry2d-circle')(adapter);
         var Howl = require('howler').Howl;
-
+        var jade = require('jade');
         var $ = require('zepto-browserify').$;
 
         return {
@@ -77,15 +77,28 @@ module.exports = {
                     urls: ['/game/audio/go.mp3']
                 });
 
-                var the_game_state = function (state) { return state.controller.state; };
-                var the_score = function (state) { return state.controller.score; };
+                var onScoreAddedFunction = function() {
+                    var template;
+                    $.get('/game/jade/priorScores.jade', function (data) {
+                        template = data;
+                    });
 
-                tracker.onChangeTo(the_game_state, equals('ready'), show_instructions, statusIndicator);
-                tracker.onChangeTo(the_game_state, equals('waiting'), hide_instructions, [statusIndicator, waitingSound]);
-                tracker.onChangeTo(the_game_state, equals('challenge_started'), show_challenge, [statusIndicator, goSound, waitingSound]);
-                tracker.onChangeTo(the_game_state, equals('complete'), show_results, statusIndicator);
-                tracker.onChangeTo(the_game_state, equals('false_start'), show_false_start, [statusIndicator, goSound, waitingSound]);
-                tracker.onChangeOf(the_score, update_score);
+                    return function (currentValue, priorValue) {
+                        $("#prior-scores").append(jade.render(template, {score: currentValue.score}));
+                    };
+                };
+
+                var theGameState = function (state) { return state.controller.state; };
+                var theScore = function (state) { return state.controller.score; };
+                var thePriorScores = function (state) { return state.controller.priorScores; };
+
+                tracker.onChangeTo(theGameState, equals('ready'), show_instructions, statusIndicator);
+                tracker.onChangeTo(theGameState, equals('waiting'), hide_instructions, [statusIndicator, waitingSound]);
+                tracker.onChangeTo(theGameState, equals('challenge_started'), show_challenge, [statusIndicator, goSound, waitingSound]);
+                tracker.onChangeTo(theGameState, equals('complete'), show_results, statusIndicator);
+                tracker.onChangeTo(theGameState, equals('false_start'), show_false_start, [statusIndicator, goSound, waitingSound]);
+                tracker.onChangeOf(theScore, update_score);
+                tracker.onElementAdded(thePriorScores, onScoreAddedFunction());
             }
         };
     }

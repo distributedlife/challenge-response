@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var updatable_entity = require('inch-entity-updatable');
 var StateMachine = require('javascript-state-machine');
+var sequence = require('inch-sequence');
 
 module.exports = function () {
     var delayedEffects = require('inch-delayed-effects')();
@@ -64,7 +65,13 @@ module.exports = function () {
         reset: function (force, data) {
             if (controller.state === 'complete' || controller.state === "false_start") {
                 state_machine.reset();
-                this.priorScores.push(controller.score);
+
+                if (controller.state === "false_start") {
+                    this.priorScores.push({id: sequence.next("prior-scores"), score: "x"});
+                } else {
+                    this.priorScores.push({id: sequence.next("prior-scores"), score: controller.score});
+                }
+
                 controller.score = 0;
             }
         }
