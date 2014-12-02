@@ -25,8 +25,18 @@
   position: fixed;
 }
 
-#prior-score {
+#prior-scores {
   bottom: 0;
+  display: inline;
   left: 0;
+  list-style: none;
   position: fixed;
+
+  li {
+    display: inline;
+  }
+
+  li + li:before {
+    content: ', ';
+  }
 }

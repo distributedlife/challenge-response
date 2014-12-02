@@ -64,7 +64,6 @@ module.exports = function () {
         },
         reset: function (force, data) {
             if (controller.state === 'complete' || controller.state === "false_start") {
-                state_machine.reset();
 
                 if (controller.state === "false_start") {
                     this.priorScores.push({id: sequence.next("prior-scores"), score: "x"});
@@ -73,6 +72,7 @@ module.exports = function () {
                 }
 
                 controller.score = 0;
+                state_machine.reset();
             }
         }
     });
