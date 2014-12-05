@@ -5,10 +5,17 @@ var updatable_entity = require('inch-entity-updatable');
 var StateMachine = require('javascript-state-machine');
 var sequence = require('inch-sequence');
 
-module.exports = function () {
+module.exports = function (priorState) {
+    console.log("priorState", priorState);
+    var controller = priorState || {};
+    _.defaults(controller, {
+        start: 0,
+        score: 0,
+        state: 'ready',
+        priorScores: []
+    });
+
     var delayedEffects = require('inch-delayed-effects')();
-    var start = 0;
-    var controller = Object.create(updatable_entity("controller", delayedEffects.update));
 
     var state_machine = StateMachine.create({
         initial: 'ready',
@@ -36,12 +43,10 @@ module.exports = function () {
         return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
     };
 
+    _.extend(controller, updatable_entity("controller", delayedEffects.update));
     _.extend(controller, {
-        score: 0,
-        state: 'ready',
-        priorScores: [],
         challenge_seen: function (ack) {
-            start = ack.rcvdTimestamp;
+            controller.start = ack.rcvdTimestamp;
         },
         response: function (force, data) {
             if (state_machine.is('ready')) {
@@ -58,7 +63,7 @@ module.exports = function () {
             }
             if (state_machine.is('challenge_started')) {
                 state_machine.challenge_started();
-                controller.score = data.rcvd_timestamp - start;
+                controller.score = data.rcvd_timestamp - controller.start;
                 return;
             }
         },
@@ -69,6 +74,13 @@ module.exports = function () {
                     this.priorScores.push({id: sequence.next("prior-scores"), score: "x"});
                 } else {
                     this.priorScores.push({id: sequence.next("prior-scores"), score: controller.score});
+
+                    _.each(this.priorScores, function(priorScore) {
+                        priorScore.best = false;
+                    });
+
+                    var bestScore = _.min(this.priorScores, function(priorScore) { return priorScore.score; });
+                    bestScore.best = true;
                 }
 
                 controller.score = 0;

@@ -19,6 +19,10 @@
   width: 50%;
 }
 
+.best {
+  color: #00ff00;
+}
+
 #score {
   margin: 0;
   padding: 0;
@@ -38,5 +42,6 @@
 
   li + li:before {
     content: ', ';
+    color: white !important;
   }
 }

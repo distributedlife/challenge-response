@@ -10,6 +10,7 @@ module.exports = {
         var Howl = require('howler').Howl;
         var jade = require('jade');
         var $ = require('zepto-browserify').$;
+        var _ = require('lodash');
 
         return {
             screenResized: function (dimensions) {
@@ -84,7 +85,26 @@ module.exports = {
                     });
 
                     return function (currentValue, priorValue) {
-                        $("#prior-scores").append(jade.render(template, {score: currentValue.score}));
+                        $("#prior-scores").append(jade.render(template, {id: "prior-score-" + currentValue.id, score: currentValue.score}));
+                    };
+                };
+                var updateHightlight = function(currentValue, priorValue) {
+                    if (currentValue.best) {
+                        $("#prior-score-" + currentValue.id).addClass("best");
+                    } else {
+                        $("#prior-score-" + currentValue.id).removeClass("best");
+                    }
+                }
+                var addExistingScoresFunction = function() {
+                    var template;
+                    $.get('/game/jade/priorScores.jade', function (data) {
+                        template = data;
+                    });
+
+                    return function (currrentValues) {
+                        _.each(currrentValues, function(value) {
+                            $("#prior-scores").append(jade.render(template, {id: "prior-score-" + value.id, score: value.score}));
+                        });
                     };
                 };
 
@@ -98,7 +118,8 @@ module.exports = {
                 tracker.onChangeTo(theGameState, equals('complete'), show_results, statusIndicator);
                 tracker.onChangeTo(theGameState, equals('false_start'), show_false_start, [statusIndicator, goSound, waitingSound]);
                 tracker.onChangeOf(theScore, update_score);
-                tracker.onElementAdded(thePriorScores, onScoreAddedFunction());
+                tracker.onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
+                tracker.onElementChanged(thePriorScores, updateHightlight);
             }
         };
     }
