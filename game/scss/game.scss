@@ -20,7 +20,7 @@
 }
 
 .best {
-  color: #00ff00;
+  color: #0f0;
 }
 
 #score {
@@ -41,7 +41,7 @@
   }
 
   li + li:before {
+    color: #fff !important;
     content: ', ';
-    color: white !important;
   }
 }
