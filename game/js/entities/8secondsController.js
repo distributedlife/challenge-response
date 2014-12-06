@@ -11,7 +11,8 @@ module.exports = function (priorState) {
         start: 0,
         score: 0,
         state: 'ready',
-        priorScores: []
+        attempts: 0,
+        total: 0
     });
 
     var delayedEffects = require('inch-delayed-effects')();
@@ -23,7 +24,8 @@ module.exports = function (priorState) {
             { name: 'waiting', from: 'waiting', to: 'challenge_started' },
             { name: 'challenge_started', from: 'challenge_started', to: 'complete' },
             { name: 'reset', from: '*', to: 'ready' },
-            { name: 'false_start', from: '*', to: 'false_start' }
+            { name: 'false_start', from: '*', to: 'false_start' },
+            { name: 'game_over', from: '*', to: 'game_over' }
         ],
         callbacks: {
             onstate: function () { controller.state = this.current; }
@@ -63,25 +65,21 @@ module.exports = function (priorState) {
             if (state_machine.is('challenge_started')) {
                 state_machine.challenge_started();
                 controller.score = data.rcvd_timestamp - controller.start;
+                controller.total += controller.score;
+                controller.attempts += 1;
+
+                if (controller.total >= 8000) {
+                    state_machine.game_over();
+                }
                 return;
             }
         },
         reset: function (force, data) {
+            if (controller.state === "false_start") {
+                controller.attempts += 1;
+            }
+
             if (controller.state === 'complete' || controller.state === "false_start") {
-
-                if (controller.state === "false_start") {
-                    this.priorScores.push({id: sequence.next("prior-scores"), score: "x"});
-                } else {
-                    this.priorScores.push({id: sequence.next("prior-scores"), score: controller.score});
-
-                    _.each(this.priorScores, function(priorScore) {
-                        priorScore.best = false;
-                    });
-
-                    var bestScore = _.min(this.priorScores, function(priorScore) { return priorScore.score; });
-                    bestScore.best = true;
-                }
-
                 controller.score = 0;
                 state_machine.reset();
             }

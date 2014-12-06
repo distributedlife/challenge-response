@@ -23,7 +23,8 @@ var paths = {
   scss: ['game/**/*.scss'],
   css: ['game/css'],
   tests: ['tests/**/*.js'],
-  genjs: './game/js/gen'
+  genjs: './game/js/gen',
+  modes: ['./game/js/practice.js', './game/js/8seconds.js']
 };
 
 var onError = function (error) {
@@ -61,14 +62,14 @@ gulp.task('test', function () {
 });
 
 gulp.task('build-code', function() {
-    gulp.src('./game/js/practice.js')
+    gulp.src(paths.modes)
         .pipe(plumber({errorHandler: onError}))
         .pipe(browserify({
             debug: false,
             transform: [reactify]
         }))
         // .pipe(uglify())
-        .pipe(rename('primary.js'))
+        // .pipe(rename('primary.js'))
         .pipe(gulp.dest(paths.genjs));
 });
 gulp.task('build-styles', function() {

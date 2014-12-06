@@ -64,6 +64,26 @@ module.exports = {
                     score.show();
                 };
 
+                var updateTheNumberOfAttempts = function (model, prior_model) {
+                    $("#attempts")[0].innerText = model;
+
+                    var score = $("#attempts");
+                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
+
+                    score.css('left', centered.left + 'px');
+                    score.show();
+                };
+
+                var updateTheTotal = function (model, prior_model) {
+                    $("#total")[0].innerText = model;
+
+                    var score = $("#total");
+                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
+
+                    score.css('left', centered.left + 'px');
+                    score.show();
+                };
+
                 var statusIndicator = new Circle(scene.add, scene.remove, {
                     radius: 100,
                     segments: 80,
@@ -94,7 +114,7 @@ module.exports = {
                     } else {
                         $("#prior-score-" + currentValue.id).removeClass("best");
                     }
-                }
+                };
                 var addExistingScoresFunction = function() {
                     var template;
                     $.get('/game/jade/priorScores.jade', function (data) {
@@ -120,6 +140,12 @@ module.exports = {
                 tracker.onChangeOf(theScore, update_score);
                 tracker.onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
                 tracker.onElementChanged(thePriorScores, updateHightlight);
+
+                var theNumberOfAttempts = function (state) { return state.controller.attempts; };
+                var theTotal = function (state) { return state.controller.total; };
+
+                tracker.onChangeOf(theNumberOfAttempts, updateTheNumberOfAttempts);
+                tracker.onChangeOf(theTotal, updateTheTotal);
             }
         };
     }
