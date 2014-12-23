@@ -43,9 +43,7 @@ gulp.task('clean', ['delete-gen-css', 'delete-gen-code']);
 gulp.task('lint-code', function () {
     gulp.src(paths.js)
         .pipe(plumber({errorHandler: onError}))
-        .pipe(jshint({
-            node: true
-        }))
+        .pipe(jshint())
         .pipe(jshint.reporter('default', { verbose: true }));
 });
 gulp.task('lint-scss', function () {
@@ -58,7 +56,7 @@ gulp.task('lint', ['lint-code', 'lint-scss']);
 gulp.task('test', function () {
     return gulp.src(paths.tests, {read: false})
         .pipe(plumber({errorHandler: onError}))
-        .pipe(mocha({reporter: 'nyan'}));
+        .pipe(mocha({reporter: 'spec'}));
 });
 
 gulp.task('build-code', function() {
@@ -69,7 +67,6 @@ gulp.task('build-code', function() {
             transform: [reactify]
         }))
         // .pipe(uglify())
-        // .pipe(rename('primary.js'))
         .pipe(gulp.dest(paths.genjs));
 });
 gulp.task('build-styles', function() {

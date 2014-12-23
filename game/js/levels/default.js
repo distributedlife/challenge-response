@@ -17,7 +17,7 @@ module.exports = {
                 //TODO: do we need to reposition all the things?
             },
             setup: function (scene, ackLastRequest, register, tracker, camera) {
-                var show_instructions = function (model, prior_model, statusIndicator) {
+                var showInstructions = function (model, priorModel, statusIndicator) {
                     $("#instructions").show();
                     $("#challenge").hide();
                     $("#results").hide();
@@ -25,13 +25,13 @@ module.exports = {
                     statusIndicator.changeColour(0, colour("grey").rgbArray());
                 };
 
-                var hide_instructions = function (model, prior_model, statusIndicator, waitingSound) {
+                var hideInstructions = function (model, priorModel, statusIndicator, waitingSound) {
                     $("#instructions").hide();
                     statusIndicator.changeColour(0, colour("red").rgbArray());
                     waitingSound.play();
                 };
 
-                var show_challenge = function (model, prior_model, statusIndicator, goSound, waitingSound) {
+                var showChallenge = function (model, priorModel, statusIndicator, goSound, waitingSound) {
                     waitingSound.stop();
                     goSound.play();
 
@@ -40,20 +40,20 @@ module.exports = {
                     statusIndicator.changeColour(0, colour("green").rgbArray());
                 };
 
-                var show_results = function (model, prior_model, statusIndicator) {
+                var showResults = function (model, priorModel, statusIndicator) {
                     $("#challenge").hide();
                     $("#results").show();
                     statusIndicator.changeColour(0, colour("black").rgbArray());
                 };
 
-                var show_false_start = function (model, prior_model, statusIndicator, goSound, waitingSound) {
+                var showFalseStart = function (model, priorModel, statusIndicator, goSound, waitingSound) {
                     $("#falsestart").show();
                     statusIndicator.changeColour(0, colour("orange").rgbArray());
                     goSound.stop();
                     waitingSound.stop();
                 };
 
-                var update_score = function (model, prior_model) {
+                var updateScore = function (model, priorModel) {
                     $("#score")[0].innerText = model;
 
                     var score = $("#score");
@@ -61,26 +61,6 @@ module.exports = {
 
                     score.css('left', centered.left + 'px');
                     score.css('top', centered.top + "px");
-                    score.show();
-                };
-
-                var updateTheNumberOfAttempts = function (model, prior_model) {
-                    $("#attempts")[0].innerText = model;
-
-                    var score = $("#attempts");
-                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
-
-                    score.css('left', centered.left + 'px');
-                    score.show();
-                };
-
-                var updateTheTotal = function (model, prior_model) {
-                    $("#total")[0].innerText = model;
-
-                    var score = $("#total");
-                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
-
-                    score.css('left', centered.left + 'px');
                     score.show();
                 };
 
@@ -132,20 +112,14 @@ module.exports = {
                 var theScore = function (state) { return state.controller.score; };
                 var thePriorScores = function (state) { return state.controller.priorScores; };
 
-                tracker.onChangeTo(theGameState, equals('ready'), show_instructions, statusIndicator);
-                tracker.onChangeTo(theGameState, equals('waiting'), hide_instructions, [statusIndicator, waitingSound]);
-                tracker.onChangeTo(theGameState, equals('challenge_started'), show_challenge, [statusIndicator, goSound, waitingSound]);
-                tracker.onChangeTo(theGameState, equals('complete'), show_results, statusIndicator);
-                tracker.onChangeTo(theGameState, equals('false_start'), show_false_start, [statusIndicator, goSound, waitingSound]);
-                tracker.onChangeOf(theScore, update_score);
+                tracker.onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
+                tracker.onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator, waitingSound]);
+                tracker.onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator, goSound, waitingSound]);
+                tracker.onChangeTo(theGameState, equals('complete'), showResults, statusIndicator);
+                tracker.onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator, goSound, waitingSound]);
+                tracker.onChangeOf(theScore, updateScore);
                 tracker.onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
                 tracker.onElementChanged(thePriorScores, updateHightlight);
-
-                var theNumberOfAttempts = function (state) { return state.controller.attempts; };
-                var theTotal = function (state) { return state.controller.total; };
-
-                tracker.onChangeOf(theNumberOfAttempts, updateTheNumberOfAttempts);
-                tracker.onChangeOf(theTotal, updateTheTotal);
             }
         };
     }

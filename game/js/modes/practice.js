@@ -1,9 +1,11 @@
 "use strict";
 
 var entities = require('inch-entity-loader').loadFromPath(process.cwd() + "/game/js/entities/");
+var SocketSupport = require('inch-socket-support');
+var GameState = require('inch-game-state');
 
-module.exports = function (server) {
-    var state = require('inch-game-state').andExtendWith({
+module.exports = function (io) {
+    var state = new GameState({
         controller: new entities.controller()
     });
     var actionMap = {
@@ -11,19 +13,16 @@ module.exports = function (server) {
         'r': [{target: state.controller.reset.bind(state.controller), keypress: true}]
     };
     var ackMap = {
-        'show-challenge': [state.controller.challenge_seen]
+        'show-challenge': [state.controller.challengeSeen]
     };
-    var game_logic = require(process.cwd() + "/game/js/logic")(state);
 
-
-    var inputHandler = require('inch-input-handler')(actionMap);
+    var inputHandler = require('inch-input-handler').InputHandler(actionMap);
     var engine = require('inch-game-engine')(state.isPaused.bind(state), [
-        state.update.bind(state),
         inputHandler.update,
-        game_logic.update
+        state.controller.update
     ]);
     engine.run(120);
 
-    var callbacks = require('inch-standard-socket-support-callbacks')(state, inputHandler);
-    require('inch-socket-support')(server, callbacks, ackMap);
+    var callbacks = SocketSupport.createStandardCallbacksHash(state, inputHandler);
+    SocketSupport.setup(io, callbacks, ackMap, 'practice');
 };

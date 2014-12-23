@@ -7,7 +7,7 @@ var modes = {
 
 var overlays = {
     '8seconds': process.cwd() + "/game/jade/8seconds.jade",
-    'practice': process.cwd() + "/game/jade/primary.jade"
+    'practice': process.cwd() + "/game/jade/practice.jade"
 };
 
 var server = require("inch-server-express").Server("./game", modes, overlays);
