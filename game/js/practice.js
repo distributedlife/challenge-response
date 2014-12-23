@@ -15,9 +15,3 @@ pluginManager.load(require("./levels/default"));
 
 var clientSideEngine = require('inch-client-assembler')(pluginManager);
 clientSideEngine.assembleAndRun();
-
-
-// var pluginManager = require('inch-plugins');
-// pluginManager.loadFromConfig("/path/to/clientAssemblyConfig.json", "practice");
-// var clientSideEngine = require('inch-client-assembler')(pluginManager);
-// clientSideEngine.assembleAndRun();
