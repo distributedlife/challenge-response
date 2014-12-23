@@ -10,6 +10,7 @@ pluginManager.load(require("inch-plugin-debug-outside-in-grid"));
 pluginManager.load(require("inch-plugin-position-helper-2d"));
 pluginManager.load(require("inch-plugin-socket-behaviour-desktop"));
 pluginManager.load(require("inch-plugin-display-behaviour-standard"));
+pluginManager.load(require("inch-plugin-level-player-observer-count"));
 pluginManager.load(require("./levels/default"));
 // pluginManager.load(require("./levels/shared"));
 pluginManager.load(require("./levels/8seconds"));
