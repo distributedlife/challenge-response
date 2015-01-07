@@ -2,3 +2,5 @@ node_modules/
 game/js/gen/
 .sass-cache/
 game/css/
+.node-version
+npm-debug.log
