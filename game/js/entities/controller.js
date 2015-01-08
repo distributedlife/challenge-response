@@ -2,7 +2,6 @@
 
 var _ = require('lodash');
 var updatableEntity = require('inch-entity-updatable');
-var StateMachine = require('javascript-state-machine');
 var sequence = require('inch-sequence');
 
 module.exports = function (priorState) {
@@ -15,27 +14,12 @@ module.exports = function (priorState) {
     });
 
     var delayedEffects = require('inch-delayed-effects')();
-
-    var stateMachine = StateMachine.create({
-        initial: 'ready',
-        events: [
-            { name: 'ready', from: 'ready', to: 'waiting' },
-            { name: 'waiting', from: 'waiting', to: 'challengeStarted' },
-            { name: 'challengeStarted', from: 'challengeStarted', to: 'complete' },
-            { name: 'reset', from: '*', to: 'ready' },
-            { name: 'falseStart', from: '*', to: 'falseStart' }
-        ],
-        callbacks: {
-            onstate: function () { controller.state = this.current; }
-        }
-    });
-
     var delayed = function () {
-        if (stateMachine.is('falseStart')) {
+        if (controller.state === 'falseStart') {
             return;
         }
 
-        stateMachine.waiting();
+        controller.state = "challengeStarted";
     };
 
     var rollUpAnUnnvervingDelay = function () {
@@ -48,25 +32,24 @@ module.exports = function (priorState) {
             controller.start = ack.rcvdTimestamp;
         },
         response: function (force, data) {
-            if (stateMachine.is('ready')) {
-                stateMachine.ready();
+            if (controller.state === 'ready') {
+                controller.state = "waiting";
                 delayedEffects.add(rollUpAnUnnvervingDelay(), delayed);
                 return;
             }
-            if (stateMachine.is('waiting')) {
-                stateMachine.falseStart();
-
+            if (controller.state === 'waiting') {
+                controller.state = "falseStart";
                 delayedEffects.cancelAll();
 
                 return;
             }
-            if (stateMachine.is('challengeStarted')) {
-                stateMachine.challengeStarted();
+            if (controller.state === 'challengeStarted') {
+                controller.state = 'complete';
                 controller.score = data.rcvdTimestamp - controller.start;
                 return;
             }
         },
-        reset: function (force, data) {
+        reset: function () {
             if (controller.state === 'complete' || controller.state === "falseStart") {
 
                 if (controller.state === "falseStart") {
@@ -83,7 +66,7 @@ module.exports = function (priorState) {
                 }
 
                 controller.score = 0;
-                stateMachine.reset();
+                controller.state = "ready";
             }
         }
     });

@@ -13,7 +13,7 @@ module.exports = {
         var _ = require('lodash');
 
         return {
-            screenResized: function (dimensions) {
+            screenResized: function () {
                 //TODO: do we need to reposition all the things?
             },
             setup: function (scene, ackLastRequest, register, tracker, camera) {
@@ -53,7 +53,7 @@ module.exports = {
                     waitingSound.stop();
                 };
 
-                var updateScore = function (model, priorModel) {
+                var updateScore = function (model) {
                     $("#score")[0].innerText = model;
 
                     var score = $("#score");
@@ -84,11 +84,11 @@ module.exports = {
                         template = data;
                     });
 
-                    return function (currentValue, priorValue) {
+                    return function (currentValue) {
                         $("#prior-scores").append(jade.render(template, {id: "prior-score-" + currentValue.id, score: currentValue.score}));
                     };
                 };
-                var updateHightlight = function(currentValue, priorValue) {
+                var updateHightlight = function(currentValue) {
                     if (currentValue.best) {
                         $("#prior-score-" + currentValue.id).addClass("best");
                     } else {

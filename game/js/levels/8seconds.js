@@ -12,11 +12,11 @@ module.exports = {
                 //TODO: do we need to reposition all the things?
             },
             setup: function (scene, ackLastRequest, register, tracker, camera) {
-                var showGameOver = function (model, priorModel) {
+                var showGameOver = function () {
                     $("#gameOver").show();
                 };
 
-                var updateTheNumberOfAttempts = function (model, priorModel) {
+                var updateTheNumberOfAttempts = function (model) {
                     $("#attempts")[0].innerText = model;
 
                     var score = $("#attempts");
@@ -26,7 +26,7 @@ module.exports = {
                     score.show();
                 };
 
-                var updateTheTotal = function (model, priorModel) {
+                var updateTheTotal = function (model) {
                     $("#total")[0].innerText = model;
 
                     var score = $("#total");

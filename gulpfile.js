@@ -17,6 +17,8 @@ var flatten = require('gulp-flatten');
 var browserify = require('gulp-browserify');
 var plumber = require('gulp-plumber');
 var uglify = require('gulp-uglify');
+var istanbul = require('gulp-istanbul');
+var coveralls = require('gulp-coveralls');
 
 var paths = {
   js: ['game/**/*.js', 'game.js', '!game/js/gen/**'],
@@ -53,10 +55,22 @@ gulp.task('lint-scss', function () {
 });
 gulp.task('lint', ['lint-code', 'lint-scss']);
 
-gulp.task('test', function () {
-    return gulp.src(paths.tests, {read: false})
+gulp.task('test', ['clean'], function (cb) {
+    gulp.src('src/**/*.js')
         .pipe(plumber({errorHandler: onError}))
-        .pipe(mocha({reporter: 'spec'}));
+        .pipe(istanbul())
+        .pipe(istanbul.hookRequire())
+        .on('finish', function () {
+            gulp.src(['tests/**/*.js'])
+                .pipe(mocha({reporter: 'spec'}))
+                .pipe(istanbul.writeReports())
+                .on('end', cb);
+        });
+});
+
+gulp.task('coveralls', ['test'], function() {
+  return gulp.src(['coverage/**/lcov.info'])
+    .pipe(coveralls());
 });
 
 gulp.task('build-code', function() {
@@ -97,5 +111,5 @@ gulp.task('watch', ['server:start'], function() {
     gulp.watch(paths.scss, ['delete-gen-css', 'lint-scss', 'build-styles']).on('change', restart);
 });
 
-gulp.task('default', ['clean', 'lint', 'test', 'build']);
+gulp.task('default', ['lint', 'test', 'build']);
 gulp.task('local', ['default', 'watch']);
