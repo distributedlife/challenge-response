@@ -5,3 +5,4 @@ game/css/
 coverage/
 .node-version
 npm-debug.log
+vendor

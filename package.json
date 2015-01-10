@@ -27,7 +27,7 @@
     "inch-plugin-display-behaviour-standard": "^3.0.8",
     "inch-plugin-icon-layout-fixed-aspect": "^1.0.2",
     "inch-plugin-input-mode-keyboard": "^2.0.2",
-    "inch-plugin-level-player-observer-count": "0.0.1",
+    "inch-plugin-level-player-observer-count": "^0.0.3",
     "inch-plugin-level-standard-behaviour": "^1.0.1",
     "inch-plugin-position-helper-2d": "^0.0.1",
     "inch-plugin-render-engine-adapter-threejs": "^1.5.0",
@@ -45,7 +45,8 @@
     "lodash": "^2.4.1",
     "nodemon": "^1.3.0-7",
     "passport": "^0.2.1",
-    "plumber": "^0.4.8"
+    "plumber": "^0.4.8",
+    "zepto-browserify": "^1.1.3-0"
   },
   "devDependencies": {
     "browserify": "^6.2.0",

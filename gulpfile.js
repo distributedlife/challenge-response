@@ -51,7 +51,7 @@ gulp.task('lint-code', function () {
 gulp.task('lint-scss', function () {
     return gulp.src(paths.scss)
         .pipe(plumber({errorHandler: onError}))
-        .pipe(scsslint());
+        .pipe(scsslint({ 'bundleExec': true }));
 });
 gulp.task('lint', ['lint-code', 'lint-scss']);
 
@@ -87,7 +87,7 @@ gulp.task('build-styles', function() {
     return gulp.src(paths.scss)
         .pipe(plumber({errorHandler: onError}))
         .pipe(autoprefixer({ cascade: false }))
-        .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css' }))
+        .pipe(sass({ style: 'expanded', sourcemapPath: 'public/css', bundleExec: true }))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
         .pipe(flatten())
