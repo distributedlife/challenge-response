@@ -49,37 +49,41 @@ module.exports = function (priorState) {
         challengeSeen: function (ack) {
             controller.start = ack.rcvdTimestamp;
         },
-        response: function (force, data) {
+        response: function () {
             if (stateMachine.is('ready')) {
                 stateMachine.ready();
                 delayedEffects.add(rollUpAnUnnervingDelay(), delayed);
                 return;
             }
             if (stateMachine.is('waiting')) {
-                stateMachine.falseStart();
+                stateMachine.reset();
+                controller.attempts += 1;
+                controller.score = 0;
 
                 delayedEffects.cancelAll();
 
                 return;
             }
             if (stateMachine.is('challengeStarted')) {
-                stateMachine.challengeStarted();
+                stateMachine.reset();
+
                 controller.score = data.rcvdTimestamp - controller.start;
                 controller.total += controller.score;
                 controller.attempts += 1;
+                controller.score = 0;
                 if (controller.total >= 8000) {
                     stateMachine.gameOver();
                 }
+
                 return;
             }
         },
         reset: function (force, data) {
-            if (controller.state === "falseStart") {
-                controller.attempts += 1;
-            }
-
-            if (controller.state === 'complete' || controller.state === "falseStart") {
+            if (stateMachine.is('gameOver')) {
                 controller.score = 0;
+                controller.attempts = 0;
+                controller.total = 0;
+
                 stateMachine.reset();
             }
         }

@@ -8,8 +8,11 @@ module.exports = function (io) {
     var state = new GameState({
         controller: new entities.controller()
     });
+    //TODO: solve the namespace problem.
+    // state.addExternalModule(require('inch-player-observer-game-state'));
+
     var actionMap = {
-        'space': [{target: state.controller.response, keypress: true}],
+        'space': [{target: state.controller.response, keypress: true, data: state.controller}],
         'r': [{target: state.controller.reset.bind(state.controller), keypress: true}]
     };
     var ackMap = {
