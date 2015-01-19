@@ -25,7 +25,7 @@ module.exports = function (io) {
     // state.addState("inch.core", state.core);                              //explicitly set the namespace and the initial state. This is used when?
     // state.addStateFromModule(require('inch-game-state-player-observer')); //the module define the interface providing the namespace and the code itself
 
-    var delayed = function (controller) {
+    var delayed = function (data, controller) {
         controller = state.controller;
 
         if (controller.state === 'falseStart') {
@@ -44,8 +44,6 @@ module.exports = function (io) {
     };
 
     var response = function (force, data, controller) {
-        controller = state.controller;
-
         if (controller.state === 'ready') {
             controller.state = "waiting";
             delayedEffects.add("pause-for-effect", rollUpAnUnnvervingDelay(), delayed);
@@ -64,9 +62,7 @@ module.exports = function (io) {
         }
     };
 
-    var reset = function (controller) {
-        controller = state.controller;
-
+    var reset = function (force, data, controller) {
         if (controller.state !== 'complete' && controller.state !== "falseStart") {
             return;
         }
