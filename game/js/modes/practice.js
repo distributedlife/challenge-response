@@ -10,8 +10,6 @@ var sequence = require('inch-sequence');
 var _ = require('lodash');
 
 module.exports = function (io) {
-    //TODO: define namespace when creating state
-    // var state = new GameState("distributedlife.challenge-response");
     var state = new GameState({
         controller: {
             start: 0,
@@ -21,19 +19,22 @@ module.exports = function (io) {
         }
     });
 
+    // // set the namespace for this app
+    // var state = new GameState("distributedlife.challenge-response");
+    // // add some state under the namespace
+    // state.addState({
+    // controller:
+    //     {
+    //         start: 0,
+    //         score: 0,
+    //         state: 'ready',
+    //         priorScores: []
+    //     }
+    // });
+
     //TODO: solve the namespace problem.
     // state.addState("inch.core", state.core);                              //explicitly set the namespace and the initial state. This is used when?
     // state.addStateFromModule(require('inch-game-state-player-observer')); //the module define the interface providing the namespace and the code itself
-
-    var delayed = function (data, controller) {
-        controller = state.controller;
-
-        if (controller.state === 'falseStart') {
-            return;
-        }
-
-        controller.state = "challengeStarted";
-    };
 
     var challengeSeen = function (ack, controller) {
         controller.start = ack.rcvdTimestamp;
@@ -46,7 +47,15 @@ module.exports = function (io) {
     var response = function (force, data, controller) {
         if (controller.state === 'ready') {
             controller.state = "waiting";
-            delayedEffects.add("pause-for-effect", rollUpAnUnnvervingDelay(), delayed);
+
+            delayedEffects.add("pause-for-effect", rollUpAnUnnvervingDelay(), function () {
+                if (controller.state === 'falseStart') {
+                    return;
+                }
+
+                controller.state = "challengeStarted";
+            });
+
             return;
         }
         if (controller.state === 'waiting') {
