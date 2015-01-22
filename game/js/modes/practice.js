@@ -1,11 +1,10 @@
 "use strict";
 
-//TODO: DO WE EVEN HAVE ENTITIES? OR DO WE JUST HAVE BEHAVIOUR?
-// var entities = require('inch-entity-loader').loadFromPath(process.cwd() + "/game/js/entities/");
 var delayedEffects = require('inch-delayed-effects').DelayedEffects();
-var controllerBehaviour = require(process.cwd() + '/game/js/entities/controller')(delayedEffects);
 var SocketSupport = require('inch-socket-support');
 var GameState = require('inch-game-state');
+
+var controllerBehaviour = require(process.cwd() + '/game/js/entities/controller')(delayedEffects);
 
 module.exports = function (io) {
     var state = new GameState({
