@@ -8,9 +8,10 @@ module.exports = {
         var equals = require("inch-state-tracker").Equals;
         var Circle = require('inch-geometry2d-circle')(adapter);
         var Howl = require('howler').Howl;
-        var jade = require('jade');
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');
+
+        var priorScoresTemplate = require("../../jade/priorScores.jade");
 
         return {
             screenResized: function () {
@@ -79,13 +80,8 @@ module.exports = {
                 });
 
                 var onScoreAddedFunction = function() {
-                    var template;
-                    $.get('/game/jade/priorScores.jade', function (data) {
-                        template = data;
-                    });
-
                     return function (currentValue) {
-                        $("#prior-scores").append(jade.render(template, {id: "prior-score-" + currentValue.id, score: currentValue.score}));
+                        $("#prior-scores").append(priorScoresTemplate({id: "prior-score-" + currentValue.id, score: currentValue.score}));
                     };
                 };
                 var updateHightlight = function(currentValue) {
@@ -96,14 +92,9 @@ module.exports = {
                     }
                 };
                 var addExistingScoresFunction = function() {
-                    var template;
-                    $.get('/game/jade/priorScores.jade', function (data) {
-                        template = data;
-                    });
-
                     return function (currrentValues) {
                         _.each(currrentValues, function(value) {
-                            $("#prior-scores").append(jade.render(template, {id: "prior-score-" + value.id, score: value.score}));
+                            $("#prior-scores").append(priorScoresTemplate({id: "prior-score-" + value.id, score: value.score}));
                         });
                     };
                 };

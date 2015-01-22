@@ -5,7 +5,6 @@ var server = require('gulp-develop-server');
 var livereload = require('gulp-livereload');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
-var reactify = require('reactify');
 var csslint = require('gulp-csslint');
 var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
@@ -14,11 +13,15 @@ var rename = require('gulp-rename');
 var del = require('del');
 var scsslint = require('gulp-scss-lint');
 var flatten = require('gulp-flatten');
-var browserify = require('gulp-browserify');
+var browserify = require('browserify');
 var plumber = require('gulp-plumber');
 var uglify = require('gulp-uglify');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
+var buffer = require('vinyl-buffer');
+var sourcemaps = require('gulp-sourcemaps');
+var source = require('vinyl-source-stream');
+var transform = require('vinyl-transform');
 
 var paths = {
   js: ['game/**/*.js', 'game.js', '!game/js/gen/**'],
@@ -74,13 +77,17 @@ gulp.task('coveralls', ['test'], function() {
 });
 
 gulp.task('build-code', function() {
-    gulp.src(paths.modes)
+    var browserified = transform(function(filename) {
+        var b = browserify(filename);
+        return b.bundle();
+    });
+
+    return gulp.src(paths.modes)
         .pipe(plumber({errorHandler: onError}))
-        .pipe(browserify({
-            debug: false,
-            transform: [reactify]
-        }))
-        // .pipe(uglify())
+        .pipe(browserified)
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(paths.genjs));
 });
 gulp.task('build-styles', function() {
