@@ -23,13 +23,14 @@
   color: #0f0;
 }
 
-#score {
+.score {
+  font-size: 10em;
   margin: 0;
   padding: 0;
   position: fixed;
 }
 
-#prior-scores {
+.prior-scores {
   bottom: 0;
   display: inline;
   left: 0;
