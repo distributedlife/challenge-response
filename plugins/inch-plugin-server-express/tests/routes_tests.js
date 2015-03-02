@@ -2,7 +2,6 @@ var expect = require('expect');
 var sinon = require('sinon');
 var http = require('http');
 var _ = require('lodash');
-var rek = require('rekuire');
 
 describe("configuring the routes", function () {
 	var routes;
@@ -12,7 +11,7 @@ describe("configuring the routes", function () {
 	var server;
 
 	before(function() {
-		server = rek("plugins/inch-plugin-server-express/src/js/server").Server("../dummy", callbacks);
+		server = require("../src/js/server").Server("../dummy", callbacks);
 		server.start();
 	});
 

@@ -1,6 +1,5 @@
 var expect = require('expect');
 var sinon = require('sinon');
-var rek = require('rekuire');
 
 var modes = {
     'test': function() { console.log("this just happened"); }
@@ -23,7 +22,7 @@ describe("starting the server", function () {
 	});
 
 	beforeEach(function() {
-		server = rek("plugins/inch-plugin-server-express/src/js/server").Server("../game", modes);
+		server = require("../src/js/server").Server("../game", modes);
 		server.start();
 	});
 
@@ -58,7 +57,7 @@ describe("stopping the server", function () {
 		io.listen = sinon.spy();
 		http.createServer = function() { return expressServer; }
 
-		server = rek("plugins/inch-plugin-server-express/src/js/server").Server("../game", modes);
+		server = require("../src/js/server").Server("../game", modes);
 		server.start();
 		server.stop();
 	});

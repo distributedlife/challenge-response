@@ -1,14 +1,13 @@
 "use strict";
 
-var rek = require('rekuire');
-var define = rek('plugins/inch-define-plugin');
-var pluginManager = rek('plugins/inch-plugins');
-pluginManager.load(rek('plugins/inch-plugin-state-mutator-default'));
-pluginManager.load(rek('plugins/inch-plugin-behaviour-invoker-default'));
+var define = require('../../../plugins/inch-define-plugin/src/define.js');
+var pluginManager = require('../../../plugins/inch-plugins/src/plugin_manager.js').PluginManager;
+pluginManager.load(require('../../../plugins/inch-plugin-state-mutator-default/src/index.js'));
+pluginManager.load(require('../../../plugins/inch-plugin-behaviour-invoker-default/src/index.js'));
 
 // var state = pluginManager.get('StateAccess');
-var delayedEffects = require('inch-delayed-effects').DelayedEffects();
-var SocketSupport = require('inch-socket-support');
+var delayedEffects = require('../../../plugins/inch-delayed-effects/src/delayed_effect.js');
+var SocketSupport = require('../../../plugins/inch-socket-support/src/socket-support.js');
 var GameState = require('inch-game-state');
 
 var controllerBehaviour = require(process.cwd() + '/game/js/entities/controller')(delayedEffects);

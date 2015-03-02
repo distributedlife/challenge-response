@@ -12,6 +12,11 @@ module.exports = function(delayedEffects) {
         challengeSeen: function (ack, controller) {
             controller.start = ack.rcvdTimestamp;
         },
+        challengeSeen2: function (state, rcvdTimestamp) {
+            return {
+                start: rcvdTimestamp
+            };
+        },
         response: function (force, data, controller) {
             if (controller.state === 'ready') {
                 controller.state = "waiting";

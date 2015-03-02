@@ -40,6 +40,7 @@
     "inch-socket-support": "^4.0.0",
     "inch-state-tracker": "^1.1.1",
     "inch-temporary-effect": "^1.0.1",
+    "inch-unfurl": "^1.0.0",
     "jade": "^1.8.2",
     "javascript-state-machine": "^2.3.2",
     "lodash": "^2.4.1",

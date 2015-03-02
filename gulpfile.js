@@ -24,10 +24,10 @@ var source = require('vinyl-source-stream');
 var transform = require('vinyl-transform');
 
 var paths = {
-  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js'],
+  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js'],
   scss: ['game/**/*.scss'],
   css: ['game/css'],
-  tests: ['tests/**/*.js'],
+  tests: ['tests/**/*.js', 'plugins/**/tests/*.js'],
   genjs: './game/js/gen',
   modes: ['./game/js/practice.js', './game/js/8seconds.js']
 };
@@ -64,7 +64,7 @@ gulp.task('test', ['clean'], function (cb) {
         .pipe(istanbul())
         .pipe(istanbul.hookRequire())
         .on('finish', function () {
-            gulp.src(['tests/**/*.js'])
+            gulp.src(paths.tests)
                 .pipe(mocha({reporter: 'spec'}))
                 .pipe(istanbul.writeReports())
                 .on('end', cb);
