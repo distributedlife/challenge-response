@@ -8,7 +8,7 @@ pluginManager.load(require('../../../plugins/inch-plugin-behaviour-invoker-defau
 // var state = pluginManager.get('StateAccess');
 var delayedEffects = require('../../../plugins/inch-delayed-effects/src/delayed_effect.js');
 var SocketSupport = require('../../../plugins/inch-socket-support/src/socket-support.js');
-var GameState = require('inch-game-state');
+var GameState = require('../../../plugins/inch-game-state/src/state.js');
 
 var controllerBehaviour = require(process.cwd() + '/game/js/entities/controller')(delayedEffects);
 
