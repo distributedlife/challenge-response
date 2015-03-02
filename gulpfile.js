@@ -24,7 +24,7 @@ var source = require('vinyl-source-stream');
 var transform = require('vinyl-transform');
 
 var paths = {
-  js: ['game/**/*.js', 'game.js', '!game/js/gen/**'],
+  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js'],
   scss: ['game/**/*.scss'],
   css: ['game/css'],
   tests: ['tests/**/*.js'],
@@ -59,7 +59,7 @@ gulp.task('lint-scss', function () {
 gulp.task('lint', ['lint-code', 'lint-scss']);
 
 gulp.task('test', ['clean'], function (cb) {
-    gulp.src('src/**/*.js')
+    gulp.src(paths.js)
         .pipe(plumber({errorHandler: onError}))
         .pipe(istanbul())
         .pipe(istanbul.hookRequire())
