@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require('lodash');
-var sequence = require('inch-sequence');
+var sequence = require('../../inch-sequence/src/sequence.js');
 var unfurl = require('inch-unfurl');
 
 var statistics = {};

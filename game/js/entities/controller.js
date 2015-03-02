@@ -1,6 +1,6 @@
 "use strict";
 
-var sequence = require('inch-sequence');
+var sequence = require('../../../plugins/inch-sequence/src/sequence.js');
 var _ = require('lodash');
 
 module.exports = function(delayedEffects) {
