@@ -8,20 +8,20 @@ pluginManager.set('WidescreenMinimumMargin', 32);							//default, required
 pluginManager.set('Element', "canvas");										//default, required
 pluginManager.set('FOV', 60);												//default, required
 pluginManager.set('DebugProperties', {});									//default, required
-pluginManager.load(require('../../plugins/inch-plugin-dimensions-widescreen'));			//default, required
-pluginManager.load(require('../../plugins/inch-plugin-render-engine-adapter-threejs'));
-pluginManager.load(require('../../plugins/inch-plugin-connect-disconnect-behaviour'));	//default, required
-pluginManager.load(require('../../plugins/inch-plugin-camera-orthographic-centred'));
-pluginManager.load(require('../../plugins/inch-plugin-input-mode-keyboard'));
-pluginManager.load(require("../../plugins/inch-plugin-debug-outside-in-grid"));
-pluginManager.load(require("../../plugins/inch-plugin-position-helper-2d"));
-pluginManager.load(require("../../plugins/inch-plugin-socket-behaviour-desktop"));
-pluginManager.load(require("../../plugins/inch-plugin-display-behaviour-standard"));
-pluginManager.load(require("../../plugins/inch-plugin-update-loop-vsync"));				//default, required
-pluginManager.load(require('../../plugins/inch-plugin-icon-layout-fixed-aspect'));		//default, required
-pluginManager.load(require("../../plugins/inch-plugin-level-player-observer-count"));
-pluginManager.load(require('../../plugins/inch-plugin-level-standard-behaviour'));
+pluginManager.load(require('../../plugins/inch-plugin-dimensions-widescreen/src/dimensions.js'));			//default, required
+pluginManager.load(require('../../plugins/inch-plugin-render-engine-adapter-threejs/src/adapter.js'));
+pluginManager.load(require('../../plugins/inch-plugin-connect-disconnect-behaviour/src/behaviour.js'));	//default, required
+pluginManager.load(require('../../plugins/inch-plugin-camera-orthographic-centred/src/camera.js'));
+pluginManager.load(require('../../plugins/inch-plugin-input-mode-keyboard/src/input.js'));
+pluginManager.load(require("../../plugins/inch-plugin-debug-outside-in-grid/src/grid.js"));
+pluginManager.load(require("../../plugins/inch-plugin-position-helper-2d/src/helper.js"));
+pluginManager.load(require("../../plugins/inch-plugin-socket-behaviour-desktop/src/behaviour.js"));
+pluginManager.load(require("../../plugins/inch-plugin-display-behaviour-standard/src/display.js"));
+pluginManager.load(require("../../plugins/inch-plugin-update-loop-vsync/src/loop.js"));				//default, required
+pluginManager.load(require('../../plugins/inch-plugin-icon-layout-fixed-aspect/src/layout-icons.js'));		//default, required
+pluginManager.load(require("../../plugins/inch-plugin-level-player-observer-count/src/level.js"));
+pluginManager.load(require('../../plugins/inch-plugin-level-standard-behaviour/src/level.js'));
 pluginManager.load(require("./levels/default"));
 
-var clientSideEngine = require('../../plugins/inch-client-assembler')(pluginManager);
+var clientSideEngine = require('../../plugins/inch-client-assembler/src/assembler.js')(pluginManager);
 clientSideEngine.assembleAndRun();
