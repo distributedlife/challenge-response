@@ -51,12 +51,12 @@ module.exports = function (io) {
     //     }
     // });
 
-    var inputHandler = require('inch-input-handler').InputHandler(actionMap);
+    var inputHandler = require('../../../plugins/inch-input-handler/src/input-handler.js').InputHandler(actionMap);
 
     // pluginManager.load(require('inch-plugin-game-engine-default'));
 
 
-    var engine = require('inch-game-engine')(state.isPaused.bind(state), [      //isPaused has to be loaded in by IsPausedBehaviour?
+    var engine = require('../../../plugins/inch-game-engine/src/engine.js')(state.isPaused.bind(state), [      //isPaused has to be loaded in by IsPausedBehaviour?
         inputHandler.update,                //is loaded as a plugin
         delayedEffects.update               //is loaded as a plugin
     ]);

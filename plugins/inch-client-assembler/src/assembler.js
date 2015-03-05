@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var $ = require('zepto-browserify').$;
-var pendingAcknowledgements = require('inch-socket-pending-acknowledgements')();
+var pendingAcknowledgements = require('../../inch-socket-pending-acknowledgements/src/index.js')();
 
 module.exports = function (pluginManager) {
     _.each(pluginManager.get("Font"), function (font) {

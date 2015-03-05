@@ -4,8 +4,8 @@ module.exports = {
     type: "Level",
     func: function () {
         var $ = require("zepto-browserify").$;
-        var equals = require("inch-state-tracker").Equals;
-        var the = require("inch-state-tracker").The;
+        var equals = require("../../inch-state-tracker/src/tracker.js").Equals;
+        var the = require("../../inch-state-tracker/src/tracker.js").The;
         // var Howler = require('howler').Howler;
 
         var pause = function () {

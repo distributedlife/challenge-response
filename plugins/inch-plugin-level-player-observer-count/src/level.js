@@ -4,7 +4,7 @@ module.exports = {
     type: "Level",
     func: function () {
         var $ = require("zepto-browserify").$;
-        var the = require("inch-state-tracker").The;
+        var the = require("../../inch-state-tracker/src/tracker.js").The;
         var numeral = require('numeral');
 
         var updatePlayerCount = function (currentValue) {

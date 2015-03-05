@@ -5,8 +5,8 @@ module.exports = {
     type: "Level",
     func: function (adapter, window, Dimensions, PositionHelper) {
         var colour = require('color');
-        var equals = require("inch-state-tracker").Equals;
-        var Circle = require('inch-geometry2d-circle')(adapter);
+        var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
+        var Circle = require('../../../plugins/inch-geometry2d-circle/src/circle.js')(adapter);
         var Howl = require('howler').Howl;
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');

@@ -29,7 +29,7 @@ module.exports = {
                 var camera = Camera.Camera();
 
                 var threeJsScene = adapter.createScene();
-                var inchScene = require('inch-scene')(threeJsScene);
+                var inchScene = require('../../inch-scene/src/scene.js')(threeJsScene);
 
                 var renderer = adapter.createRenderer();
                 adapter.attachRenderer(element, renderer);

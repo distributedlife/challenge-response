@@ -119,4 +119,4 @@ gulp.task('watch', ['server:start'], function() {
 });
 
 gulp.task('default', ['lint', 'test', 'build']);
-gulp.task('local', ['default', 'watch']);
+gulp.task('local', ['build', 'watch']);
