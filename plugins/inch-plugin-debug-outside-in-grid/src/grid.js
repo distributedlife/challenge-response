@@ -9,7 +9,7 @@ module.exports = {
 
         return {
             Debug: function () {
-                var dims = Dimensions.Dimensions();
+                var dims = Dimensions().Dimensions;
                 var verticalLines = dims.usableWidth / size;
                 var horizontalLines = dims.usableHeight / size;
                 var x, y, w, h;
@@ -40,7 +40,7 @@ module.exports = {
                     vertices.push({x:  dims.usableWidth, y: y, z: 0});
                 }
 
-                return adapter.createColouredLinePieces(vertices, colour);
+                return adapter().createColouredLinePieces(vertices, colour);
             }
         };
     }

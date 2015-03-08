@@ -29,14 +29,14 @@ module.exports = {
 
                 return {
                     connect: function (setupFunc, updateFunc) {
-                        var socket = io.connect('http://localhost/' + GameMode + '/primary');
+                        var socket = io.connect('http://localhost/' + GameMode() + '/primary');
 
-                        if (window.document.hasFocus()) {
+                        if (window().document.hasFocus()) {
                             socket.emit('unpause');
                         }
 
-                        socket.on('connect', ConnectDisconnectBehaviour.connected);
-                        socket.on('disconnect', ConnectDisconnectBehaviour.disconnected);
+                        socket.on('connect', ConnectDisconnectBehaviour().connected);
+                        socket.on('disconnect', ConnectDisconnectBehaviour().disconnected);
                         socket.on('gameState/setup', setupFunc);
                         socket.on('gameState/update', updateFunc);
                         socket.on('error', function (data) { throw new Error(data); });
@@ -46,7 +46,7 @@ module.exports = {
                         $(window).on('mousedown', function () { socket.emit('unpause'); });
                         $(window).on('mouseup', function () { socket.emit('unpause'); });
 
-                        _.each(InputModes, function (InputMode) {
+                        _.each(InputModes(), function (InputMode) {
                             controls.push(InputMode.InputMode());
                         });
 

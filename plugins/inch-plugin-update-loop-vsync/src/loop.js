@@ -10,7 +10,7 @@ module.exports = {
                     run: function (time) {
                         updateFunc(time);
 
-                        window.requestAnimationFrame(this.run.bind(this));
+                        window().requestAnimationFrame(this.run.bind(this));
                     }
                 };
             }

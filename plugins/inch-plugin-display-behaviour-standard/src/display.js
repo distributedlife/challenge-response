@@ -20,21 +20,21 @@ module.exports = {
 
         return {
             Display: function (ackLast, addAck) {
-                var dims = Dimensions.Dimensions();
+                var dims = Dimensions().Dimensions;
 
-                _.each(levelParts, function (levelPart) {
+                _.each(levelParts(), function (levelPart) {
                     levelPart.screenResized(dims);
                 });
 
 
                 //TODO: pull the setup render stuff out of here. It's a render engine layer concern
-                var camera = Camera.Camera();
+                var camera = Camera().Camera();
 
-                var threeJsScene = adapter.createScene();
+                var threeJsScene = adapter().createScene();
                 var inchScene = require('../../inch-scene/src/scene.js')(threeJsScene);
 
-                var renderer = adapter.createRenderer();
-                adapter.attachRenderer(element, renderer);
+                var renderer = adapter().createRenderer();
+                adapter().attachRenderer(element(), renderer);
 
 
 
@@ -46,7 +46,7 @@ module.exports = {
                     tracker.updateState(state);
 
                     //TODO: inchScene and camera will need to be passed another way
-                    _.each(levelParts, function (levelPart) {
+                    _.each(levelParts(), function (levelPart) {
                         levelPart.setup(
                             inchScene,
                             ackLast,
@@ -112,12 +112,12 @@ module.exports = {
                         renderer.setSize(dims.usableWidth, dims.usableHeight);
 
                         //TODO: can we use dims.ratio?
-                        adapter.setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
+                        adapter().setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
 
                         //TODO: move this technical detail into the adapter
-                        adapter.updateProjectionMatrix(camera);
+                        adapter().updateProjectionMatrix(camera);
 
-                        _.each(levelParts, function (levelPart) {
+                        _.each(levelParts(), function (levelPart) {
                             levelPart.screenResized(dims);
                         });
                     }

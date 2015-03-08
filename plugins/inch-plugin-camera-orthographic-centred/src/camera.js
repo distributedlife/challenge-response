@@ -6,9 +6,9 @@ module.exports = {
     func: function (adapter, Dimensions) {
         return {
             Camera: function () {
-                var dims = Dimensions.Dimensions();
+                var dims = Dimensions().Dimensions;
 
-                var camera = adapter.newOrthographicCamera(
+                var camera = adapter().newOrthographicCamera(
                     dims.usableWidth / -2,
                     dims.usableWidth / 2,
                     dims.usableHeight / 2,
@@ -17,9 +17,9 @@ module.exports = {
                     1000
                 );
 
-                adapter.setPosition(camera, {z: 1});
-                adapter.setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
-                adapter.updateProjectionMatrix(camera);
+                adapter().setPosition(camera, {z: 1});
+                adapter().setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
+                adapter().updateProjectionMatrix(camera);
 
                 return camera;
             }

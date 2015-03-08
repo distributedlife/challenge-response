@@ -69,7 +69,7 @@ module.exports = {
                 var detectButtonsMappingToKeys = function () {
                     _.each(keyMap(), function (value) {
                         var classname = ".button.key-" + value;
-                        if (window.ontouchstart !== undefined) {
+                        if (window().ontouchstart !== undefined) {
                             $(classname).on('touchstart', function (e) { handleClickOrTouch(press, value, e); });
                             $(classname).on('touchend', function (e) { handleClickOrTouch(release, value, e); });
                             $(classname).on('touchcancel', function (e) { handleClickOrTouch(release, value, e); });
@@ -82,17 +82,17 @@ module.exports = {
                 };
 
                 var bindToWindowEvents = function () {
-                    $(window).on('mousedown', function (e) {
+                    $(window()).on('mousedown', function (e) {
                         press(mouseMap()[e.which]);
                         e.preventDefault();
                     });
 
-                    $(window).on('mouseup', function (e) {
+                    $(window()).on('mouseup', function (e) {
                         release(mouseMap()[e.which]);
                         e.preventDefault();
                     });
 
-                    var elementId = "#" + element;
+                    var elementId = "#" + element();
 
                     $(elementId).on('mousemove', function (e) {
                         x = e.layerX;
@@ -131,7 +131,7 @@ module.exports = {
                     });
 
 
-                    $(window.document).keypress(function (e) {
+                    $(window().document).keypress(function (e) {
                         if (e.metaKey) { return; }
 
                         singlePress(keyMap()[e.which]);
@@ -140,14 +140,14 @@ module.exports = {
                         // e.preventDefault();
                     });
 
-                    $(window.document).keydown(function (e) {
+                    $(window().document).keydown(function (e) {
                         if (e.metaKey) { return; }
 
                         press(keyMap()[e.which]);
                         // e.preventDefault();
                     });
 
-                    $(window.document).keyup(function (e) {
+                    $(window().document).keyup(function (e) {
                         release(keyMap()[e.which]);
                     });
                 };

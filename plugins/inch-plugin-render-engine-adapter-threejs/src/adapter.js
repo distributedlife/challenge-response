@@ -70,7 +70,7 @@ module.exports = {
             createScene: function () {
                 var scene = new THREE.Scene();
 
-                _.each(DebugItems.Resolve(), function (debugItem) {
+                _.each(DebugItems(), function (debugItem) {
                     scene.add(debugItem());
                 });
 
@@ -78,7 +78,7 @@ module.exports = {
             },
             createRenderer: function () {
                 var renderer = new THREE.WebGLRenderer({ antialias: true });
-                renderer.setSize(Dimensions.Dimensions().usableWidth, Dimensions.Dimensions().usableHeight);
+                renderer.setSize(Dimensions().Dimensions.usableWidth, Dimensions().Dimensions.usableHeight);
 
                 return renderer;
             },
