@@ -70,7 +70,7 @@ describe("Alignment", function() {
 		describe("when a function is passed in for position data", function() {
 			beforeEach(function() {
 				position = {
-					x: function() { return 200; }, 
+					x: function() { return 200; },
 					y: function() { return 200; }
 				};
 				options.horizontal = "derp";

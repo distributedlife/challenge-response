@@ -92,12 +92,14 @@ module.exports = {
                         e.preventDefault();
                     });
 
-                    $("#" + element).on('mousemove', function (e) {
+                    var elementId = "#" + element;
+
+                    $(elementId).on('mousemove', function (e) {
                         x = e.layerX;
                         y = e.layerY;
                     });
 
-                    $("#" + element).on('touchstart', function (e) {
+                    $(elementId).on('touchstart', function (e) {
                         _.each(e.touches, function (touch) {
                             var x = touch.clientX - touch.target.offsetLeft;
                             var y = touch.clientY - touch.target.offsetTop;
@@ -105,7 +107,7 @@ module.exports = {
                         });
                     });
 
-                    $("#" + element).on('touchmove', function (e) {
+                    $(elementId).on('touchmove', function (e) {
                         _.each(e.touches, function (touch) {
                             var x = touch.clientX - touch.target.offsetLeft;
                             var y = touch.clientY - touch.target.offsetTop;
@@ -113,17 +115,17 @@ module.exports = {
                         });
                     });
 
-                    $("#" + element).on('touchend', function (e) {
+                    $(elementId).on('touchend', function (e) {
                         var ids = _.map(e.changedTouches, function (touch) { return touch.identifier; });
                         touches = _.reject(touches, function (touch) { return ids.indexOf(touch.id) !== -1; });
                     });
 
-                    $("#" + element).on('touchleave', function (e) {
+                    $(elementId).on('touchleave', function (e) {
                         var ids = _.map(e.changedTouches, function (touch) { return touch.identifier; });
                         touches = _.reject(touches, function (touch) { return ids.indexOf(touch.id) !== -1; });
                     });
 
-                    $("#" + element).on('touchcancel', function (e) {
+                    $(elementId).on('touchcancel', function (e) {
                         var ids = _.map(e.changedTouches, function (touch) { return touch.identifier; });
                         touches = _.reject(touches, function (touch) { return ids.indexOf(touch.id) !== -1; });
                     });

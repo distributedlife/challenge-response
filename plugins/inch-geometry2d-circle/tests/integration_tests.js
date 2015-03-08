@@ -1,19 +1,23 @@
 var expect = require('expect');
 var jsdom = require('jsdom').jsdom;
-var _ = require('lodash');
-
-var document = jsdom("<div id=\"a-div\">With content.</div>");
-global.window = document.parentWindow;
-global.getComputedStyle = function() {};
-global.document = document;
-global.self = {};
-
-var adapter = require('../../inch-plugin-render-engine-adapter-threejs/src/adapter.js').func();
 
 describe("a circle", function () {
 	var circle;
 
+	before(function(done) {
+		jsdom.env({
+			html: "<html><body><div id=\"element\">With content.</div><div id=\"derp\" class=\"button key-space\">With content.</div><div class=\"button\">Derp</div></body></html>",
+			done: function(err, window) {
+				global.window = window;
+				global.getComputedStyle = function() {};
+
+				done();
+			}});
+	});
+
 	beforeEach(function () {
+		var adapter = require('../../inch-plugin-render-engine-adapter-threejs/src/adapter.js').func();
+
 		circle = require("../src/circle")(adapter);
 	});
 

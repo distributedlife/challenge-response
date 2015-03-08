@@ -52,6 +52,17 @@ describe("the standard display behaviour", function () {
 		usableHeight: sinon.spy()
 	};
 
+	before(function(done) {
+		jsdom.env({
+			html: "<div id=\"a-div\">With content.</div>",
+			done: function(err, window) {
+				global.window = window;
+				global.getComputedStyle = function() {};
+
+				done();
+			}});
+	});
+
 	beforeEach(function() {
 		ackLast.reset();
 		addAck.reset();
@@ -64,11 +75,6 @@ describe("the standard display behaviour", function () {
 		adapter.createRenderer.reset();
 		adapter.attachRenderer.reset();
 		renderer.render.reset();
-
-		var document = jsdom("<div id=\"a-div\">With content.</div>");
-		global.window = document.parentWindow;
-		global.getComputedStyle = function() {};
-		global.document = document;
 
 		DisplayBehaviour = require("../src/display").func(Dimensions, Camera, adapter, "element", levelParts);
 		behaviour = DisplayBehaviour.Display(ackLast, addAck);

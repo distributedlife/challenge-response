@@ -26,6 +26,8 @@ module.exports = {
                     levelPart.screenResized(dims);
                 });
 
+
+                //TODO: pull the setup render stuff out of here. It's a render engine layer concern
                 var camera = Camera.Camera();
 
                 var threeJsScene = adapter.createScene();
@@ -34,6 +36,8 @@ module.exports = {
                 var renderer = adapter.createRenderer();
                 adapter.attachRenderer(element, renderer);
 
+
+
                 var registerEffect = function (effect) {
                     effects.push(effect);
                 };
@@ -41,6 +45,7 @@ module.exports = {
                 var setup = function (state) {
                     tracker.updateState(state);
 
+                    //TODO: inchScene and camera will need to be passed another way
                     _.each(levelParts, function (levelPart) {
                         levelPart.setup(
                             inchScene,
@@ -71,7 +76,11 @@ module.exports = {
                     var dt = (now - priorStep) / 1000;
                     priorStep = Date.now();
 
+
+                    //TODO: pull the setup render stuff out of here. It's a render engine layer concern. It still needs to be called here
                     renderer.render(inchScene.scene(), camera);
+
+
 
                     if (!setupComplete) {
                         return;

@@ -10,9 +10,10 @@ describe("configuring the routes", function () {
 	};
 	var server;
 
-	before(function() {
+	before(function(done) {
 		server = require("../src/js/server").Server("../dummy", callbacks);
 		server.start();
+		done();
 	});
 
 	after(function () {
@@ -20,7 +21,7 @@ describe("configuring the routes", function () {
 	})
 
 	it("should redirect to the root page when the mode is not in the callbacks", function (done) {
-		http.request("http://localhost:3000/derp/primary", function (res) {
+		http.request("/derp/primary", function (res) {
 			expect(res.statusCode).toEqual(302);
 			expect(res.headers.location).toEqual('/');
 			done();
@@ -28,22 +29,19 @@ describe("configuring the routes", function () {
 	});
 
 	it("should invoke the callback specified by the mode", function (done) {
-		http.request("http://localhost:3000/arcade/primary", function (res) {
+		http.request("/arcade/primary", function (res) {
 			expect(res.statusCode).toEqual(200);
 			expect(callbacks.arcade.called).toEqual(true);
 			done();
 		}).end();
 	});
 
-	it("should setup a route for each of the supplied pages", function (done) {
-		pages = ['primary'];
-
-		_.each(pages, function (page) {
-			http.request("http://localhost:3000/arcade/" + page, function (res) {
+	describe("each of the default routes", function () {
+		it("the 'primary' view", function (done) {
+			http.request("/arcade/primary", function (res) {
 				expect(res.statusCode).toEqual(200);
+				done();
 			}).end();
 		});
-
-		done();
 	});
 });

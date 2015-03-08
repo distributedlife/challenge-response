@@ -8,15 +8,9 @@ var socket = {
 	emit: sinon.spy()
 }
 
-var document = jsdom("<div id=\"element\">With content.</div>");
-global.window = document.parentWindow;
-global.getComputedStyle = function() {};
-global.document = document;
-global.window.document.hasFocus = function () { return false; };
+var $;
 
-var $ = require('zepto-browserify').$;
-
-io = require('socket.io-client');
+var io = require('socket.io-client');
 io.connect = function () { return socket; };
 var ConnectDisconnectBehaviour = {
 	connected: sinon.spy(),
@@ -27,13 +21,31 @@ var InputModes = [
 	{ InputMode: function(socket) { return { getCurrentState: function() { return { "b": { "c": "c" } }; }}}}
 ];
 var GameMode = "arcade";
-var Behaviour = require("../src/behaviour").func(global.window, ConnectDisconnectBehaviour, InputModes, GameMode);
 var flushPendingAcksFunc = function() { return [1, 2, 3]; };
 var setupFunc = sinon.spy();
 var updateFunc = sinon.spy();
+var Behaviour;
 
 describe("desktop socket behaviour", function () {
+	before(function(done) {
+		var html = "<html><body><div id=\"element\">With content.</div></body></html>";
+	  jsdom.env({
+	    html: html,
+	    done: function(err, window) {
+	      global.window = window;
+	      global.getComputedStyle = function() {};
+	      global.self = {};
+	      global.window.document.hasFocus = function () { return false; };
+
+				Behaviour = require("../src/behaviour").func(window, ConnectDisconnectBehaviour, InputModes, GameMode);
+
+	      done();
+	    }});
+	});
+
 	beforeEach(function () {
+		$ = require('zepto-browserify').$;
+
 		sinon.spy(io, "connect");
 		sinon.spy(global, "setInterval");
 		socket.emit.reset();

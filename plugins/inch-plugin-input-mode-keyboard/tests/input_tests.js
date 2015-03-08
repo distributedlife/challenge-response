@@ -25,16 +25,23 @@ describe("the keyboard input mode plugin", function () {
 		$(global.window)[0]._listeners[eventName].false[n](data)
 	};
 
-	var callWindowDocumentInputEvent = function(eventName, data) {
-		$(global.window.document)[0]._listeners[eventName].false[0](data)
+	var callWindowDocumentInputEvent = function(eventName, data, n) {
+		n = n || 0;
+		$(global.window.document)[0]._listeners[eventName].false[n](data)
 	};
 
-	beforeEach(function () {
-		var document = jsdom("<div id=\"element\">With content.</div><div id=\"derp\" class=\"button key-space\">With content.</div><div class=\"button\">Derp</div>");
-		global.window = document.parentWindow;
-		global.getComputedStyle = function() {};
-		global.document = document;
+	before(function(done) {
+		jsdom.env({
+			html: "<html><body><div id=\"element\">With content.</div><div id=\"derp\" class=\"button key-space\">With content.</div><div class=\"button\">Derp</div></body></html>",
+			done: function(err, window) {
+				global.window = window;
+				global.getComputedStyle = function() {};
 
+				done();
+			}});
+	});
+
+	beforeEach(function () {
 		$ = require('zepto-browserify').$;
 
 		socket.emit.reset();
@@ -57,13 +64,13 @@ describe("the keyboard input mode plugin", function () {
 
 	describe("when a mouse button is pressed", function() {
 		it("should register the mouse click as a key", function () {
-			callWindowInputEvent("mousedown", {which: 1});
+			callWindowInputEvent("mousedown", {which: 1}, 1);
 
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
 		});
 
 		it("should continue to register the mouse click on subsequent calls to getCurrentState", function () {
-			callWindowInputEvent("mousedown", {which: 1});
+			callWindowInputEvent("mousedown", {which: 1}, 2);
 
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
@@ -259,13 +266,13 @@ describe("the keyboard input mode plugin", function () {
 
 	describe("when a key is pressed", function() {
 		it("should register the key as a single press key", function () {
-			callWindowDocumentInputEvent("keypress", {which: 32});
+			callWindowDocumentInputEvent("keypress", {which: 32}, 13);
 
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual(["space"]);
 		});
 
 		it("should remove the single press key after get the current state", function () {
-			callWindowDocumentInputEvent("keypress", {which: 32});
+			callWindowDocumentInputEvent("keypress", {which: 32}, 14);
 
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual(["space"]);
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual([]);
@@ -274,13 +281,13 @@ describe("the keyboard input mode plugin", function () {
 
 	describe("when a key is depressed", function() {
 		it("should register the key as a key", function () {
-			callWindowDocumentInputEvent("keydown", {which: 32});
+			callWindowDocumentInputEvent("keydown", {which: 32}, 15);
 
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
 		});
 
 		it("should continue to register the mouse click on subsequent calls to getCurrentState", function () {
-			callWindowDocumentInputEvent("keydown", {which: 32});
+			callWindowDocumentInputEvent("keydown", {which: 32}, 16);
 
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
@@ -329,7 +336,7 @@ describe("the keyboard input mode plugin", function () {
 				});
 
 				it("should continue to register the touch on subsequent calls to getCurrentState", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 1);
+					callInputEventOnClass(".key-space", "touchstart", {}, 2);
 
 					expect(inputMode.getCurrentState().keys).toEqual(["space"]);
 					expect(inputMode.getCurrentState().keys).toEqual(["space"]);
@@ -361,30 +368,6 @@ describe("the keyboard input mode plugin", function () {
 
 					expect(inputMode.getCurrentState().keys).toEqual([]);
 				});
-			});
-		});
-
-		describe("when a mouse button is pressed", function() {
-			it("should register the mouse click as a key", function () {
-				callInputEventOnClass(".key-space", "mousedown", {}, 24);
-
-				expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-			});
-
-			it("should continue to register the mouse click on subsequent calls to getCurrentState", function () {
-				callInputEventOnClass(".key-space", "mousedown", {}, 25);
-
-				expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-				expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-			});
-		});
-
-		describe("when a mouse button is released", function() {
-			it("should remove the mouse click from the current state", function () {
-				callInputEventOnClass(".key-space", "mousedown", {}, 26);
-				callInputEventOnClass(".key-space", "mouseup", {}, 26);
-
-				expect(inputMode.getCurrentState().keys).toEqual([]);
 			});
 		});
 	})
