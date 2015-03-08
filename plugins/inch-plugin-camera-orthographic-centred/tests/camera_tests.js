@@ -16,10 +16,15 @@ describe("the camera", function () {
 			};
 		}
 	};
+	var defer = function(dep) {
+		return function() {
+			return dep;
+		}
+	};
 
 	beforeEach(function () {
 		adapter.newOrthographicCamera.reset();
-		var camera = require("../src/camera").func(adapter, dimensions).Camera();
+		var camera = require("../src/camera").func(defer(adapter), defer(dimensions)).Camera();
 	});
 
 	it("it should be centered on the usable width and height of the canvas", function() {

@@ -10,6 +10,12 @@ describe("the keyboard input mode plugin", function () {
 	};
 	var $;
 
+	var defer = function(dep) {
+		return function() {
+			return dep;
+		}
+	};
+
 	var callInputEventOnClass = function(klass, eventName, data, n) {
 		n = n || 0;
 		$(klass)[0]._listeners[eventName].false[n](data)
@@ -46,7 +52,7 @@ describe("the keyboard input mode plugin", function () {
 
 		socket.emit.reset();
 
-		InputMode = require('../src/input.js').func(global.window, "element").InputMode;
+		InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
 		inputMode = new InputMode(socket);
 	});
 
@@ -324,7 +330,7 @@ describe("the keyboard input mode plugin", function () {
 
 				socket.emit.reset();
 
-				InputMode = require('../src/input.js').func(global.window, "element").InputMode;
+				InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
 				inputMode = new InputMode(socket);
 			})
 

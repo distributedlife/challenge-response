@@ -6,7 +6,7 @@ module.exports = {
     func: function (adapter, Dimensions) {
         return {
             Camera: function () {
-                var dims = Dimensions().Dimensions;
+                var dims = Dimensions().Dimensions();
 
                 var camera = adapter().newOrthographicCamera(
                     dims.usableWidth / -2,

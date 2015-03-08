@@ -52,6 +52,12 @@ describe("the standard display behaviour", function () {
 		usableHeight: sinon.spy()
 	};
 
+	var defer = function(dep) {
+		return function() {
+			return dep;
+		}
+	};
+
 	before(function(done) {
 		jsdom.env({
 			html: "<div id=\"a-div\">With content.</div>",
@@ -76,7 +82,7 @@ describe("the standard display behaviour", function () {
 		adapter.attachRenderer.reset();
 		renderer.render.reset();
 
-		DisplayBehaviour = require("../src/display").func(Dimensions, Camera, adapter, "element", levelParts);
+		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(Camera), defer(adapter), defer("element"), defer(levelParts));
 		behaviour = DisplayBehaviour.Display(ackLast, addAck);
 	});
 

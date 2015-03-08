@@ -26,6 +26,12 @@ var setupFunc = sinon.spy();
 var updateFunc = sinon.spy();
 var Behaviour;
 
+var defer = function(dep) {
+	return function() {
+		return dep;
+	};
+};
+
 describe("desktop socket behaviour", function () {
 	before(function(done) {
 		var html = "<html><body><div id=\"element\">With content.</div></body></html>";
@@ -37,7 +43,7 @@ describe("desktop socket behaviour", function () {
 	      global.self = {};
 	      global.window.document.hasFocus = function () { return false; };
 
-				Behaviour = require("../src/behaviour").func(window, ConnectDisconnectBehaviour, InputModes, GameMode);
+				Behaviour = require("../src/behaviour").func(defer(window), defer(ConnectDisconnectBehaviour), defer(InputModes), defer(GameMode));
 
 	      done();
 	    }});
