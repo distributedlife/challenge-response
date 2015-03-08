@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-    deps: ["Debug*", "Dimensions"],
+    deps: ["Debug", "Dimensions"],
     type: 'RenderEngineAdapter',
     func: function (DebugItems, Dimensions) {
         var THREE = require('inch-threejs');
