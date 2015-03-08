@@ -25,8 +25,8 @@ var transform = require('vinyl-transform');
 
 var paths = {
   js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js'],
-  scss: ['game/**/*.scss'],
-  css: ['game/css'],
+  scss: ['game/**/*.scss', 'plugins/inch-plugin-server-express/src/scss/*.scss'],
+  css: ['game/css', 'plugins/inch-plugin-server-express/public/*.css'],
   tests: ['tests/**/*.js', 'plugins/**/tests/*.js'],
   genjs: './game/js/gen',
   modes: ['./game/js/practice.js', './game/js/8seconds.js']

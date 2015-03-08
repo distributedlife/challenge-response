@@ -1,6 +1,6 @@
 "use strict";
 
-var pluginManager = require('../../plugins/inch-plugins/src/plugin_manager.js');
+var pluginManager = require('../../plugins/inch-plugins/src/plugin_manager.js').PluginManager;
 pluginManager.set('Window', require('window'));
 pluginManager.set('GameMode', 'practice');
 pluginManager.set('AspectRatio', 26 / 10);									//default, required
