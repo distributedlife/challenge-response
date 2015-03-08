@@ -13,10 +13,10 @@ module.exports = {
                 var app = express();
                 app.use('/game', express.static(assetPath));
                 app.use('/inch', express.static(__dirname + '/../../public/'));
-                app.set('views', __dirname + '/../../public/views');
                 app.use(require('morgan')('combined'));
                 app.use(require('body-parser').urlencoded({extended: true }));
                 app.use(require('body-parser').json());
+                app.set('views', __dirname + '/../../public/views');
                 app.set('view options', {layout: false});
                 app.engine('jade', require('jade').__express);
 
