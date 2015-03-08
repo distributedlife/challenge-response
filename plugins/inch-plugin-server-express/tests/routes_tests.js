@@ -16,8 +16,9 @@ describe("configuring the routes", function () {
 		done();
 	});
 
-	after(function () {
+	after(function (done) {
 		server.stop();
+		done();
 	})
 
 	it("should redirect to the root page when the mode is not in the callbacks", function (done) {
