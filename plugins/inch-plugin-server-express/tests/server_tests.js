@@ -19,14 +19,12 @@ describe("starting the server", function () {
 
 		io = require('socket.io');
 		io.listen = sinon.spy();
-	});
 
-	beforeEach(function() {
 		server = require("../src/js/server").Server("../game", modes);
 		server.start();
 	});
 
-	afterEach(function() {
+	after(function() {
 		server.stop();
 	});
 

@@ -35,7 +35,12 @@ module.exports = {
                 server.listen(process.env.PORT || 3000);
             },
             stop: function () {
-                server.close();
+                if (io !== undefined) {
+                    io.close();
+                }
+                if (server !== undefined) {
+                    server.close();
+                }
             }
         };
     }

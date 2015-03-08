@@ -10,16 +10,17 @@ describe("configuring the routes", function () {
 	};
 	var server;
 
-	before(function(done) {
+	before(function() {
+		io = require('socket.io');
+		io.listen = sinon.spy();
+
 		server = require("../src/js/server").Server("../dummy", callbacks);
 		server.start();
-		done();
 	});
 
-	after(function (done) {
+	after(function () {
 		server.stop();
-		done();
-	})
+	});
 
 	it("should redirect to the root page when the mode is not in the callbacks", function (done) {
 		http.request("http://localhost:3000/derp/primary", function (res) {
