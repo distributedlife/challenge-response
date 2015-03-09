@@ -35,7 +35,7 @@ describe("Temporary Effect", function() {
 		});
 	});
 
-	describe("being alive", function () {	
+	describe("being alive", function () {
 		it("should start with a progress of zero", function() {
 			expect(progress).toBe(0);
 		});

@@ -2,6 +2,7 @@ var expect = require('expect');
 var sinon = require('sinon');
 var http = require('http');
 var _ = require('lodash');
+var request = require('request');
 
 describe("configuring the routes", function () {
 	var routes;
@@ -23,15 +24,19 @@ describe("configuring the routes", function () {
 	});
 
 	it("should redirect to the root page when the mode is not in the callbacks", function (done) {
-		http.request("http://localhost:3000/derp/primary", function (res) {
-			expect(res.statusCode).toEqual(302);
-			expect(res.headers.location).toEqual('/');
+		request({
+			followRedirect: function(res) {
+				expect(res.statusCode).toEqual(302);
+				expect(res.headers.location).toEqual('/');
+			},
+			uri: "http://localhost:3000/derp/primary"
+		}, function (err, res, body) {
 			done();
 		}).end();
 	});
 
 	it("should invoke the callback specified by the mode", function (done) {
-		http.request("http://localhost:3000/arcade/primary", function (res) {
+		request.get("http://localhost:3000/arcade/primary", function (err, res, body) {
 			expect(res.statusCode).toEqual(200);
 			expect(callbacks.arcade.called).toEqual(true);
 			done();
@@ -40,7 +45,7 @@ describe("configuring the routes", function () {
 
 	describe("each of the default routes", function () {
 		it("the 'primary' view", function (done) {
-			http.request("http://localhost:3000/arcade/primary", function (res) {
+			request.get("http://localhost:3000/arcade/primary", function (err, res, body) {
 				expect(res.statusCode).toEqual(200);
 				done();
 			}).end();

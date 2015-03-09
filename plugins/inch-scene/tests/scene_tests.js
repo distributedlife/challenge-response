@@ -4,7 +4,7 @@ var assert = require('assert');
 
 var threeJsScene = {
 	add: sinon.spy(),
-	remove: sinon.spy()	
+	remove: sinon.spy()
 };
 
 var InchScene = require('../src/scene');
