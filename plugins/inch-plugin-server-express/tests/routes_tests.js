@@ -1,7 +1,5 @@
 var expect = require('expect');
 var sinon = require('sinon');
-var http = require('http');
-var _ = require('lodash');
 var request = require('request');
 
 describe("configuring the routes", function () {
