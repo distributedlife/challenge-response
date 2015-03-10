@@ -66,21 +66,6 @@ module.exports = {
                     e.stopPropagation();
                 };
 
-                var detectButtonsMappingToKeys = function () {
-                    _.each(keyMap(), function (value) {
-                        var classname = ".button.key-" + value;
-                        if (window().ontouchstart !== undefined) {
-                            $(classname).on('touchstart', function (e) { handleClickOrTouch(press, value, e); });
-                            $(classname).on('touchend', function (e) { handleClickOrTouch(release, value, e); });
-                            $(classname).on('touchcancel', function (e) { handleClickOrTouch(release, value, e); });
-                            $(classname).on('touchleave', function (e) { handleClickOrTouch(release, value, e); });
-                        } else {
-                            $(classname).on('mousedown', function (e) { handleClickOrTouch(press, value, e); });
-                            $(classname).on('mouseup', function (e) { handleClickOrTouch(release, value, e); });
-                        }
-                    });
-                };
-
                 var bindToWindowEvents = function () {
                     $(window()).on('mousedown', function (e) {
                         press(mouseMap()[e.which]);
@@ -152,7 +137,6 @@ module.exports = {
                     });
                 };
 
-                detectButtonsMappingToKeys();
                 bindToWindowEvents();
 
                 return {

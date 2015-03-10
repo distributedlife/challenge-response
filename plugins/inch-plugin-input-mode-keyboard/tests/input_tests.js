@@ -10,6 +10,19 @@ describe("the keyboard input mode plugin", function () {
 		emit: sinon.spy()
 	};
 	var $;
+	var element;
+
+	var document = function() {
+		return global.window.document;
+	};
+
+	var makeFakeEvent = function(klass, type, options) {
+		var event = new document().createEvent(klass);
+		event.initEvent(type, true, true);
+    event = _.defaults(event, options);
+
+    return event;
+	};
 
 	var defer = function(dep) {
 		return function() {
@@ -17,65 +30,70 @@ describe("the keyboard input mode plugin", function () {
 		}
 	};
 
-	before(function(done) {
-		jsdom.env({
-			html: "<html><body><div id=\"element\">With content.</div><div id=\"derp\" class=\"button key-space\">With content.</div><div class=\"button\">Derp</div></body></html>",
-			done: function(err, window) {
-				global.window = window;
-				global.getComputedStyle = function() {};
+	beforeEach(function (done) {
+		jsdom.env(
+			"<html><body><canvas id='element'></canvas></body></html>",
+			{
+				done: function (err, window) {
+					global.window = window;
+					global.getComputedStyle = function() {};
 
-				done();
-			}});
+					socket.emit.reset();
+$ = require('zepto-browserify').$;
+					InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
+					inputMode = new InputMode(socket);
+
+					element = global.window.document.getElementById("element");
+
+					done();
+				}
+			}
+		);
 	});
 
-	beforeEach(function () {
-		$ = require('zepto-browserify').$;
-
-		socket.emit.reset();
-
-		InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
-		inputMode = new InputMode(socket);
-	});
-
-	describe.skip("when the mouse moves", function() {
+	describe("when the mouse moves", function() {
 		it("should update the current x and y values", function () {
-			callInputEventOn("mousemove", {
+			var event = new global.window.document.createEvent("MouseEvent");
+			event.initEvent("mousemove", true, true);
+	    event = _.defaults(event, {
 				layerX: 45,
 				layerY: 67
 			});
+
+	    element.dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().x).toEqual(45);
 			expect(inputMode.getCurrentState().y).toEqual(67);
 		});
 	});
 
-	describe.skip("when a mouse button is pressed", function() {
+	describe("when a mouse button is pressed", function() {
 		it("should register the mouse click as a key", function () {
-			callWindowInputEvent("mousedown", {which: 1}, 1);
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mousedown", {which: 1}));
 
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
 		});
 
 		it("should continue to register the mouse click on subsequent calls to getCurrentState", function () {
-			callWindowInputEvent("mousedown", {which: 1}, 2);
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mousedown", {which: 1}));
 
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
 			expect(inputMode.getCurrentState().keys).toEqual(["button1"]);
 		});
 	});
 
-	describe.skip("when a mouse button is released", function() {
+	describe("when a mouse button is released", function() {
 		it("should remove the mouse click from the current state", function () {
-			callWindowInputEvent("mousedown", {which: 1});
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mousedown", {which: 1}));
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mouseup", {which: 1}));
 
-			callWindowInputEvent("mouseup", {which: 1});
 			expect(inputMode.getCurrentState().keys).toNotEqual(["button1"]);
 		});
 	});
 
-	describe.skip("when a touch press starts", function() {
+	describe("when a touch press starts", function() {
 		it("should register the touch event", function () {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 0,
@@ -85,14 +103,16 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 0
 					}
 				}]
-			}, 4);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].id).toEqual(1);
 			expect(inputMode.getCurrentState().touches[0].force).toEqual(1);
 		});
 
 		it("should calculate the touch position", function () {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -102,14 +122,16 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 5);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].x).toEqual(-55);
 			expect(inputMode.getCurrentState().touches[0].y).toEqual(20);
 		});
 
 		it("should use the webkit touch force if it is available", function () {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -120,15 +142,17 @@ describe("the keyboard input mode plugin", function () {
 					},
 					webkitForce: 0.5
 				}]
-			}, 6);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].force).toEqual(0.5);
 		});
 	});
 
-	describe.skip("when a touch press moves", function() {
+	describe("when a touch press moves", function() {
 		it("should register the touch event", function() {
-			callInputEventOn("touchmove", {
+			var event = makeFakeEvent("TouchEvent", "touchmove", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -138,14 +162,16 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 7);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].id).toEqual(1);
 			expect(inputMode.getCurrentState().touches[0].force).toEqual(1);
 		});
 
 		it("should calculate the touch position", function() {
-			callInputEventOn("touchmove", {
+			var event = makeFakeEvent("TouchEvent", "touchmove", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -155,14 +181,16 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 8);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].x).toEqual(-55);
 			expect(inputMode.getCurrentState().touches[0].y).toEqual(20);
 		});
 
 		it("should use the webkit touch force if it is available", function() {
-			callInputEventOn("touchmove", {
+			var event = makeFakeEvent("TouchEvent", "touchmove", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -173,15 +201,17 @@ describe("the keyboard input mode plugin", function () {
 					},
 					webkitForce: 0.5
 				}]
-			}, 9);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches[0].force).toEqual(0.5);
 		});
 	});
 
-	describe.skip("when a touch press finishes", function() {
+	describe("when a touch press finishes", function() {
 		it("should remove the touch event from the current state", function() {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -191,21 +221,25 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 10);
+			});
 
-			callInputEventOn("touchend", {
+			$("#element")[0].dispatchEvent(event);
+
+			var event = makeFakeEvent("TouchEvent", "touchend", {
 				changedTouches: [{
 					identifier: 1,
 				}]
-			}, 10);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches).toEqual([]);
 		});
 	});
 
-	describe.skip("when a touch press leaves the touch area", function() {
+	describe("when a touch press leaves the touch area", function() {
 		it("should remove the touch event from the current state", function () {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -215,21 +249,25 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 11);
+			});
 
-			callInputEventOn("touchleave", {
+			$("#element")[0].dispatchEvent(event);
+
+			var event = makeFakeEvent("TouchEvent", "touchleave", {
 				changedTouches: [{
 					identifier: 1,
 				}]
-			}, 11);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches).toEqual([]);
 		});
 	});
 
-	describe.skip("when a touch press is cancelled", function() {
+	describe("when a touch press is cancelled", function() {
 		it("should remove the touch event from the current state", function () {
-			callInputEventOn("touchstart", {
+			var event = makeFakeEvent("TouchEvent", "touchstart", {
 				touches: [{
 					identifier: 1,
 					clientY: 54,
@@ -239,56 +277,31 @@ describe("the keyboard input mode plugin", function () {
 						offsetTop: 34
 					}
 				}]
-			}, 12);
+			});
 
-			callInputEventOn("touchcancel", {
+			$("#element")[0].dispatchEvent(event);
+
+			var event = makeFakeEvent("TouchEvent", "touchcancel", {
 				changedTouches: [{
 					identifier: 1,
 				}]
-			}, 12);
+			});
+
+			$("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().touches).toEqual([]);
 		});
 	});
-
-	var publishFakeEvent = function(type, options) {
-		var document = global.window.document;
-
-		var event = new document.createEvent("KeyboardEvent");
-		event.initEvent(type, true, true);
-    event = _.defaults(event, options);
-
-    document.dispatchEvent(event);
-	};
 
 	describe("when a key is pressed", function() {
-		beforeEach(function (done) {
-			jsdom.env(
-				"<html><body></body></html>",
-				{
-					done: function (err, window) {
-						global.window = window;
-						global.getComputedStyle = function() {};
-
-						socket.emit.reset();
-
-						InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
-						inputMode = new InputMode(socket);
-
-						done();
-					}
-				}
-			);
-		});
-
 		it("should register the key as a single press key", function () {
-			publishFakeEvent("keypress", {which: 32 });
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent", "keypress", {which: 32 }));
 
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual(["space"]);
 		});
 
 		it("should remove the single press key after get the current state", function () {
-			publishFakeEvent("keypress", {which: 32 });
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent","keypress", {which: 32 }));
 
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual(["space"]);
 			expect(inputMode.getCurrentState().singlePressKeys).toEqual([]);
@@ -297,13 +310,13 @@ describe("the keyboard input mode plugin", function () {
 
 	describe("when a key is depressed", function() {
 		it("should register the key as a key", function () {
-			publishFakeEvent("keydown", {which: 32 });
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent", "keydown", {which: 32 }));
 
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
 		});
 
 		it("should continue to register the mouse click on subsequent calls to getCurrentState", function () {
-			publishFakeEvent("keydown", {which: 32 });
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent", "keydown", {which: 32 }));
 
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
 			expect(inputMode.getCurrentState().keys).toEqual(["space"]);
@@ -312,79 +325,10 @@ describe("the keyboard input mode plugin", function () {
 
 	describe("when a key is released", function() {
 		it("should remove the key from the current state", function () {
-			publishFakeEvent("keydown", {which: 32 });
-			publishFakeEvent("keyup", {which: 32 });
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent", "keydown", {which: 32 }));
+			document().dispatchEvent(makeFakeEvent("KeyboardEvent", "keyup", {which: 32 }));
 
 			expect(inputMode.getCurrentState().keys).toNotEqual(["space"]);
 		});
 	});
-
-	describe.skip("html elements marked as keys", function () {
-		it("should only work for elements with the correct div", function () {
-			it("should register the touch as a key", function () {
-				callInputEventOnClass(".key-tab", "touchstart", {}, 0);
-
-				expect(inputMode.getCurrentState().keys).toEqual([]);
-			});
-		});
-
-		describe("when touch is enabled in the browser", function () {
-			beforeEach(function() {
-				var document = jsdom("<div id=\"element\">With content.</div><div id=\"derp\" class=\"button key-space\">With content.</div><div class=\"button\">Derp</div>");
-				global.window = document.parentWindow;
-				global.window.ontouchstart = function() { return undefined; };
-				global.getComputedStyle = function() {};
-				global.document = document;
-
-				$ = require('zepto-browserify').$;
-
-				socket.emit.reset();
-
-				InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
-				inputMode = new InputMode(socket);
-			})
-
-			describe("when a touch press starts", function() {
-				it("should register the touch as a key", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 0);
-
-					expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-				});
-
-				it("should continue to register the touch on subsequent calls to getCurrentState", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 2);
-
-					expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-					expect(inputMode.getCurrentState().keys).toEqual(["space"]);
-				});
-			});
-
-			describe("when a touch press finishes", function() {
-				it("should remove the touch from the current state", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 2);
-					callInputEventOnClass(".key-space", "touchend", {}, 2);
-
-					expect(inputMode.getCurrentState().keys).toEqual([]);
-				});
-			});
-
-			describe("when a touch press is cancelled", function() {
-				it("should remove the touch from the current state", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 3);
-					callInputEventOnClass(".key-space", "touchcancel", {}, 3);
-
-					expect(inputMode.getCurrentState().keys).toEqual([]);
-				});
-			});
-
-			describe("when a touch press leaves the element", function() {
-				it("should remove the touch from the current state", function () {
-					callInputEventOnClass(".key-space", "touchstart", {}, 4);
-					callInputEventOnClass(".key-space", "touchleave", {}, 4);
-
-					expect(inputMode.getCurrentState().keys).toEqual([]);
-				});
-			});
-		});
-	})
 });
