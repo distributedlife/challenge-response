@@ -10,7 +10,6 @@ describe("the keyboard input mode plugin", function () {
 		emit: sinon.spy()
 	};
 	var $;
-	var element;
 
 	var document = function() {
 		return global.window.document;
@@ -39,11 +38,11 @@ describe("the keyboard input mode plugin", function () {
 					global.getComputedStyle = function() {};
 
 					socket.emit.reset();
-$ = require('zepto-browserify').$;
+
+					$ = require('zepto-browserify').$;
+
 					InputMode = require('../src/input.js').func(defer(global.window), defer("element")).InputMode;
 					inputMode = new InputMode(socket);
-
-					element = global.window.document.getElementById("element");
 
 					done();
 				}
@@ -60,7 +59,7 @@ $ = require('zepto-browserify').$;
 				layerY: 67
 			});
 
-	    element.dispatchEvent(event);
+	    $("#element")[0].dispatchEvent(event);
 
 			expect(inputMode.getCurrentState().x).toEqual(45);
 			expect(inputMode.getCurrentState().y).toEqual(67);
