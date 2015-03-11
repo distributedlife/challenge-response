@@ -29,7 +29,7 @@ module.exports = {
 
         return {
             connect: function (setupFunc, updateFunc) {
-              var socket = io.connect('http://localhost/' + GameMode() + '/primary');
+              var socket = io.connect('http://localhost:3000/' + GameMode() + '/primary');
 
               if (window().document.hasFocus()) {
                   socket.emit('unpause');
