@@ -7,7 +7,7 @@ module.exports = {
         return {
             centreInCamera: function (camera, width, height) {
                 //http://zachberry.com/blog/tracking-3d-objects-in-2d-with-three-js/
-                var dims = Dimensions.Dimensions();
+                var dims = Dimensions().Dimensions();
                 var visibleWidth, visibleHeight, percX, percY;
 
                 visibleWidth = camera.right - camera.left;

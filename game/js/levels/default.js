@@ -1,16 +1,17 @@
 "use strict";
 
 module.exports = {
-    deps: ["RenderEngineAdapter", "Window", "Dimensions", "PositionHelper"],
+    deps: ["RenderEngineAdapter", "PositionHelper"],
     type: "Level",
-    func: function (adapter, window, Dimensions, PositionHelper) {
+    func: function (adapter, PositionHelper) {
         var colour = require('color');
         var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
-        var Circle = require('../../../plugins/inch-geometry2d-circle/src/circle.js')(adapter);
+        var Circle = require('../../../plugins/inch-geometry2d-circle/src/circle.js')(adapter());
         var Howl = require('howler').Howl;
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');
 
+        var mainTemplate = require("../../jade/practice.jade");
         var priorScoresTemplate = require("../../jade/priorScores.jade");
 
         return {
@@ -18,6 +19,8 @@ module.exports = {
                 //TODO: do we need to reposition all the things?
             },
             setup: function (scene, ackLastRequest, register, tracker, camera) {
+                $("#overlay").append(mainTemplate());
+
                 var showInstructions = function (model, priorModel, statusIndicator) {
                     $("#instructions").show();
                     $("#challenge").hide();
@@ -58,7 +61,7 @@ module.exports = {
                     $("#score")[0].innerText = model;
 
                     var score = $("#score");
-                    var centered = PositionHelper.centreInCamera(camera, score.width(), score.height());
+                    var centered = PositionHelper().centreInCamera(camera, score.width(), score.height());
 
                     score.css('left', centered.left + 'px');
                     score.css('top', centered.top + "px");
