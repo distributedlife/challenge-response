@@ -6,7 +6,7 @@ pluginManager.load(require('../../../plugins/inch-plugin-state-mutator-default/s
 pluginManager.load(require('../../../plugins/inch-plugin-behaviour-invoker-default/src/index.js'));
 
 // var state = pluginManager.get('StateAccess');
-var delayedEffects = require('../../../plugins/inch-delayed-effects/src/delayed_effect.js');
+var delayedEffects = require('../../../plugins/inch-delayed-effects/src/manager.js').DelayedEffects();
 var SocketSupport = require('../../../plugins/inch-socket-support/src/socket-support.js');
 var GameState = require('../../../plugins/inch-game-state/src/state.js');
 
