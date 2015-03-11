@@ -78,7 +78,8 @@ module.exports = {
             },
             createRenderer: function () {
                 var renderer = new THREE.WebGLRenderer({ antialias: true });
-                renderer.setSize(Dimensions().Dimensions.usableWidth, Dimensions().Dimensions.usableHeight);
+                console.log(Dimensions().Dimensions())
+                renderer.setSize(Dimensions().Dimensions().usableWidth, Dimensions().Dimensions().usableHeight);
 
                 return renderer;
             },

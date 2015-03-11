@@ -70,7 +70,7 @@ describe("desktop socket behaviour", function () {
 	it("should connect to /:mode/primary on localhost", function () {
 		Behaviour.SocketBehaviour(flushPendingAcksFunc).connect(setupFunc, updateFunc);
 
-		expect(io.connect.firstCall.args[0]).toEqual('http://localhost/arcade/primary');
+		expect(io.connect.firstCall.args[0]).toEqual('http://localhost:3000/arcade/primary');
 	});
 
 	it("if the window has focus when we connect; unpause", function () {

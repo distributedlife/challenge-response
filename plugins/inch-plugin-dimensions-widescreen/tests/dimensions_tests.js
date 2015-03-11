@@ -4,7 +4,13 @@ var window = {
 	innerHeight: 400
 }
 
-var Dimensions = require("../src/dimensions").func(2.6, 32, window).Dimensions;
+var defer = function(x) {
+	return function() {
+		return x;
+	}
+}
+
+var Dimensions = require("../src/dimensions").func(defer(2.6), defer(32), defer(window)).Dimensions;
 
 describe('dimensions', function() {
 	it("should get the screen width", function() {

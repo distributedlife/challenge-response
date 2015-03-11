@@ -4,12 +4,12 @@ module.exports = {
     deps: ["RenderEngineAdapter", "DebugProperties", "Dimensions"],
     type: "Debug",
     func: function (adapter, debugProperties, Dimensions) {
-        var size = debugProperties.size || 50;
-        var colour = debugProperties.colour || 0x00FF00;
+        var size = debugProperties().size || 50;
+        var colour = debugProperties().colour || 0x00FF00;
 
         return {
             Debug: function () {
-                var dims = Dimensions().Dimensions;
+                var dims = Dimensions().Dimensions();
                 var verticalLines = dims.usableWidth / size;
                 var horizontalLines = dims.usableHeight / size;
                 var x, y, w, h;

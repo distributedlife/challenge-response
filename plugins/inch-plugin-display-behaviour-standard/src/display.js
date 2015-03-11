@@ -20,7 +20,7 @@ module.exports = {
 
         return {
             Display: function (ackLast, addAck) {
-                var dims = Dimensions().Dimensions;
+                var dims = Dimensions().Dimensions();
 
                 _.each(levelParts(), function (levelPart) {
                     levelPart.screenResized(dims);
