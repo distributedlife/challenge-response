@@ -20,14 +20,6 @@ module.exports = {
                 app.set('view options', {layout: false});
                 app.engine('jade', require('jade').__express);
 
-                app.use(function (req, res, next) {
-                    res.setHeader('Access-Control-Allow-Origin', "http://"+req.headers.host+':8000');
-                    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-                    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-                        next();
-                    }
-                );
-
                 var pathToFavIcon = process.cwd() + '/game/favicon.ico';
                 if (!require('fs').existsSync(pathToFavIcon)) {
                     pathToFavIcon = __dirname + '/../../public/favicon.ico';
