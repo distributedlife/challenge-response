@@ -6,7 +6,6 @@ module.exports = {
     func: function (adapter, PositionHelper, Camera, pluginManager, element) {
         var colour = require('color');
         var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
-        var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter());
         var Howl = require('howler').Howl;
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');
@@ -37,7 +36,9 @@ module.exports = {
                     renderer.render(scene.scene(), camera);
                 }
             },
-            setup: function (unused1, ackLastRequest, register, tracker, unused2) {
+            setup: function (unused1, ackLastRequest, register, tracker) {
+                var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter());
+
                 $("#overlay").append(mainTemplate());
 
 
