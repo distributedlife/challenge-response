@@ -5,7 +5,7 @@ module.exports = {
     type: 'RenderEngineAdapter',
     func: function (DebugItems, Dimensions) {
         var THREE = require('inch-threejs');
-        var _ = require('lodash');
+        var each = require('lodash').each;
         var $ = require('zepto-browserify').$;
 
         return {
@@ -70,7 +70,7 @@ module.exports = {
             createScene: function () {
                 var scene = new THREE.Scene();
 
-                _.each(DebugItems(), function (debugItem) {
+                each(DebugItems(), function (debugItem) {
                     scene.add(debugItem());
                 });
 
@@ -96,7 +96,7 @@ module.exports = {
             createColouredLinePieces: function (vertices, colour) {
                 var geometry = new THREE.Geometry();
 
-                _.each(vertices, function (vertex) {
+                each(vertices, function (vertex) {
                     geometry.vertices.push(new THREE.Vector3(vertex.x, vertex.y, vertex.z));
                     geometry.colors.push(new THREE.Color());
                 });

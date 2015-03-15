@@ -1,10 +1,11 @@
 "use strict";
 
 module.exports = {
-    deps: ['Dimensions', 'Level'],
+    deps: ['Dimensions', 'Level', 'OnMuteCallback', 'OnUnmuteCallback'],
     type: 'DisplayBehaviour',
-    func: function (Dimensions, levelParts) {
-        var _ = require("lodash");
+    func: function (Dimensions, levelParts, OnMuteCallbacks, OnUnmuteCallbacks) {
+        var each = require("lodash").each;
+        var reject = require("lodash").reject;
 
         var effects = [];
         var priorStep = Date.now();
@@ -16,13 +17,13 @@ module.exports = {
         var setupComplete = false;
 
         require("./enable-fullscreen")();
-        require("./toggle-sound")();
+        require("./toggle-sound")(OnMuteCallbacks(), OnUnmuteCallbacks());
 
         return {
             Display: function (ackLast, addAck) {
                 var dims = Dimensions().Dimensions();
 
-                _.each(levelParts(), function (levelPart) {
+                each(levelParts(), function (levelPart) {
                     if (levelPart.screenResized) {
                         levelPart.screenResized(dims);
                     }
@@ -35,15 +36,13 @@ module.exports = {
                 var setup = function (state) {
                     tracker.updateState(state);
 
-                    //TODO: inchScene and camera will need to be passed another way
-                    _.each(levelParts(), function (levelPart) {
+                    each(levelParts(), function (levelPart) {
                         if (levelPart.setup) {
                             levelPart.setup(
                                 undefined,
                                 ackLast,
                                 registerEffect,
-                                tracker,
-                                undefined
+                                tracker
                             );
                         };
                     });
@@ -68,7 +67,7 @@ module.exports = {
                     var dt = (now - priorStep) / 1000;
                     priorStep = Date.now();
 
-                    _.each(levelParts(), function (levelPart) {
+                    each(levelParts(), function (levelPart) {
                         if (levelPart.update) {
                             levelPart.update(dt);
                         }
@@ -78,11 +77,11 @@ module.exports = {
                         return;
                     }
 
-                    _.each(effects, function (effect) {
+                    each(effects, function (effect) {
                         effect.tick(dt);
                     });
 
-                    effects = _.reject(effects, function (effect) { return !effect.isAlive(); });
+                    effects = reject(effects, function (effect) { return !effect.isAlive(); });
                 };
 
                 var dontUpdate = function () {
@@ -101,7 +100,7 @@ module.exports = {
                     },
 
                     resize: function (dims) {
-                        _.each(levelParts(), function (levelPart) {
+                        each(levelParts(), function (levelPart) {
                             if (levelPart.screenResized) {
                                 levelPart.screenResized(dims);
                             }

@@ -67,7 +67,7 @@ describe("the standard display behaviour", function () {
 		part1.update.reset();
 		part2.update.reset();
 
-		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(levelParts));
+		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(levelParts), defer([]), defer([]));
 		behaviour = DisplayBehaviour.Display(ackLast, addAck);
 	});
 

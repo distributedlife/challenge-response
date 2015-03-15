@@ -1,11 +1,11 @@
 "use strict";
 
-var _ = require('lodash');
+var each = require('lodash').each;
 var $ = require('zepto-browserify').$;
 var pendingAcknowledgements = require('../../inch-socket-pending-acknowledgements/src/index.js')();
 
 module.exports = function (pluginManager) {
-    _.each(pluginManager.get("Font"), function (font) {
+    each(pluginManager.get("Font"), function (font) {
         font.load();
     });
 

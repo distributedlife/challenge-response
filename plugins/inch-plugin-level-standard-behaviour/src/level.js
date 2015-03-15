@@ -1,28 +1,32 @@
 "use strict";
 
 module.exports = {
+    deps: ["OnPauseCallback", "OnResumeCallback"],
     type: "Level",
-    func: function () {
+    func: function (OnPauseCallbacks, OnResumeCallbacks) {
+        var each = require("lodash").each;
         var $ = require("zepto-browserify").$;
         var equals = require("../../inch-state-tracker/src/tracker.js").Equals;
         var the = require("../../inch-state-tracker/src/tracker.js").The;
-        // var Howler = require('howler').Howler;
 
         var pause = function () {
             $('.paused').show();
             $('#paused').show();
-            // Howler.pauseAll();
+
+            each(OnPauseCallbacks(), function(onPauseCallback) {
+                onPauseCallback();
+            });
         };
         var resume = function () {
             $('.paused').hide();
             $('#paused').hide();
-            // Howler.resumeAll();
+
+            each(OnResumeCallbacks(), function(onResumeCallback) {
+                onResumeCallback();
+            });
         };
 
         return {
-            screenResized: function () {
-                return undefined;
-            },
             setup: function (scene, ackLastRequest, register, tracker) {
                 tracker.onChangeTo(the('paused'), equals(true), pause);
                 tracker.onChangeTo(the('paused'), equals(false), resume);

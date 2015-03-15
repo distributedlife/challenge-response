@@ -1,20 +1,24 @@
 "use strict";
 
+var each = require("lodash").each;
 var $ = require("zepto-browserify").$;
-var Howler = require("howler").Howler;
 
-module.exports = function () {
+module.exports = function (onMuteCallbacks, onUnmuteCallbacks) {
     $(".sound-off").hide();
     $(".sound-on").on('click', function () {
         $(".sound-on").hide();
         $(".sound-off").show();
 
-        Howler.mute();
+        each(onMuteCallbacks, function(onMuteCallback) {
+            onMuteCallback();
+        })
     });
     $(".sound-off").on('click', function () {
         $(".sound-off").hide();
         $(".sound-on").show();
 
-        Howler.unmute();
+        each(onUnmuteCallbacks, function(onUnmuteCallback) {
+            onUnmuteCallback();
+        })
     });
 };

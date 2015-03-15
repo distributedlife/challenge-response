@@ -1,5 +1,7 @@
 "use strict";
 
+var define = require('../../plugins/inch-define-plugin/src/define.js');
+
 var pluginManager = require('../../plugins/inch-plugins/src/plugin_manager.js').PluginManager;
 pluginManager.set('Window', require('window'));
 pluginManager.set('GameMode', 'practice');
@@ -34,6 +36,18 @@ pluginManager.load(require("../../supporting-libs/inch-plugin-debug-outside-in-g
 pluginManager.load(require('../../three-js-dep/inch-plugin-camera-orthographic-centred/src/camera.js'));
 
 
+var Howler = require("howler").Howler;
+pluginManager.load(define('OnMuteCallback', function() {
+  return function () {
+    Howler.mute();
+  };
+}));
+
+pluginManager.load(define('OnUnmuteCallback', function() {
+  return function () {
+    Howler.unmute();
+  };
+}));
 
 var clientSideEngine = require('../../plugins/inch-client-assembler/src/assembler.js')(pluginManager);
 clientSideEngine.assembleAndRun();

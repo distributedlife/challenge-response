@@ -1,12 +1,16 @@
 "use strict";
 
-var _ = require('lodash');
+var isArray = require('lodash').isArray;
 
 //Multimode plugins are initialised to an empty array.
 var plugins = {
     InputMode: [],
     Font: [],
-    Level: []
+    Level: [],
+    OnPauseCallback: [],
+    OnResumeCallback: [],
+    OnMuteCallback: [],
+    OnUnmuteCallback: []
 };
 
 var pluginManager = {
@@ -32,7 +36,7 @@ var pluginManager = {
             args.push(deferredDependency(dep));
         }
 
-        if (_.isArray(plugins[module.type])) {
+        if (isArray(plugins[module.type])) {
             plugins[module.type].push(module.func.apply(this, args));
         } else {
             plugins[module.type] = module.func.apply(this, args);
