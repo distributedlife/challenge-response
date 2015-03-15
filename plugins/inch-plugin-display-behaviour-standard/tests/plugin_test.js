@@ -7,28 +7,15 @@ describe("the standard display behaviour", function () {
 	var Dimensions = {
 		Dimensions: function() {}
 	};
-	var Camera = {
-		Camera: sinon.spy()
-	};
-	var renderer = {
-		render: sinon.spy(),
-		setSize: sinon.spy()
-	};
-	var adapter = {
-		createScene: sinon.spy(),
-		createRenderer: function() { return renderer; },
-		attachRenderer: sinon.spy(),
-		setCameraAspectRatio: sinon.spy(),
-		updateProjectionMatrix: sinon.spy()
-	};
-	sinon.spy(adapter, "createRenderer");
 	var part1 = {
 		screenResized: sinon.spy(),
-		setup: sinon.spy()
+		setup: sinon.spy(),
+		update: sinon.spy()
 	};
 	var part2 = {
 		screenResized: sinon.spy(),
-		setup: sinon.spy()
+		setup: sinon.spy(),
+		update: sinon.spy()
 	};
 	var part3 = {
 		screenResized: function() {},
@@ -63,6 +50,7 @@ describe("the standard display behaviour", function () {
 			html: "<div id=\"a-div\">With content.</div>",
 			done: function(err, window) {
 				global.window = window;
+				global.document = window.document;
 				global.getComputedStyle = function() {};
 
 				done();
@@ -76,32 +64,16 @@ describe("the standard display behaviour", function () {
 		part2.screenResized.reset();
 		part1.setup.reset();
 		part2.setup.reset();
-		Camera.Camera.reset();
-		adapter.createScene.reset();
-		adapter.createRenderer.reset();
-		adapter.attachRenderer.reset();
-		renderer.render.reset();
+		part1.update.reset();
+		part2.update.reset();
 
-		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(Camera), defer(adapter), defer("element"), defer(levelParts));
+		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(levelParts));
 		behaviour = DisplayBehaviour.Display(ackLast, addAck);
 	});
 
 	it("should resize each level part to the current dimensions", function () {
 		expect(part1.screenResized.called).toEqual(true);
 		expect(part2.screenResized.called).toEqual(true);
-	});
-
-	it("should create a camera", function () {
-		expect(Camera.Camera.called).toEqual(true);
-	});
-
-	it("should create a scene", function() {
-		expect(adapter.createScene.called).toEqual(true);
-	});
-
-	it("should create a renderer and attach it to the dom", function() {
-		expect(adapter.createRenderer.called).toEqual(true);
-		expect(adapter.attachRenderer.firstCall.args).toEqual(["element", renderer])
 	});
 
 	describe("on a setup packet", function() {
@@ -194,7 +166,8 @@ describe("the standard display behaviour", function () {
 				behaviour.setup();
 				part3.registerEffect(effect);
 				behaviour.updateDisplay();
-				expect(renderer.render.called).toEqual(true);
+				expect(part1.update.called).toEqual(true);
+				expect(part2.update.called).toEqual(true);
 			});
 
 			describe("when the setup is complete", function () {
@@ -235,14 +208,6 @@ describe("the standard display behaviour", function () {
 	describe("when told to resize", function () {
 		beforeEach(function () {
 			behaviour.resize(dimensions);
-		});
-
-		it("should update the renderer size", function () {
-			expect(renderer.setSize.called).toEqual(true);
-		});
-
-		it("should update the camera aspect ratio", function () {
-			expect(adapter.setCameraAspectRatio.called).toEqual(true);
 		});
 
 		it("should tell each level part to resize", function () {

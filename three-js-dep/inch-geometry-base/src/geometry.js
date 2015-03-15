@@ -1,6 +1,6 @@
 "use strict";
 
-var alignment = require("../../inch-geometry-alignment/src/alignment.js");
+var alignment = require("../../../plugins/inch-geometry-alignment/src/alignment.js");
 
 module.exports = function (adapter) {
     var width = function (mesh) {

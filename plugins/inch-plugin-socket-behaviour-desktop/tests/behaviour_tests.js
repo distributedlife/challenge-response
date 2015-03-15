@@ -33,7 +33,7 @@ var defer = function(dep) {
 };
 
 describe("desktop socket behaviour", function () {
-	before(function(done) {
+	beforeEach(function (done) {
 		var html = "<html><body><div id=\"element\">With content.</div></body></html>";
 	  jsdom.env({
 	    html: html,
@@ -43,14 +43,12 @@ describe("desktop socket behaviour", function () {
 	      global.self = {};
 	      global.window.document.hasFocus = function () { return false; };
 
+	      $ = require('zepto-browserify').$;
+
 				Behaviour = require("../src/behaviour").func(defer(window), defer(ConnectDisconnectBehaviour), defer(InputModes), defer(GameMode));
 
 	      done();
-	    }});
-	});
-
-	beforeEach(function () {
-		$ = require('zepto-browserify').$;
+    }});
 
 		sinon.spy(io, "connect");
 		sinon.spy(global, "setInterval");
@@ -118,19 +116,26 @@ describe("desktop socket behaviour", function () {
 	});
 });
 
-var callWindowInputEvent = function(eventName, data, n) {
-	n = n || 0;
-	$(global.window)[0]._listeners[eventName].false[n](data)
-};
-
 describe("events", function () {
 	beforeEach(function () {
 		socket.emit.reset();
 	});
 
+	var document = function() {
+		return global.window.document;
+	};
+
+	var makeFakeEvent = function(klass, type, options) {
+		var event = new document().createEvent(klass);
+		event.initEvent(type, true, true);
+    event = _.defaults(event, options);
+
+    return event;
+	};
+
 	describe("when the window loses focus", function() {
 		it("should send a pause event", function () {
-			callWindowInputEvent("blur", {});
+			document().dispatchEvent(makeFakeEvent("WindowEvent", "blur"));
 
 			expect(socket.emit.firstCall.args[0]).toEqual("pause");
 		});
@@ -138,7 +143,7 @@ describe("events", function () {
 
 	describe("when the window gains focus", function() {
 		it("should send an unpause event", function () {
-			callWindowInputEvent("focus", {});
+			document().dispatchEvent(makeFakeEvent("WindowEvent", "focus"));
 
 			expect(socket.emit.firstCall.args[0]).toEqual("unpause");
 		});
@@ -146,7 +151,7 @@ describe("events", function () {
 
 	describe("when the mouse button is pressed", function() {
 		it("should send an unpause event", function () {
-			callWindowInputEvent("mouseup", {}, 1);
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mouseup", {which: 1}));
 
 			expect(socket.emit.firstCall.args[0]).toEqual("unpause");
 		});
@@ -154,7 +159,7 @@ describe("events", function () {
 
 	describe("when the mouse button is released", function() {
 		it("should send an unpause event", function () {
-			callWindowInputEvent("mousedown", {}, 1);
+			document().dispatchEvent(makeFakeEvent("MouseEvent", "mousedown", {which: 1}));
 
 			expect(socket.emit.firstCall.args[0]).toEqual("unpause");
 		});

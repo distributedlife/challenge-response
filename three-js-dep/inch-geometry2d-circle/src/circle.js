@@ -3,7 +3,7 @@
 module.exports = function (adapter) {
     var base = require("../../inch-geometry-base/src/geometry.js")(adapter);
     var _ = require('lodash');
-    var temporaryEffect = require('../../inch-temporary-effect/src/temporary_effect.js');
+    var temporaryEffect = require('../../../plugins/inch-temporary-effect/src/temporary_effect.js');
     var geometryTransitions = require("../../inch-geometry-transitions/src/transitions.js");
 
     return function (onCreate, onDestroy, settings) {

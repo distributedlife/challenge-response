@@ -24,12 +24,12 @@ var source = require('vinyl-source-stream');
 var transform = require('vinyl-transform');
 
 var paths = {
-  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js'],
+  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
   scss: ['game/**/*.scss', 'plugins/**/src/scss/*.scss'],
   css: ['game/css', 'plugins/**/public/*.css'],
-  tests: ['tests/**/*.js', 'plugins/**/tests/*.js'],
+  tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js', 'plugins/**/tests/*.js'],
   genjs: './game/js/gen',
-  modes: ['./game/js/practice.js', './game/js/8seconds.js']
+  modes: ['./game/js/practice.js']
 };
 
 var onError = function (error) {

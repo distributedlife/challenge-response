@@ -1,9 +1,9 @@
 "use strict";
 
 module.exports = {
-    deps: ['Dimensions', 'Camera', 'RenderEngineAdapter', 'Element', 'Level'],
+    deps: ['Dimensions', 'Level'],
     type: 'DisplayBehaviour',
-    func: function (Dimensions, Camera, adapter, element, levelParts) {
+    func: function (Dimensions, levelParts) {
         var _ = require("lodash");
 
         var effects = [];
@@ -23,20 +23,10 @@ module.exports = {
                 var dims = Dimensions().Dimensions();
 
                 _.each(levelParts(), function (levelPart) {
-                    levelPart.screenResized(dims);
+                    if (levelPart.screenResized) {
+                        levelPart.screenResized(dims);
+                    }
                 });
-
-
-                //TODO: pull the setup render stuff out of here. It's a render engine layer concern
-                var camera = Camera().Camera();
-
-                var threeJsScene = adapter().createScene();
-                var inchScene = require('../../inch-scene/src/scene.js')(threeJsScene);
-
-                var renderer = adapter().createRenderer();
-                adapter().attachRenderer(element(), renderer);
-
-
 
                 var registerEffect = function (effect) {
                     effects.push(effect);
@@ -47,13 +37,15 @@ module.exports = {
 
                     //TODO: inchScene and camera will need to be passed another way
                     _.each(levelParts(), function (levelPart) {
-                        levelPart.setup(
-                            inchScene,
-                            ackLast,
-                            registerEffect,
-                            tracker,
-                            camera
-                        );
+                        if (levelPart.setup) {
+                            levelPart.setup(
+                                undefined,
+                                ackLast,
+                                registerEffect,
+                                tracker,
+                                undefined
+                            );
+                        };
                     });
 
                     setupComplete = true;
@@ -76,11 +68,11 @@ module.exports = {
                     var dt = (now - priorStep) / 1000;
                     priorStep = Date.now();
 
-
-                    //TODO: pull the setup render stuff out of here. It's a render engine layer concern. It still needs to be called here
-                    renderer.render(inchScene.scene(), camera);
-
-
+                    _.each(levelParts(), function (levelPart) {
+                        if (levelPart.update) {
+                            levelPart.update(dt);
+                        }
+                    });
 
                     if (!setupComplete) {
                         return;
@@ -109,16 +101,10 @@ module.exports = {
                     },
 
                     resize: function (dims) {
-                        renderer.setSize(dims.usableWidth, dims.usableHeight);
-
-                        //TODO: can we use dims.ratio?
-                        adapter().setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
-
-                        //TODO: move this technical detail into the adapter
-                        adapter().updateProjectionMatrix(camera);
-
                         _.each(levelParts(), function (levelPart) {
-                            levelPart.screenResized(dims);
+                            if (levelPart.screenResized) {
+                                levelPart.screenResized(dims);
+                            }
                         });
                     }
                 };

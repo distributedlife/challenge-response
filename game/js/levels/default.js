@@ -1,25 +1,54 @@
 "use strict";
 
 module.exports = {
-    deps: ["RenderEngineAdapter", "PositionHelper"],
+    deps: ["RenderEngineAdapter", "PositionHelper", "Camera", "PluginManager", "Element"],
     type: "Level",
-    func: function (adapter, PositionHelper) {
+    func: function (adapter, PositionHelper, Camera, pluginManager, element) {
         var colour = require('color');
         var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
-        var Circle = require('../../../plugins/inch-geometry2d-circle/src/circle.js')(adapter());
+        var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter());
         var Howl = require('howler').Howl;
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');
+        var define = require('../../../plugins/inch-define-plugin/src/define.js');
 
         var mainTemplate = require("../../jade/practice.jade");
         var priorScoresTemplate = require("../../jade/priorScores.jade");
 
+        var camera;
+        var renderer;
+        var scene;
         return {
-            screenResized: function () {
-                //TODO: do we need to reposition all the things?
+            screenResized: function (dims) {
+                if (renderer) {
+                    renderer.setSize(dims.usableWidth, dims.usableHeight);
+                }
+
+                if (camera) {
+                    //TODO: can we use dims.ratio?
+                    adapter().setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
+
+                    //TODO: move this technical detail into the adapter
+                    adapter().updateProjectionMatrix(camera);
+                }
             },
-            setup: function (scene, ackLastRequest, register, tracker, camera) {
+            update: function(dt) {
+                if (renderer) {
+                    renderer.render(scene.scene(), camera);
+                }
+            },
+            setup: function (unused1, ackLastRequest, register, tracker, unused2) {
                 $("#overlay").append(mainTemplate());
+
+
+                //Render layer concern
+                //Setup threejs-camera, inch-scene, threejs-scene, threejs-renderer
+                camera = Camera().Camera();
+                scene = require('../../../three-js-dep/inch-scene/src/scene.js')(adapter().createScene());
+                renderer = adapter().createRenderer();
+                adapter().attachRenderer(element(), renderer);
+
+
 
                 var showInstructions = function (model, priorModel, statusIndicator) {
                     $("#instructions").show();
