@@ -1,7 +1,7 @@
 "use strict";
 
-var _ = require('lodash');
-var io = require('socket.io-client');
+var each = require('lodash').each;
+var extend = require('lodash').extend;
 var $ = require('zepto-browserify').$;
 
 module.exports = {
@@ -19,8 +19,8 @@ module.exports = {
               sentTimestamp: Date.now()
             };
 
-            _.each(controls, function (control) {
-              _.extend(packet, control.getCurrentState());
+            each(controls, function (control) {
+              extend(packet, control.getCurrentState());
             });
 
             socket.emit('input', packet);
@@ -29,6 +29,8 @@ module.exports = {
 
         return {
             connect: function (setupFunc, updateFunc) {
+              var io = require('socket.io-client');
+
               var socket = io.connect('http://localhost:3000/' + GameMode() + '/primary');
 
               if (window().document.hasFocus()) {
@@ -46,11 +48,14 @@ module.exports = {
               $(window()).on('mousedown', function () { socket.emit('unpause'); });
               $(window()).on('mouseup', function () { socket.emit('unpause'); });
 
-              _.each(InputModes(), function (InputMode) {
+              each(InputModes(), function (InputMode) {
                 controls.push(InputMode.InputMode());
               });
 
-              setInterval(configureEmitFunction(socket), 1000 / 120);
+              var id = setInterval(configureEmitFunction(socket), 1000 / 120);
+              socket.on('disconnect', function () {
+                clearInterval(id);
+              });
             }
         };
       }

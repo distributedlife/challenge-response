@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 
-module.exports = function (callbacks, app, io, pages, extension) {
+module.exports = function (callbacks, app, pages, extension) {
     _.each(pages, function (page) {
         app.get('/:mode/' + page, function (req, res) {
             var mode = req.params.mode;
@@ -11,8 +11,6 @@ module.exports = function (callbacks, app, io, pages, extension) {
                 res.redirect('/');
                 return;
             }
-
-            callbacks[mode](io);
 
             res.render(page + extension, {html: "", mode: mode});
         });

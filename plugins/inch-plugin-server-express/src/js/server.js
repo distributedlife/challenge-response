@@ -27,12 +27,15 @@ module.exports = {
                 app.use(favicon(pathToFavIcon));
 
                 server = require('http').createServer(app);
-                io = require('socket.io').listen(server);
-
                 var pages = ["primary"];
-                configureRoutes(callbacks, app, io, pages, '.jade');
+                configureRoutes(callbacks, app, pages, '.jade');
 
                 server.listen(process.env.PORT || 3000);
+
+                io = require('socket.io').listen(server);
+
+                var SocketSupport = require('../../../inch-socket-support/src/socket-support.js');
+                SocketSupport.setup(io, callbacks, 'practice');
             },
             stop: function () {
                 if (io !== undefined) {

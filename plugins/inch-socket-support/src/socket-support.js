@@ -6,30 +6,24 @@ var unfurl = require('inch-unfurl');
 
 var statistics = {};
 
+var createStandardCallbacksHash = function (state, inputHandler) {
+    return {
+        onPlayerConnect: state.playerConnected.bind(state),
+        onPlayerDisconnect: state.playerDisconnected.bind(state),
+        onObserverConnect: state.observerConnected.bind(state),
+        onObserverDisconnect: state.observerDisconnected.bind(state),
+        onPause: state.pause.bind(state),
+        onUnpause: state.unpause.bind(state),
+        onNewUserInput: inputHandler.newUserInput,
+        getGameState: function () { return state; }
+    };
+};
+
 module.exports = {
-    createStandardCallbacksHash: function (state, inputHandler) {
-        return {
-            onPlayerConnect: state.playerConnected.bind(state),
-            onPlayerDisconnect: state.playerDisconnected.bind(state),
-            onObserverConnect: state.observerConnected.bind(state),
-            onObserverDisconnect: state.observerDisconnected.bind(state),
-            onPause: state.pause.bind(state),
-            onUnpause: state.unpause.bind(state),
-            onNewUserInput: inputHandler.newUserInput,
-            getGameState: function () { return state; }
-        };
-    },
-    setup: function (io, callbacks, ackMap, mode) {
-        var unfurledCallbacks = {
-            onPlayerConnect: unfurl.arrayWithGuarantee(callbacks.onPlayerConnect),
-            onPlayerDisconnect: unfurl.arrayWithGuarantee(callbacks.onPlayerDisconnect),
-            onObserverConnect: unfurl.arrayWithGuarantee(callbacks.onObserverConnect),
-            onObserverDisconnect: unfurl.arrayWithGuarantee(callbacks.onObserverDisconnect),
-            onPause: unfurl.arrayWithGuarantee(callbacks.onPause),
-            onUnpause: unfurl.arrayWithGuarantee(callbacks.onUnpause),
-            onNewUserInput: unfurl.arrayWithGuarantee(callbacks.onNewUserInput),
-            getGameState: callbacks.getGameState
-        };
+    setup: function (io, modeCallbacks, mode) {
+        var ackMap = {};
+
+        var unfurledCallbacks = {};
 
         var startUpdateClientLoop = function (id, socket) {
             var lastPacket = {};
@@ -102,6 +96,27 @@ module.exports = {
                     total: 0
                 }
             };
+
+
+            //This is a dirty hack
+            modeCallbacks[mode](function(state, inputHandler, acknowledgementMap) {
+
+                ackMap = acknowledgementMap;
+                var socketCallbacks = createStandardCallbacksHash(state, inputHandler);
+
+                unfurledCallbacks = {
+                    onPlayerConnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerConnect),
+                    onPlayerDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerDisconnect),
+                    onObserverConnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverConnect),
+                    onObserverDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverDisconnect),
+                    onPause: unfurl.arrayWithGuarantee(socketCallbacks.onPause),
+                    onUnpause: unfurl.arrayWithGuarantee(socketCallbacks.onUnpause),
+                    onNewUserInput: unfurl.arrayWithGuarantee(socketCallbacks.onNewUserInput),
+                    getGameState: socketCallbacks.getGameState
+                };
+            });
+
+
 
             var onInput = createOnInputFunction(id);
 

@@ -1,18 +1,20 @@
 "use strict";
 
-var define = require('../../../plugins/inch-define-plugin/src/define.js');
-var pluginManager = require('../../../plugins/inch-plugins/src/plugin_manager.js').PluginManager;
-pluginManager.load(require('../../../plugins/inch-plugin-state-mutator-default/src/index.js'));
-pluginManager.load(require('../../../plugins/inch-plugin-behaviour-invoker-default/src/index.js'));
+var pp = "../../../plugins"
+
+var define = require(pp+'/inch-define-plugin/src/define.js');
+var pluginManager = require(pp+'/inch-plugins/src/plugin_manager.js').PluginManager;
+pluginManager.load(require(pp+'/inch-plugin-state-mutator-default/src/index.js'));
+pluginManager.load(require(pp+'/inch-plugin-behaviour-invoker-default/src/index.js'));
 
 // var state = pluginManager.get('StateAccess');
-var delayedEffects = require('../../../plugins/inch-delayed-effects/src/manager.js').DelayedEffects();
-var SocketSupport = require('../../../plugins/inch-socket-support/src/socket-support.js');
-var GameState = require('../../../plugins/inch-game-state/src/state.js');
+var delayedEffects = require(pp+'/inch-delayed-effects/src/manager.js').DelayedEffects();
+var SocketSupport = require(pp+'/inch-socket-support/src/socket-support.js');
+var GameState = require(pp+'/inch-game-state/src/state.js');
 
 var controllerBehaviour = require(process.cwd() + '/game/js/entities/controller')(delayedEffects);
 
-module.exports = function (io) {
+module.exports = function (callback) {
     var state = new GameState({
         controller: {
             start: 0,
@@ -51,17 +53,15 @@ module.exports = function (io) {
     //     }
     // });
 
-    var inputHandler = require('../../../plugins/inch-input-handler/src/input-handler.js').InputHandler(actionMap);
+    var inputHandler = require(pp+'/inch-input-handler/src/input-handler.js').InputHandler(actionMap);
 
-    // pluginManager.load(require('inch-plugin-game-engine-default'));
+    callback(state, inputHandler, ackMap);
 
-
-    var engine = require('../../../plugins/inch-game-engine/src/engine.js')(state.isPaused.bind(state), [      //isPaused has to be loaded in by IsPausedBehaviour?
-        inputHandler.update,                //is loaded as a plugin
-        delayedEffects.update               //is loaded as a plugin
-    ]);
+    var engine = require(pp+'/inch-game-engine/src/engine.js')(state.isPaused.bind(state), //isPaused has to be loaded in by IsPausedBehaviour?
+        [
+            inputHandler.update,                //is loaded as a plugin
+            delayedEffects.update               //is loaded as a plugin
+        ]
+    );
     engine.run(120);
-
-    var callbacks = SocketSupport.createStandardCallbacksHash(state, inputHandler);
-    SocketSupport.setup(io, callbacks, ackMap, 'practice');
 };
