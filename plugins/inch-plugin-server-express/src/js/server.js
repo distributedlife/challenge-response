@@ -35,7 +35,7 @@ module.exports = {
                 io = require('socket.io').listen(server);
 
                 var SocketSupport = require('../../../inch-socket-support/src/socket-support.js');
-                SocketSupport.setup(io, callbacks, 'practice');
+                SocketSupport.setup(io, callbacks);
             },
             stop: function () {
                 if (io !== undefined) {

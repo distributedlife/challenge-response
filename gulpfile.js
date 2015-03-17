@@ -24,7 +24,7 @@ var source = require('vinyl-source-stream');
 var transform = require('vinyl-transform');
 
 var paths = {
-  js: ['game/**/*.js', 'game.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
+  js: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
   scss: ['game/**/*.scss', 'plugins/**/src/scss/*.scss'],
   css: ['game/css', 'plugins/**/public/*.css'],
   tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js', 'plugins/**/tests/*.js'],
@@ -103,7 +103,7 @@ gulp.task('build-styles', function() {
 gulp.task('build', ['build-styles', 'build-code'])
 
 gulp.task('server:start', function () {
-    server.listen({path: './game.js'});
+    server.listen({path: './start-here.js'});
 });
 
 gulp.task('watch', ['server:start'], function() {

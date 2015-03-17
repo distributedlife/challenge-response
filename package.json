@@ -68,7 +68,7 @@
     "vinyl-transform": "^1.0.0"
   },
   "scripts": {
-    "start": "node game.js"
+    "start": "node start-here.js"
   },
   "browserify": {
     "transform": [

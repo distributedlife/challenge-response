@@ -1,9 +1,9 @@
 "use strict";
 
-var _ = require('lodash');
+var each = require('lodash').each;
 
 module.exports = function (callbacks, app, pages, extension) {
-    _.each(pages, function (page) {
+    each(pages, function (page) {
         app.get('/:mode/' + page, function (req, res) {
             var mode = req.params.mode;
 

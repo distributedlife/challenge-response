@@ -1,9 +1,11 @@
 "use strict";
 
 var _ = require('lodash');
+var each = require('lodash').each;
 var sequence = require('../../inch-sequence/src/sequence.js');
 var unfurl = require('inch-unfurl');
 
+//TODO: State here is at per-server-instance level
 var statistics = {};
 
 var createStandardCallbacksHash = function (state, inputHandler) {
@@ -20,7 +22,7 @@ var createStandardCallbacksHash = function (state, inputHandler) {
 };
 
 module.exports = {
-    setup: function (io, modeCallbacks, mode) {
+    setup: function (io, modeCallbacks) {
         var ackMap = {};
 
         var unfurledCallbacks = {};
@@ -50,7 +52,7 @@ module.exports = {
         };
 
         var calculateLatency = function (id, pendingAcknowledgements) {
-            _.each(pendingAcknowledgements, function (ack) {
+            each(pendingAcknowledgements, function (ack) {
                 var sentTime = statistics[id].packets.unacked[ack.id];
 
                 statistics[id].latency.total += ack.rcvdTimestamp - sentTime;
@@ -60,11 +62,11 @@ module.exports = {
         };
 
         var removeAcknowledgedPackets = function (id, pendingAcknowledgements) {
-            _.each(pendingAcknowledgements, function (ack) {
-                _.each(ack.names, function (name) {
+            each(pendingAcknowledgements, function (ack) {
+                each(ack.names, function (name) {
                     if (ackMap[name] === undefined) { return; }
 
-                    _.each(ackMap[name], function (action) {
+                    each(ackMap[name], function (action) {
                         action.target(ack, action.data);
                     });
                 });
@@ -84,54 +86,58 @@ module.exports = {
             };
         };
 
-        var setupPlayableClient = function (socket) {
-            var id = socket.id;
+        var createSetupPlayableClientFunction = function (modeCallback) {
+            return function (socket) {
+                var id = socket.id;
 
-            statistics[id] = {
-                packets: {
-                    totalAcked: 0,
-                    unacked: {}
-                },
-                latency: {
-                    total: 0
-                }
-            };
-
-
-            //This is a dirty hack
-            modeCallbacks[mode](function(state, inputHandler, acknowledgementMap) {
-
-                ackMap = acknowledgementMap;
-                var socketCallbacks = createStandardCallbacksHash(state, inputHandler);
-
-                unfurledCallbacks = {
-                    onPlayerConnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerConnect),
-                    onPlayerDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerDisconnect),
-                    onObserverConnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverConnect),
-                    onObserverDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverDisconnect),
-                    onPause: unfurl.arrayWithGuarantee(socketCallbacks.onPause),
-                    onUnpause: unfurl.arrayWithGuarantee(socketCallbacks.onUnpause),
-                    onNewUserInput: unfurl.arrayWithGuarantee(socketCallbacks.onNewUserInput),
-                    getGameState: socketCallbacks.getGameState
+                statistics[id] = {
+                    packets: {
+                        totalAcked: 0,
+                        unacked: {}
+                    },
+                    latency: {
+                        total: 0
+                    }
                 };
-            });
+
+
+                //TODO: This is a dirty hack, but it gets us through these growing pains.
+                modeCallback(function(state, inputHandler, acknowledgementMap) {
+
+                    ackMap = acknowledgementMap;
+                    var socketCallbacks = createStandardCallbacksHash(state, inputHandler);
+
+                    unfurledCallbacks = {
+                        onPlayerConnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerConnect),
+                        onPlayerDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerDisconnect),
+                        onObserverConnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverConnect),
+                        onObserverDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverDisconnect),
+                        onPause: unfurl.arrayWithGuarantee(socketCallbacks.onPause),
+                        onUnpause: unfurl.arrayWithGuarantee(socketCallbacks.onUnpause),
+                        onNewUserInput: unfurl.arrayWithGuarantee(socketCallbacks.onNewUserInput),
+                        getGameState: socketCallbacks.getGameState
+                    };
+                });
 
 
 
-            var onInput = createOnInputFunction(id);
+                var onInput = createOnInputFunction(id);
 
-            socket.on('disconnect', unfurledCallbacks.onPlayerDisconnect);
-            socket.on('input', onInput);
-            socket.on('pause', unfurledCallbacks.onPause);
-            socket.on('unpause', unfurledCallbacks.onUnpause);
+                socket.on('disconnect', unfurledCallbacks.onPlayerDisconnect);
+                socket.on('input', onInput);
+                socket.on('pause', unfurledCallbacks.onPause);
+                socket.on('unpause', unfurledCallbacks.onUnpause);
 
-            socket.emit("gameState/setup", unfurledCallbacks.getGameState());
+                socket.emit("gameState/setup", unfurledCallbacks.getGameState());
 
-            startUpdateClientLoop(id, socket);
+                startUpdateClientLoop(id, socket);
 
-            unfurledCallbacks.onPlayerConnect();
+                unfurledCallbacks.onPlayerConnect();
+            };
         };
 
-        io.of('/' + mode + '/primary').on('connection', setupPlayableClient);
+        each(modeCallbacks, function(callback, mode) {
+            io.of('/' + mode + '/primary').on('connection', createSetupPlayableClientFunction(callback));
+        });
     }
 };
