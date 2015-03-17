@@ -53,6 +53,7 @@ module.exports = function (callback) {
     //     }
     // });
 
+    //TODO: everything below this line doesn't belong here.
     var inputHandler = require(pp+'/inch-input-handler/src/input-handler.js').InputHandler(actionMap);
 
     callback(state, inputHandler, ackMap);
