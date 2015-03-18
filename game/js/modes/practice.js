@@ -3,9 +3,9 @@
 var pp = "../../../plugins"
 
 var define = require(pp+'/inch-define-plugin/src/define.js');
-var pluginManager = require(pp+'/inch-plugins/src/plugin_manager.js').PluginManager;
-// pluginManager.load(require(pp+'/inch-plugin-state-mutator-default/src/index.js'));
-// pluginManager.load(require(pp+'/inch-plugin-behaviour-invoker-default/src/index.js'));
+var plugins = require(pp+'/inch-plugins/src/plugin_manager.js').PluginManager;
+// plugins.load(require(pp+'/inch-plugin-state-mutator-default/src/index.js'));
+// plugins.load(require(pp+'/inch-plugin-behaviour-invoker-default/src/index.js'));
 
 var delayedEffects = require(pp+'/inch-delayed-effects/src/manager.js').DelayedEffects();
 //TODO: DelayedEffects should be a plugin
@@ -26,13 +26,24 @@ module.exports = {
             }
         });
 
-        //TODO: migrate to plugin, define('ActionMap', ...);
-        var actionMap = {
-            'space': [{target: controllerBehaviour.response, keypress: true, data: state.controller}],
-            'r': [{target: controllerBehaviour.reset, keypress: true, data: state.controller}]
-        };
+        plugins.load(define("ActionMap", function () {
+            return {
+                'space': [{target: controllerBehaviour.response, keypress: true, data: state.controller}],
+                'r': [{target: controllerBehaviour.reset, keypress: true, data: state.controller}]
+            };
+        }));
 
         //TODO: migrate to plugin, define('AckMap', ...);
+        // plugins.load(define("AcknowledgementMap", function () {
+        //     return {
+        //         'show-challenge': [{
+        //             target: controllerBehaviour.challengeSeen,
+        //             namespace: 'controller',
+        //             data: state.controller
+        //         }]
+        //     };
+        // };
+
         var ackMap = {
             'show-challenge': [{
                 target: controllerBehaviour.challengeSeen,
@@ -46,7 +57,8 @@ module.exports = {
 
 
         //TODO: everything below this line doesn't belong here. It's a framework concern that needs to happen at this step but is not something that will be controlled by the game-dev. The action and ack maps will become plugins and these modules that depend on them can declare them as deps and we can move on with our lives.
-        var inputHandler = require(pp+'/inch-input-handler/src/input-handler.js').InputHandler(actionMap);
+        plugins.load(require(pp+'/inch-input-handler/src/input-handler.js'));
+        var inputHandler = plugins.get("InputHandler");
 
         socketSupportCallback(state, inputHandler, ackMap);
 
