@@ -9,8 +9,8 @@ var define = require(pp+'/inch-define-plugin/src/define.js');
 
 module.exports = {
     type: 'GameMode',
-    deps: ['PluginManager', "DelayedEffects", "GameBehaviour"],
-    func: function(plugins, DelayedEffects, GameBehaviour) {
+    deps: ['PluginManager', "DelayedEffects", "GameBehaviour", "InputHandler"],
+    func: function(plugins, DelayedEffects, GameBehaviour, InputHandler) {
         return function(socketSupportCallback) {
 
             //TODO: If this is here, then the state exists per HTTP request. This is not the best place to put state. Or, we do initialise the state if it has not been initialised yet. The setting up of state will be a common pattern so we want to make it painless.
@@ -41,16 +41,15 @@ module.exports = {
                 };
             }));
 
+            plugins().load(define("IsPaused", function () {
+                return state.isPaused.bind(state);
+            }));
+
             //TODO: everything below this line doesn't belong here.
             socketSupportCallback(state);
 
-            var engine = require(pp+'/inch-game-engine/src/engine.js')(state.isPaused.bind(state), //isPaused is to be loaded in as a plugin. The player could have their own onPause behaviour which they can declare now or forever hold their peace.
-                [
-                    plugins().get("InputHandler").update,
-                    DelayedEffects().update               //is loaded as a plugin
-                ]
-            );
-            engine.run(120);
+            plugins().load(require(pp+'/inch-game-engine/src/engine.js'));
+            plugins().get("ServerSideEngine")().run(120);
         };
     }
 };

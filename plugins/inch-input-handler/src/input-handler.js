@@ -1,11 +1,12 @@
 "use strict";
 
+var define = require('../../inch-define-plugin/src/define.js');
 var each = require('lodash').each;
 
 module.exports = {
 	type: "InputHandler",
-	deps: ["ActionMap"],
-	func: function(ActionMap) {
+	deps: ["ActionMap", "PluginManager"],
+	func: function(ActionMap, PluginManager) {
 		var userInput = [];
 
 		var parseKeysAndButtons = function(currentInput, callback) {
@@ -53,49 +54,56 @@ module.exports = {
 			});
 		};
 
+		var update = {
+			type: "ServerSideUpdate",
+			func: function () {
+				return function () {
+					var currentInput = userInput.shift();
+					if (currentInput === undefined) {
+						return;
+					}
+
+					var data = {
+						rcvdTimestamp: currentInput.timestamp
+					};
+
+					var somethingHasReceivedInput = [];
+					parseKeysAndButtons(currentInput, function(target, noEventKey, suppliedData) {
+						target(1.0, data, suppliedData);
+						somethingHasReceivedInput.push(noEventKey);
+					});
+
+					parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
+						target(x, y, data, suppliedData);
+						somethingHasReceivedInput.push(noEventKey);
+					});
+
+					parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
+						target(x, y, force, data, suppliedData);
+						somethingHasReceivedInput.push(noEventKey);
+					});
+
+					if (ActionMap().cursor !== undefined) {
+						each(ActionMap().cursor, function(action) {
+							var cx = currentInput.rawData.x;
+							var cy = currentInput.rawData.y;
+							action.target(cx, cy, data, action.data);
+						});
+					}
+
+					each(ActionMap().nothing, function(action) {
+						if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
+							action.target(data, action.data);
+						}
+					});
+				};
+			}
+		};
+		PluginManager().load(update);
+
 		return {
 			newUserInput: function(newUserInput, timestamp) {
 				userInput.push({ rawData: newUserInput, timestamp: timestamp });
-			},
-			update: function() {
-				var currentInput = userInput.shift();
-				if (currentInput === undefined) {
-					return;
-				}
-
-				var data = {
-					rcvdTimestamp: currentInput.timestamp
-				};
-
-				var somethingHasReceivedInput = [];
-				parseKeysAndButtons(currentInput, function(target, noEventKey, suppliedData) {
-					target(1.0, data, suppliedData);
-					somethingHasReceivedInput.push(noEventKey);
-				});
-
-				parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
-					target(x, y, data, suppliedData);
-					somethingHasReceivedInput.push(noEventKey);
-				});
-
-				parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
-					target(x, y, force, data, suppliedData);
-					somethingHasReceivedInput.push(noEventKey);
-				});
-
-				if (ActionMap().cursor !== undefined) {
-					each(ActionMap().cursor, function(action) {
-						var cx = currentInput.rawData.x;
-						var cy = currentInput.rawData.y;
-						action.target(cx, cy, data, action.data);
-					});
-				}
-
-				each(ActionMap().nothing, function(action) {
-					if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
-						action.target(data, action.data);
-					}
-				});
 			}
 		};
 	}

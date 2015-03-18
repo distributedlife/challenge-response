@@ -10,7 +10,8 @@ var plugins = {
     OnPauseCallback: [],
     OnResumeCallback: [],
     OnMuteCallback: [],
-    OnUnmuteCallback: []
+    OnUnmuteCallback: [],
+    ServerSideUpdate: []
 };
 
 var pluginManager = {

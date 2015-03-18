@@ -6,7 +6,8 @@ var delayedEffect = require('./delayed_effect');
 
 module.exports = {
     type: "DelayedEffects",
-    func: function () {
+    deps: ["PluginManager"],
+    func: function (Plugins) {
         var effects = [];
 
         var prune = function () {
@@ -15,16 +16,24 @@ module.exports = {
             });
         };
 
+
+        var update = {
+            type: "ServerSideUpdate",
+            func: function() {
+                return function (dt) {
+                    each(effects, function (effect) {
+                        effect.tick(dt);
+                    });
+
+                    prune();
+                };
+            }
+        };
+        Plugins().load(update);
+
         return {
             add: function (key, duration, onComplete) {
                 effects.push(Object.create(delayedEffect(key, duration, onComplete)));
-            },
-            update: function (dt) {
-                each(effects, function (effect) {
-                    effect.tick(dt);
-                });
-
-                prune();
             },
             cancelAll: function (key) {
                 each(effects, function (effect) {
