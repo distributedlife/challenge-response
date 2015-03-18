@@ -9,7 +9,7 @@ module.exports = {
         var configureRoutes = require("./configure-routes");
 
         return {
-            start: function () {
+            start: function (plugins) {
                 var app = express();
                 app.use('/game', express.static(assetPath));
                 app.use('/inch', express.static(__dirname + '/../../public/'));
@@ -34,8 +34,9 @@ module.exports = {
 
                 io = require('socket.io').listen(server);
 
-                var SocketSupport = require('../../../inch-socket-support/src/socket-support.js');
-                SocketSupport.setup(io, callbacks);
+                plugins.load(require('../../../inch-input-handler/src/input-handler.js'));
+                plugins.load(require('../../../inch-socket-support/src/socket-support.js'));
+                plugins.get("SocketSupport")(io, callbacks);
             },
             stop: function () {
                 if (io !== undefined) {
