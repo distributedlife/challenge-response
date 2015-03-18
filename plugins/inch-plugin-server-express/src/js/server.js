@@ -34,8 +34,11 @@ module.exports = {
 
                 io = require('socket.io').listen(server);
 
+                //TODO: Plugins should be loaded in some default place rather than just shoved in here
                 plugins.load(require('../../../inch-input-handler/src/input-handler.js'));
+                plugins.load(require('../../../inch-delayed-effects/src/manager.js'));
                 plugins.load(require('../../../inch-socket-support/src/socket-support.js'));
+
                 plugins.get("SocketSupport")(io, callbacks);
             },
             stop: function () {
