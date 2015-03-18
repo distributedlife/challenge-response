@@ -38,6 +38,7 @@ module.exports = {
                 plugins.load(require('../../../inch-input-handler/src/input-handler.js'));
                 plugins.load(require('../../../inch-delayed-effects/src/manager.js'));
                 plugins.load(require('../../../inch-socket-support/src/socket-support.js'));
+                plugins.load(require('../../../inch-game-engine/src/engine.js'));
 
                 plugins.get("SocketSupport")(io, callbacks);
             },

@@ -10,8 +10,8 @@ var statistics = {};
 
 module.exports = {
     type: "SocketSupport",
-    deps: ["AcknowledgementMap", "InputHandler"],
-    func: function(AcknowledgementMap, InputHandler) {
+    deps: ["AcknowledgementMap", "InputHandler", "ServerSideEngine"],
+    func: function(AcknowledgementMap, InputHandler, Engine) {
         var createStandardCallbacksHash = function (state) {
             return {
                 onPlayerConnect: state.playerConnected.bind(state),
@@ -117,9 +117,10 @@ module.exports = {
                             onNewUserInput: unfurl.arrayWithGuarantee(socketCallbacks.onNewUserInput),
                             getGameState: socketCallbacks.getGameState
                         };
+
                     });
 
-
+                    Engine()().run(120);
 
                     var onInput = createOnInputFunction(id);
 
