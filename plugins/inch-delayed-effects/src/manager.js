@@ -1,31 +1,46 @@
 "use strict";
 
-var _ = require('lodash');
+var reject = require('lodash').reject;
+var each = require('lodash').each;
 var delayedEffect = require('./delayed_effect');
 
 module.exports = {
-    DelayedEffects: function () {
+    type: "DelayedEffects",
+    deps: ["PluginManager", "StateMutator"],
+    func: function (Plugins, StateMutator) {
         var effects = [];
 
         var prune = function () {
-            return _.reject(effects, function (t) {
+            return reject(effects, function (t) {
                 return !t.isAlive();
             });
         };
 
+
+        var update = {
+            type: "ServerSideUpdate",
+            func: function() {
+                return function (dt) {
+                    each(effects, function (effect) {
+                        effect.tick(dt);
+                    });
+
+                    prune();
+                };
+            }
+        };
+        Plugins().load(update);
+
         return {
             add: function (key, duration, onComplete) {
-                effects.push(Object.create(delayedEffect(key, duration, onComplete)));
-            },
-            update: function (dt) {
-                _.each(effects, function (effect) {
-                    effect.tick(dt);
-                });
+                var wrapOnCompleteWithStateMutation = function () {
+                    StateMutator()(onComplete());
+                }
 
-                prune();
+                effects.push(Object.create(delayedEffect(key, duration, wrapOnCompleteWithStateMutation)));
             },
             cancelAll: function (key) {
-                _.each(effects, function (effect) {
+                each(effects, function (effect) {
                     if (effect.key === key || key === undefined) {
                         effect.cancel();
                     }

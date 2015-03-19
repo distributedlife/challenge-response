@@ -1,68 +1,95 @@
 "use strict";
 
 var sequence = require('../../../plugins/inch-sequence/src/sequence.js');
-var _ = require('lodash');
+var each = require('lodash').each;
+var min = require('lodash').min;
 
-module.exports = function(delayedEffects) {
-    var rollUpAnUnnvervingDelay = function () {
-        return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
-    };
+module.exports = {
+    type: "GameBehaviour",
+    deps: ["DelayedEffects", "StateAccess"],
+    func: function (DelayedEffects, State) {
+        var rollUpAnUnnvervingDelay = function () {
+            return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
+        };
 
-    return {
-        challengeSeen: function (ack, controller) {
-            controller.start = ack.rcvdTimestamp;
-        },
-        challengeSeen2: function (state, rcvdTimestamp) {
-            return {
-                start: rcvdTimestamp
-            };
-        },
-        response: function (force, data, controller) {
-            if (controller.state === 'ready') {
-                controller.state = "waiting";
-
-                delayedEffects.add("pause-for-effect", rollUpAnUnnvervingDelay(), function () {
-                    if (controller.state === 'falseStart') {
-                        return;
+        return {
+            challengeSeen: function (ack) {
+                return {
+                    controller: {
+                        start: ack.rcvdTimestamp
                     }
+                }
+            },
+            response: function (force, data) {
+                var get = State().get;
 
-                    controller.state = "challengeStarted";
+                if (get("controller")("state") === 'ready') {
+                    DelayedEffects().add("pause-for-effect", rollUpAnUnnvervingDelay(), function () {
+                        if (get("controller")("state") === 'falseStart') {
+                            return {};
+                        }
+                        return {
+                            controller: {
+                                state: "challengeStarted"
+                            }
+                        };
+                    });
+                    return {
+                        controller: {
+                            state: "waiting"
+                        }
+                    };
+                }
+                if (get("controller")("state") === 'waiting') {
+                    DelayedEffects().cancelAll("pause-for-effect");
+
+                    return {
+                        controller: {
+                            state: "falseStart"
+                        }
+                    };
+                }
+                if (get("controller")("state") === 'challengeStarted') {
+                    var score = data.rcvdTimestamp - get("controller")("start");
+
+                    return {
+                        controller: {
+                            state: 'complete',
+                            score: score
+                        }
+                    };
+                }
+                return {};
+            },
+            reset: function (force, data) {
+                var get = State().get;
+
+                if (get("controller")("state") !== 'complete' && get("controller")("state") !== "falseStart") {
+                    return {};
+                }
+
+                var score = get("controller")("score");
+                if (get("controller")("state") === "falseStart") {
+                    score = "x";
+                }
+
+                var priorScores = get("controller")("priorScores");
+                priorScores.push({id: sequence.next("prior-scores"), score: score});
+                each(priorScores, function(priorScore) {
+                    priorScore.best = false;
                 });
 
-                return;
-            }
-            if (controller.state === 'waiting') {
-                controller.state = "falseStart";
-                delayedEffects.cancelAll("pause-for-effect");
+                var bestScore = min(priorScores, function(priorScore) { return priorScore.score; });
+                bestScore.best = true;
 
-                return;
+                return {
+                    controller: {
+                        score: 0,
+                        state: "ready",
+                        priorScores: priorScores
+                    }
+                }
             }
-            if (controller.state === 'challengeStarted') {
-                controller.state = 'complete';
-                controller.score = data.rcvdTimestamp - controller.start;
-                return;
-            }
-        },
-        reset: function (force, data, controller) {
-            if (controller.state !== 'complete' && controller.state !== "falseStart") {
-                return;
-            }
-
-            var score = controller.score;
-            if (controller.state === "falseStart") {
-                score = "x";
-            }
-
-            controller.priorScores.push({id: sequence.next("prior-scores"), score: score});
-            _.each(controller.priorScores, function(priorScore) {
-                priorScore.best = false;
-            });
-
-            var bestScore = _.min(controller.priorScores, function(priorScore) { return priorScore.score; });
-            bestScore.best = true;
-
-            controller.score = 0;
-            controller.state = "ready";
-        }
-    };
+        };
+    }
 };

@@ -1,34 +1,41 @@
 "use strict";
 
-var _ = require('lodash');
+var each = require('lodash').each;
+var isArray = require('lodash').isArray;
 
-module.exports = function(isPaused, updateCallbacks) {
-  var priorStepTime = Date.now();
+module.exports = {
+  type: "ServerSideEngine",
+  deps: ["ServerSideUpdate", "StateAccess"],
+  func: function (ServerSideUpdate, State) {
+    return function() {
+      var priorStepTime = Date.now();
 
-  var updateArray = function(dt) {
-    _.each(updateCallbacks, function(callback) {
-      callback(dt);
-    });
-  };
+      var updateArray = function(dt) {
+        each(ServerSideUpdate(), function(callback) {
+          callback(dt);
+        });
+      };
 
-  var update = _.isArray(updateCallbacks) ? updateArray : updateCallbacks;
+      var update = isArray(ServerSideUpdate()) ? updateArray : ServerSideUpdate();
 
-  return {
-    step: function(priorStepTime) {
-      var now = Date.now();
+      return {
+        step: function(priorStepTime) {
+          var now = Date.now();
 
-      if (isPaused()) {
-        return now;
-      }
+          if (State().get('inch')('paused')) {
+            return now;
+          }
 
-      var dt = (now - priorStepTime) / 1000;
-      update(dt);
+          var dt = (now - priorStepTime) / 1000;
+          update(dt);
 
-      return now;
-    },
-    run: function(frequency) {
-      priorStepTime = this.step(priorStepTime);
-      setTimeout(this.run.bind(this), 1000 / frequency);
-    }
-  };
+          return now;
+        },
+        run: function(frequency) {
+          priorStepTime = this.step(priorStepTime);
+          setTimeout(this.run.bind(this), 1000 / frequency);
+        }
+      };
+    };
+  }
 };

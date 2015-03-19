@@ -27,12 +27,19 @@ var Access = {
     };
   }
 };
+var RawAccess = {
+  type: "RawStateAccess",
+  func: function () {
+    return root;
+  }
+};
 
 module.exports = {
   type: "StateMutator",
   deps: ["PluginManager"],
   func: function (pluginManager) {
     pluginManager().load(Access);
+    pluginManager().load(RawAccess);
 
     return function(result) {
       root = _.merge(root, result, function (a, b) { return _.isArray(a) ? b : undefined; });
