@@ -5,8 +5,8 @@ var isArray = require('lodash').isArray;
 
 module.exports = {
   type: "ServerSideEngine",
-  deps: ["ServerSideUpdate", "IsPaused"],
-  func: function (ServerSideUpdate, IsPaused) {
+  deps: ["ServerSideUpdate", "StateAccess"],
+  func: function (ServerSideUpdate, State) {
     return function() {
       var priorStepTime = Date.now();
 
@@ -22,7 +22,7 @@ module.exports = {
         step: function(priorStepTime) {
           var now = Date.now();
 
-          if (IsPaused()()) {
+          if (State().get('inch')('paused')) {
             return now;
           }
 

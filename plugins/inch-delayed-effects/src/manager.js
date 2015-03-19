@@ -6,8 +6,8 @@ var delayedEffect = require('./delayed_effect');
 
 module.exports = {
     type: "DelayedEffects",
-    deps: ["PluginManager"],
-    func: function (Plugins) {
+    deps: ["PluginManager", "StateMutator"],
+    func: function (Plugins, StateMutator) {
         var effects = [];
 
         var prune = function () {
@@ -33,7 +33,11 @@ module.exports = {
 
         return {
             add: function (key, duration, onComplete) {
-                effects.push(Object.create(delayedEffect(key, duration, onComplete)));
+                var wrapOnCompleteWithStateMutation = function () {
+                    StateMutator()(onComplete());
+                }
+
+                effects.push(Object.create(delayedEffect(key, duration, wrapOnCompleteWithStateMutation)));
             },
             cancelAll: function (key) {
                 each(effects, function (effect) {

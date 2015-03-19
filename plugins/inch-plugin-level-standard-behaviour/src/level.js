@@ -28,8 +28,10 @@ module.exports = {
 
         return {
             setup: function (scene, ackLastRequest, register, tracker) {
-                tracker.onChangeTo(the('paused'), equals(true), pause);
-                tracker.onChangeTo(the('paused'), equals(false), resume);
+                var paused = function (state) { return state.inch.paused; };
+
+                tracker.onChangeTo(paused, equals(true), pause);
+                tracker.onChangeTo(paused, equals(false), resume);
             }
         };
     }

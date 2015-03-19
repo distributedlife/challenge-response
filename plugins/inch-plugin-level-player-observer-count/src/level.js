@@ -4,7 +4,6 @@ module.exports = {
     type: "Level",
     func: function () {
         var $ = require("zepto-browserify").$;
-        var the = require("../../inch-state-tracker/src/tracker.js").The;
         var numeral = require('numeral');
 
         var updatePlayerCount = function (currentValue) {
@@ -19,8 +18,11 @@ module.exports = {
                 return undefined;
             },
             setup: function (scene, ackLastRequest, register, tracker) {
-                tracker.onChangeOf(the('players'), updatePlayerCount);
-                tracker.onChangeOf(the('observers'), updateObserverCount);
+                var playerCount = function (state) { return state.inch.players; };
+                var observerCount = function (state) { return state.inch.observers; };
+
+                tracker.onChangeOf(playerCount, updatePlayerCount);
+                tracker.onChangeOf(observerCount, updateObserverCount);
             }
         };
     }

@@ -12,7 +12,6 @@ module.exports = {
         var lastReceivedId = 0;
 
         var tracker = require("../../inch-state-tracker/src/tracker.js").Tracker();
-        var the = require("../../inch-state-tracker/src/tracker.js").The;
 
         var setupComplete = false;
 
@@ -88,11 +87,13 @@ module.exports = {
                     priorStep = Date.now();
                 };
 
+                var paused = function (state) { return state.inch.paused; };
+
                 return {
                     setup: setup,
                     update: update,
                     updateDisplay: function () {
-                        if (tracker.get(the('paused'))) {
+                        if (tracker.get(paused)) {
                             dontUpdate();
                         } else {
                             doUpdate();

@@ -5,8 +5,8 @@ var each = require('lodash').each;
 
 module.exports = {
 	type: "InputHandler",
-	deps: ["ActionMap", "PluginManager"],
-	func: function(ActionMap, PluginManager) {
+	deps: ["ActionMap", "PluginManager", "StateMutator", "RawStateAccess"],
+	func: function(ActionMap, PluginManager, StateMutator, RawStateAccess) {
 		var userInput = [];
 
 		var parseKeysAndButtons = function(currentInput, callback) {
@@ -15,7 +15,9 @@ module.exports = {
 
 				each(ActionMap()[key], function(action) {
 					if (!action.keypress) {
-						callback(action.target, action.noEventKey, action.data);
+						StateMutator()(
+							callback(action.target, action.noEventKey, action.data)
+						);
 					}
 				});
 			});
@@ -25,7 +27,9 @@ module.exports = {
 
 				each(ActionMap()[key], function(action) {
 					if (action.keypress) {
-						callback(action.target, action.noEventKey, action.data);
+						StateMutator()(
+							callback(action.target, action.noEventKey, action.data)
+						);
 					}
 				});
 			});
@@ -37,7 +41,9 @@ module.exports = {
 				if (ActionMap()[key] === undefined) { return; }
 
 				each(ActionMap()[key], function(action) {
-					callback(action.target, action.noEventKey, touch.x, touch.y, action.data);
+					StateMutator()(
+						callback(action.target, action.noEventKey, touch.x, touch.y, action.data)
+					);
 				});
 			});
 		};
@@ -49,7 +55,9 @@ module.exports = {
 
 				var data = currentInput.rawData[key];
 				each(ActionMap()[key], function(action) {
-					callback(action.target, action.noEventKey, data.x, data.y, data.force, action.data);
+					StateMutator()(
+						callback(action.target, action.noEventKey, data.x, data.y, data.force, action.data)
+					);
 				});
 			});
 		};
@@ -69,31 +77,31 @@ module.exports = {
 
 					var somethingHasReceivedInput = [];
 					parseKeysAndButtons(currentInput, function(target, noEventKey, suppliedData) {
-						target(1.0, data, suppliedData);
 						somethingHasReceivedInput.push(noEventKey);
+						return target(1.0, data, suppliedData);
 					});
 
 					parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
-						target(x, y, data, suppliedData);
 						somethingHasReceivedInput.push(noEventKey);
+						return target(x, y, data, suppliedData);
 					});
 
 					parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
-						target(x, y, force, data, suppliedData);
 						somethingHasReceivedInput.push(noEventKey);
+						return target(x, y, force, data, suppliedData);
 					});
 
 					if (ActionMap().cursor !== undefined) {
 						each(ActionMap().cursor, function(action) {
 							var cx = currentInput.rawData.x;
 							var cy = currentInput.rawData.y;
-							action.target(cx, cy, data, action.data);
+							return action.target(cx, cy, data, action.data);
 						});
 					}
 
 					each(ActionMap().nothing, function(action) {
 						if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
-							action.target(data, action.data);
+							return action.target(data, action.data);
 						}
 					});
 				};

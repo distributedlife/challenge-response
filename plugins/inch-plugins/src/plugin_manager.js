@@ -11,7 +11,14 @@ var plugins = {
     OnResumeCallback: [],
     OnMuteCallback: [],
     OnUnmuteCallback: [],
-    ServerSideUpdate: []
+    ServerSideUpdate: [],
+    StateSeed: [],
+    OnPlayerConnect: [],
+    OnPlayerDisconnect: [],
+    OnObserverConnect: [],
+    OnObserverDisconnect: [],
+    OnPause: [],
+    OnUnpause: []
 };
 
 var pluginManager = {

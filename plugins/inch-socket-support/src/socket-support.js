@@ -3,37 +3,22 @@
 var _ = require('lodash');
 var each = require('lodash').each;
 var sequence = require('../../inch-sequence/src/sequence.js');
-var unfurl = require('inch-unfurl');
 
 //TODO: State here is at per-server-instance level
 var statistics = {};
 
 module.exports = {
     type: "SocketSupport",
-    deps: ["AcknowledgementMap", "InputHandler", "ServerSideEngine"],
-    func: function(AcknowledgementMap, InputHandler, Engine) {
-        var createStandardCallbacksHash = function (state) {
-            return {
-                onPlayerConnect: state.playerConnected.bind(state),
-                onPlayerDisconnect: state.playerDisconnected.bind(state),
-                onObserverConnect: state.observerConnected.bind(state),
-                onObserverDisconnect: state.observerDisconnected.bind(state),
-                onPause: state.pause.bind(state),
-                onUnpause: state.unpause.bind(state),
-                onNewUserInput: InputHandler().newUserInput,
-                getGameState: function () { return state; }
-            };
-        };
+    deps: ["AcknowledgementMap", "InputHandler", "ServerSideEngine", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "PluginManager"],
+    func: function(AcknowledgementMap, InputHandler, Engine, OnPlayerConnect, OnPlayerDisconnect, OnObserverConnect, OnObserverDisconnect, OnPause, OnUnpause, RawStateAccess, StateMutator, plugins) {
 
         return function (io, modeCallbacks) {
-            var unfurledCallbacks = {};
-
             var startUpdateClientLoop = function (id, socket) {
                 var lastPacket = {};
 
                 var updateClient = function () {
                     var packet = {
-                        gameState: unfurledCallbacks.getGameState()
+                        gameState: RawStateAccess()
                     };
 
                     if (_.isEqual(packet.gameState, lastPacket.gameState)) {
@@ -68,7 +53,7 @@ module.exports = {
                         if (AcknowledgementMap()[name] === undefined) { return; }
 
                         each(AcknowledgementMap()[name], function (action) {
-                            action.target(ack, action.data);
+                            StateMutator()(action.target(ack, action.data));
                         });
                     });
 
@@ -81,7 +66,7 @@ module.exports = {
                     var pendingAcks = inputData.pendingAcks;
                     delete inputData.pendingAcks;
 
-                    unfurledCallbacks.onNewUserInput(inputData, Date.now());
+                    InputHandler().newUserInput(inputData, Date.now());
                     calculateLatency(id, pendingAcks);
                     removeAcknowledgedPackets(id, pendingAcks);
                 };
@@ -101,39 +86,35 @@ module.exports = {
                         }
                     };
 
+                    modeCallback();
+                    plugins().get("InitialiseState")();
 
-                    //TODO: This is a dirty hack, but it gets us through these growing pains.
-                    modeCallback(function(state) {
-
-                        var socketCallbacks = createStandardCallbacksHash(state);
-
-                        unfurledCallbacks = {
-                            onPlayerConnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerConnect),
-                            onPlayerDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onPlayerDisconnect),
-                            onObserverConnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverConnect),
-                            onObserverDisconnect: unfurl.arrayWithGuarantee(socketCallbacks.onObserverDisconnect),
-                            onPause: unfurl.arrayWithGuarantee(socketCallbacks.onPause),
-                            onUnpause: unfurl.arrayWithGuarantee(socketCallbacks.onUnpause),
-                            onNewUserInput: unfurl.arrayWithGuarantee(socketCallbacks.onNewUserInput),
-                            getGameState: socketCallbacks.getGameState
-                        };
-
-                    });
-
+                    //TODO: we may be able to move this out of here. It's not really a socket concern; more of a sequencing concern... that's probably unrealised
                     Engine()().run(120);
+
 
                     var onInput = createOnInputFunction(id);
 
-                    socket.on('disconnect', unfurledCallbacks.onPlayerDisconnect);
-                    socket.on('input', onInput);
-                    socket.on('pause', unfurledCallbacks.onPause);
-                    socket.on('unpause', unfurledCallbacks.onUnpause);
+                    var mutateCallbackResponse = function (callbacks) {
+                        return function() {
+                            each(callbacks, function(callback) {
+                                StateMutator()(callback());
+                            });
+                        };
+                    }
 
-                    socket.emit("gameState/setup", unfurledCallbacks.getGameState());
+                    socket.on('disconnect', mutateCallbackResponse(OnPlayerDisconnect()));
+                    socket.on('input', onInput);
+                    socket.on('pause', mutateCallbackResponse(OnPause()));
+                    socket.on('unpause', mutateCallbackResponse(OnUnpause()));
+
+                    socket.emit("gameState/setup", RawStateAccess());
 
                     startUpdateClientLoop(id, socket);
 
-                    unfurledCallbacks.onPlayerConnect();
+                    each(OnPlayerConnect(), function(callback) {
+                        StateMutator()(callback());
+                    });
                 };
             };
 
