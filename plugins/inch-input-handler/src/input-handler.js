@@ -1,12 +1,11 @@
 "use strict";
 
-var define = require('../../inch-define-plugin/src/define.js');
 var each = require('lodash').each;
 
 module.exports = {
 	type: "OnInput",
-	deps: ["ActionMap", "PluginManager", "StateMutator"],
-	func: function(ActionMap, PluginManager, StateMutator) {
+	deps: ["ActionMap", "DefinePlugin", "StateMutator"],
+	func: function(ActionMap, DefinePlugin, StateMutator) {
 		var userInput = [];
 
 		var parseKeysAndButtons = function(currentInput, callback) {
@@ -62,55 +61,51 @@ module.exports = {
 			});
 		};
 
-		var update = {
-			type: "ServerSideUpdate",
-			func: function () {
-				return function () {
-					var currentInput = userInput.shift();
-					if (currentInput === undefined) {
-						return;
-					}
+		DefinePlugin()("ServerSideUpdate", function () {
+			return function () {
+				var currentInput = userInput.shift();
+				if (currentInput === undefined) {
+					return;
+				}
 
-					var data = {
-						rcvdTimestamp: currentInput.timestamp
-					};
-
-					var somethingHasReceivedInput = [];
-					parseKeysAndButtons(currentInput, function(target, noEventKey, suppliedData) {
-						somethingHasReceivedInput.push(noEventKey);
-						return target(1.0, data, suppliedData);
-					});
-
-					parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
-						somethingHasReceivedInput.push(noEventKey);
-						return target(x, y, data, suppliedData);
-					});
-
-					parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
-						somethingHasReceivedInput.push(noEventKey);
-						return target(x, y, force, data, suppliedData);
-					});
-
-					if (ActionMap().cursor !== undefined) {
-						each(ActionMap().cursor, function(action) {
-							var cx = currentInput.rawData.x;
-							var cy = currentInput.rawData.y;
-							return action.target(cx, cy, data, action.data);
-						});
-					}
-
-					each(ActionMap().nothing, function(action) {
-						if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
-							return action.target(data, action.data);
-						}
-					});
+				var data = {
+					rcvdTimestamp: currentInput.timestamp
 				};
-			}
-		};
-		PluginManager().load(update);
 
-		return function(newUserInput, timestamp) {
-			userInput.push({ rawData: newUserInput, timestamp: timestamp });
+				var somethingHasReceivedInput = [];
+				parseKeysAndButtons(currentInput, function(target, noEventKey, suppliedData) {
+					somethingHasReceivedInput.push(noEventKey);
+					return target(1.0, data, suppliedData);
+				});
+
+				parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
+					somethingHasReceivedInput.push(noEventKey);
+					return target(x, y, data, suppliedData);
+				});
+
+				parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
+					somethingHasReceivedInput.push(noEventKey);
+					return target(x, y, force, data, suppliedData);
+				});
+
+				if (ActionMap().cursor !== undefined) {
+					each(ActionMap().cursor, function(action) {
+						var cx = currentInput.rawData.x;
+						var cy = currentInput.rawData.y;
+						return action.target(cx, cy, data, action.data);
+					});
+				}
+
+				each(ActionMap().nothing, function(action) {
+					if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
+						return action.target(data, action.data);
+					}
+				});
+			};
+		});
+
+		return function(rawData, timestamp) {
+			userInput.push({ rawData: rawData, timestamp: timestamp });
 		};
 	}
 };

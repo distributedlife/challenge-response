@@ -10,13 +10,11 @@ module.exports = {
     return function() {
       var priorStepTime = Date.now();
 
-      var updateArray = function(dt) {
+      var update = function(dt) {
         each(ServerSideUpdate(), function(callback) {
           callback(dt);
         });
       };
-
-      var update = isArray(ServerSideUpdate()) ? updateArray : ServerSideUpdate();
 
       return {
         step: function(priorStepTime) {

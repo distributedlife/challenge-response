@@ -14,32 +14,22 @@ var provideReadAccessToState = function(stateHash) {
 };
 
 var rootNodeAccess = provideReadAccessToState(root);
-var Access = {
-  type: "StateAccess",
-  func: function () {
-    return {
-      get: function(key) {
-        return rootNodeAccess(key);
-      },
-      add: function (namespace, obj) {
-        root[namespace] = obj;
-      }
-    };
-  }
-};
-var RawAccess = {
-  type: "RawStateAccess",
-  func: function () {
-    return root;
-  }
-};
 
 module.exports = {
   type: "StateMutator",
-  deps: ["PluginManager"],
-  func: function (pluginManager) {
-    pluginManager().load(Access);
-    pluginManager().load(RawAccess);
+  deps: ["DefinePlugin"],
+  func: function (DefinePlugin) {
+    DefinePlugin()("StateAccess", function () {
+      return {
+        get: function(key) {
+          return rootNodeAccess(key);
+        },
+        add: function (namespace, obj) {
+          root[namespace] = obj;
+        }
+      };
+    });
+    DefinePlugin()("RawStateAccess", function () { return root; });
 
     return function(result) {
       root = _.merge(root, result, function (a, b) { return _.isArray(a) ? b : undefined; });

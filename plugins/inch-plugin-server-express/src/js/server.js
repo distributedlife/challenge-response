@@ -41,112 +41,82 @@ module.exports = {
                 plugins.load(require('../../../inch-game-engine/src/engine.js'));
                 plugins.load(require('../../../inch-plugin-state-mutator-default/src/index.js'));
                 plugins.load(require('../../../inch-plugin-behaviour-invoker-default/src/index.js'));
-                plugins.load({
-                    type: "StateSeed",
-                    func: function () {
+
+                var definePlugin = plugins.get("DefinePlugin");
+                definePlugin("StateSeed", function () {
+                    return {
+                        inch: {
+                            players: 0,
+                            observers: 0,
+                            paused: false,
+                            started: Date.now(),
+                            dimensions: { width: 1000, height: 500 }
+                        }
+                    };
+                });
+                definePlugin("OnPause", ["StateAccess"], function (State) {
+                    return function () {
                         return {
                             inch: {
-                                players: 0,
-                                observers: 0,
-                                paused: false,
-                                started: Date.now(),
-                                dimensions: { width: 1000, height: 500 }
+                                paused: true
                             }
                         };
-                    }
+                    };
                 });
-
-                plugins.load({
-                    type: "OnPause",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    paused: true
-                                }
-                            };
+                definePlugin("OnUnpause", ["StateAccess"], function (State) {
+                    return function () {
+                        return {
+                            inch: {
+                                paused: false
+                            }
                         };
-                    }
+                    };
                 });
-                plugins.load({
-                    type: "OnUnpause",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    paused: false
-                                }
-                            };
+                definePlugin("OnPlayerConnected", ["StateAccess"], function (State) {
+                    return function () {
+                        return {
+                            inch: {
+                                players: State().get("players") + 1
+                            }
                         };
-                    }
+                    };
                 });
-                plugins.load({
-                    type: "OnPlayerConnected",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    players: State().get("players") + 1
-                                }
-                            };
+                definePlugin("OnPlayerDisconnected", ["StateAccess"], function (State) {
+                    return function () {
+                        return {
+                            inch: {
+                                paused: true,
+                                players: State().get("players") - 1
+                            }
                         };
-                    }
+                    };
                 });
-                plugins.load({
-                    type: "OnPlayerDisconnected",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    paused: true,
-                                    players: State().get("players") - 1
-                                }
-                            };
+                definePlugin("OnObserverConnected", ["StateAccess"], function (State) {
+                    return function () {
+                        return {
+                            inch: {
+                                observers: State().get("observers") + 1
+                            }
                         };
-                    }
+                    };
                 });
-                plugins.load({
-                    type: "OnObserverConnected",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    observers: State().get("observers") + 1
-                                }
-                            };
+                definePlugin("OnObserverDisconnected", ["StateAccess"], function (State) {
+                    return function () {
+                        return {
+                            inch: {
+                                observers: State().get("observers") - 1
+                            }
                         };
-                    }
-                });
-                plugins.load({
-                    type: "OnObserverDisconnected",
-                    deps: ["StateAccess"],
-                    func: function (State) {
-                        return function () {
-                            return {
-                                inch: {
-                                    observers: State().get("observers") - 1
-                                }
-                            };
-                        };
-                    }
+                    };
                 });
 
                 var each = require('lodash').each;
-                plugins.load({
-                    type: "InitialiseState",
-                    deps: ["StateSeed", "StateMutator"],
-                    func: function (StateSeed, StateMutator) {
-                        return function () {
-                            each(StateSeed(), function (state) {
-                                StateMutator()(state);
-                            });
-                        };
-                    }
+                definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (StateSeed, StateMutator) {
+                    return function () {
+                        each(StateSeed(), function (state) {
+                            StateMutator()(state);
+                        });
+                    };
                 });
 
                 plugins.get("SocketSupport")(io, callbacks);

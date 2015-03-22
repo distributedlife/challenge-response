@@ -22,45 +22,66 @@ var plugins = {
     OnInput: []
 };
 
-var pluginManager = {
-    load: function (module) {
-        module.deps = module.deps || [];
-
-        var args = [];
-        var i;
-
-        var deferredDependency = function (deferred) {
-            return function () {
-                return this.get(deferred);
-            }.bind(this);
-        }.bind(this);
-
-        var dep;
-        for (i = 0; i < module.deps.length; i += 1) {
-            dep = module.deps[i];
-            if (dep.indexOf("*") !== -1) {
-                throw new Error("Dependency '" +  dep + "' for role '" + module.type + "' contains an asterisk. This is no longer used for deferred dependencies as all dependencies are now deferred.");
-            }
-
-            args.push(deferredDependency(dep));
-        }
-
-        if (isArray(plugins[module.type])) {
-            plugins[module.type].push(module.func.apply(this, args));
-        } else {
-            plugins[module.type] = module.func.apply(this, args);
-        }
-    },
-    get: function (name) {
-        if (!plugins[name]) {
-            throw new Error("No plugin defined for: " + name);
-        }
-
-        return plugins[name];
-    },
-    set: function (name, thing) {
-        plugins[name] = thing;
+var get = function (name) {
+    if (!plugins[name]) {
+        throw new Error("No plugin defined for: " + name);
     }
+
+    return plugins[name];
+};
+
+var load = function (module) {
+    module.deps = module.deps || [];
+
+    var args = [];
+    var i;
+
+    var deferredDependency = function (deferred) {
+        return function () {
+            return get(deferred);
+        };
+    };
+
+    var dep;
+    for (i = 0; i < module.deps.length; i += 1) {
+        dep = module.deps[i];
+        if (dep.indexOf("*") !== -1) {
+            throw new Error("Dependency '" +  dep + "' for role '" + module.type + "' contains an asterisk. This is no longer used for deferred dependencies as all dependencies are now deferred.");
+        }
+
+        args.push(deferredDependency(dep));
+    }
+
+    if (isArray(plugins[module.type])) {
+        plugins[module.type].push(module.func.apply(this, args));
+    } else {
+        plugins[module.type] = module.func.apply(this, args);
+    }
+};
+
+var set = function (name, thing) {
+    plugins[name] = thing;
+};
+
+var define = function (type, deps, func) {
+  if (deps instanceof Function) {
+    return {
+      type: type,
+      func: deps
+    };
+  } else {
+    return {
+      type: type,
+      deps: deps,
+      func: func
+    };
+  }
+};
+
+var pluginManager = {
+    load: load,
+    set: set,
+    get: get
 };
 
 pluginManager.load({
@@ -69,6 +90,15 @@ pluginManager.load({
         return pluginManager;
     }
 });
+
+pluginManager.load({
+    type: "DefinePlugin",
+    func: function () {
+        return function (type, deps, func) {
+            load(define(type, deps, func));
+        };
+    }
+})
 
 module.exports = {
     PluginManager: pluginManager
