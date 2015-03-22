@@ -18,7 +18,8 @@ var plugins = {
     OnObserverConnect: [],
     OnObserverDisconnect: [],
     OnPause: [],
-    OnUnpause: []
+    OnUnpause: [],
+    OnInput: []
 };
 
 var pluginManager = {

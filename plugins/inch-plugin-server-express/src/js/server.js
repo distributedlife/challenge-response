@@ -139,8 +139,8 @@ module.exports = {
                 var each = require('lodash').each;
                 plugins.load({
                     type: "InitialiseState",
-                    deps: ["StateSeed", "StateMutator", "RawStateAccess"],
-                    func: function (StateSeed, StateMutator, RawStateAccess) {
+                    deps: ["StateSeed", "StateMutator"],
+                    func: function (StateSeed, StateMutator) {
                         return function () {
                             each(StateSeed(), function (state) {
                                 StateMutator()(state);
@@ -151,6 +151,7 @@ module.exports = {
 
                 plugins.get("SocketSupport")(io, callbacks);
                 plugins.get("InitialiseState")();
+                plugins.get("ServerSideEngine")().run(120);
             },
             stop: function () {
                 if (io !== undefined) {

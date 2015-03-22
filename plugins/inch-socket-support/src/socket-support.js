@@ -1,7 +1,9 @@
 "use strict";
 
-var _ = require('lodash');
 var each = require('lodash').each;
+var isEqual = require('lodash').isEqual;
+var cloneDeep = require('lodash').cloneDeep;
+var size = require('lodash').size;
 var sequence = require('../../inch-sequence/src/sequence.js');
 
 //TODO: State here is at per-server-instance level
@@ -9,8 +11,8 @@ var statistics = {};
 
 module.exports = {
     type: "SocketSupport",
-    deps: ["AcknowledgementMap", "InputHandler", "ServerSideEngine", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "PluginManager"],
-    func: function(AcknowledgementMap, InputHandler, Engine, OnPlayerConnect, OnPlayerDisconnect, OnObserverConnect, OnObserverDisconnect, OnPause, OnUnpause, RawStateAccess, StateMutator, plugins) {
+    deps: ["AcknowledgementMap", "OnInput", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "InitialiseState"],
+    func: function(AcknowledgementMap, OnInput, OnPlayerConnect, OnPlayerDisconnect, OnObserverConnect, OnObserverDisconnect, OnPause, OnUnpause, RawStateAccess, StateMutator, InitialiseState) {
 
         return function (io, modeCallbacks) {
             var startUpdateClientLoop = function (id, socket) {
@@ -21,11 +23,11 @@ module.exports = {
                         gameState: RawStateAccess()
                     };
 
-                    if (_.isEqual(packet.gameState, lastPacket.gameState)) {
+                    if (isEqual(packet.gameState, lastPacket.gameState)) {
                         return;
                     }
 
-                    lastPacket = _.cloneDeep(packet);
+                    lastPacket = cloneDeep(packet);
 
                     packet.id = sequence.next('server-origin-messages');
                     packet.sentTimestamp = Date.now();
@@ -44,7 +46,7 @@ module.exports = {
                     statistics[id].latency.total += ack.rcvdTimestamp - sentTime;
                 });
 
-                statistics[id].packets.totalAcked += _.size(pendingAcknowledgements);
+                statistics[id].packets.totalAcked += size(pendingAcknowledgements);
             };
 
             var removeAcknowledgedPackets = function (id, pendingAcknowledgements) {
@@ -66,7 +68,10 @@ module.exports = {
                     var pendingAcks = inputData.pendingAcks;
                     delete inputData.pendingAcks;
 
-                    InputHandler().newUserInput(inputData, Date.now());
+                    each(OnInput(), function (onInputCallback) {
+                        onInputCallback(inputData, Date.now());
+                    });
+
                     calculateLatency(id, pendingAcks);
                     removeAcknowledgedPackets(id, pendingAcks);
                 };
@@ -87,10 +92,10 @@ module.exports = {
                     };
 
                     modeCallback();
-                    plugins().get("InitialiseState")();
+                    InitialiseState()();
 
                     //TODO: we may be able to move this out of here. It's not really a socket concern; more of a sequencing concern... that's probably unrealised
-                    Engine()().run(120);
+
 
 
                     var onInput = createOnInputFunction(id);

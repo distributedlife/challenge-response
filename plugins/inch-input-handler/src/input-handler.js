@@ -4,9 +4,9 @@ var define = require('../../inch-define-plugin/src/define.js');
 var each = require('lodash').each;
 
 module.exports = {
-	type: "InputHandler",
-	deps: ["ActionMap", "PluginManager", "StateMutator", "RawStateAccess"],
-	func: function(ActionMap, PluginManager, StateMutator, RawStateAccess) {
+	type: "OnInput",
+	deps: ["ActionMap", "PluginManager", "StateMutator"],
+	func: function(ActionMap, PluginManager, StateMutator) {
 		var userInput = [];
 
 		var parseKeysAndButtons = function(currentInput, callback) {
@@ -109,10 +109,8 @@ module.exports = {
 		};
 		PluginManager().load(update);
 
-		return {
-			newUserInput: function(newUserInput, timestamp) {
-				userInput.push({ rawData: newUserInput, timestamp: timestamp });
-			}
+		return function(newUserInput, timestamp) {
+			userInput.push({ rawData: newUserInput, timestamp: timestamp });
 		};
 	}
 };
