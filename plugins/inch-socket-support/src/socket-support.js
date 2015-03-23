@@ -94,10 +94,6 @@ module.exports = {
                     modeCallback();
                     InitialiseState()();
 
-                    //TODO: we may be able to move this out of here. It's not really a socket concern; more of a sequencing concern... that's probably unrealised
-
-
-
                     var onInput = createOnInputFunction(id);
 
                     var mutateCallbackResponse = function (callbacks) {
