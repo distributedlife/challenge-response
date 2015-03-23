@@ -5,7 +5,7 @@ var each = require('lodash').each;
 var min = require('lodash').min;
 
 module.exports = {
-    type: "GameBehaviour",
+    type: "GameBehaviour-Controller",
     deps: ["DelayedEffects", "StateAccess"],
     func: function (DelayedEffects, State) {
         var rollUpAnUnnvervingDelay = function () {

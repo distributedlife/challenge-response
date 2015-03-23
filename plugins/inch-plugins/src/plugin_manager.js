@@ -1,5 +1,7 @@
 "use strict";
 
+var loader = require('../../inch-entity-loader/src/loader.js');
+
 var isArray = require('lodash').isArray;
 
 //Multimode plugins are initialised to an empty array.
@@ -59,6 +61,10 @@ var load = function (module) {
     }
 };
 
+var loadPath = function (path) {
+    loader.loadFromPath(path, load);
+};
+
 var set = function (name, thing) {
     plugins[name] = thing;
 };
@@ -80,6 +86,7 @@ var define = function (type, deps, func) {
 
 var pluginManager = {
     load: load,
+    loadPath: loadPath,
     set: set,
     get: get
 };
@@ -87,6 +94,7 @@ var pluginManager = {
 pluginManager.load({
     type: "PluginManager",
     func: function() {
+        console.log("PluginManager is deprecated");
         return pluginManager;
     }
 });

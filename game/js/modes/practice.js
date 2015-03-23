@@ -1,16 +1,12 @@
 "use strict";
 
-var pp = "../../../plugins"
-
-var define = require(pp+'/inch-define-plugin/src/define.js');
-
 module.exports = {
-    type: 'GameMode',
-    deps: ['PluginManager', "GameBehaviour"],
-    func: function(plugins, GameBehaviour) {
+    type: 'GameMode-Practice',
+    deps: ['DefinePlugin', "GameBehaviour-Controller"],
+    func: function(DefinePlugin, Controller) {
         return function() {
             //TODO: If this is here, then the state exists per HTTP request. This is not the best place to put state. Or, we do initialise the state if it has not been initialised yet. The setting up of state will be a common pattern so we want to make it painless.
-            plugins().load(define("StateSeed", function () {
+            DefinePlugin()("StateSeed", function () {
                 return {
                     controller: {
                         start: 0,
@@ -19,22 +15,22 @@ module.exports = {
                         priorScores: []
                     }
                 };
-            }));
+            });
 
-            plugins().load(define("ActionMap", function () {
+            DefinePlugin()("ActionMap", function () {
                 return {
-                    'space': [{target: GameBehaviour().response, keypress: true}],
-                    'r': [{target: GameBehaviour().reset, keypress: true}]
+                    'space': [{target: Controller().response, keypress: true}],
+                    'r': [{target: Controller().reset, keypress: true}]
                 };
-            }));
+            });
 
-            plugins().load(define("AcknowledgementMap", function () {
+            DefinePlugin()("AcknowledgementMap", function () {
                 return {
                     'show-challenge': [{
-                        target: GameBehaviour().challengeSeen
+                        target: Controller().challengeSeen
                     }]
                 };
-            }));
+            });
         };
     }
 };

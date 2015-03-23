@@ -1,9 +1,9 @@
 "use strict";
 
 module.exports = {
-    deps: ["RenderEngineAdapter", "PositionHelper", "Camera", "PluginManager", "Element"],
+    deps: ["RenderEngineAdapter", "PositionHelper", "Camera", "Element"],
     type: "Level",
-    func: function (adapter, PositionHelper, Camera, pluginManager, element) {
+    func: function (adapter, PositionHelper, Camera, element) {
         var colour = require('color');
         var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
         var Howl = require('howler').Howl;
