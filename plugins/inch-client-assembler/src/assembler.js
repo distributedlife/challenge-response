@@ -24,6 +24,11 @@ module.exports = function (pluginManager) {
                 $("#" + element).css("width", dims.usableWidth);
                 $("#" + element).css("height", dims.usableHeight);
 
+                var input_element = pluginManager.get('InputElement');
+                $("#" + input_element).css("margin-top", dims.marginTopBottom);
+                $("#" + input_element).css("width", dims.usableWidth);
+                $("#" + input_element).css("height", dims.usableHeight);
+
                 display.resize(dims);
             };
 

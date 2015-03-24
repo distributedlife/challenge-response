@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-    deps: ["Window", "Element"],
+    deps: ["Window", "InputElement"],
     type: "InputMode",
     func: function (window, element) {
         var _ = require('lodash');

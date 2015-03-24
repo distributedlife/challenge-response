@@ -7,7 +7,8 @@ pluginManager.set('Window', require('window'));
 pluginManager.set('GameMode', 'practice');
 pluginManager.set('AspectRatio', 26 / 10);									//default, required
 pluginManager.set('WidescreenMinimumMargin', 32);							//default, required
-pluginManager.set('Element', "canvas");										//default, required
+pluginManager.set('Element', "canvas");                   //default, required
+pluginManager.set('InputElement', "input");                   //default, required
 pluginManager.set('FOV', 60);												//default, required
 pluginManager.set('DebugProperties', {});									//default, required
 
