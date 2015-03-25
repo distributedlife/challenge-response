@@ -17,77 +17,77 @@ module.exports = {
     var each = require('lodash').each;
     var definePlugin = plugins.get("DefinePlugin");
     definePlugin("StateSeed", function () {
-        return {
-            inch: {
-                players: 0,
-                observers: 0,
-                paused: false,
-                started: Date.now(),
-                dimensions: { width: 1000, height: 500 }
-            }
-        };
+      return {
+        inch: {
+          players: 0,
+          observers: 0,
+          paused: false,
+          started: Date.now(),
+          dimensions: { width: 1000, height: 500 }
+        }
+      };
     });
     definePlugin("OnPause", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    paused: true
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            paused: true
+          }
         };
+      };
     });
     definePlugin("OnUnpause", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    paused: false
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            paused: false
+          }
         };
+      };
     });
     definePlugin("OnPlayerConnected", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    players: State().get("players") + 1
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            players: State().get("players") + 1
+          }
         };
+      };
     });
     definePlugin("OnPlayerDisconnected", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    paused: true,
-                    players: State().get("players") - 1
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            paused: true,
+            players: State().get("players") - 1
+          }
         };
+      };
     });
     definePlugin("OnObserverConnected", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    observers: State().get("observers") + 1
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            observers: State().get("observers") + 1
+          }
         };
+      };
     });
     definePlugin("OnObserverDisconnected", ["StateAccess"], function (State) {
-        return function () {
-            return {
-                inch: {
-                    observers: State().get("observers") - 1
-                }
-            };
+      return function () {
+        return {
+          inch: {
+            observers: State().get("observers") - 1
+          }
         };
+      };
     });
     definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (StateSeed, StateMutator) {
-        return function () {
-            each(StateSeed(), function (state) {
-                StateMutator()(state);
-            });
-        };
+      return function () {
+        each(StateSeed(), function (state) {
+          StateMutator()(state);
+        });
+      };
     });
 
     plugins.get("InitialiseState")();
