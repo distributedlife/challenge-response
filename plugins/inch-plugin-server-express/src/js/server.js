@@ -1,135 +1,54 @@
 "use strict";
 
 module.exports = {
-    Server: function (assetPath, callbacks) {
-        var server;
-        var io;
-        var express = require('express');
-        var favicon = require('serve-favicon');
-        var configureRoutes = require("./configure-routes");
-
+    type: "Server",
+    deps: ["PluginManager"],
+    func: function (plugins) {
         return {
-            start: function (plugins) {
-                var app = express();
-                app.use('/game', express.static(assetPath));
-                app.use('/inch', express.static(__dirname + '/../../public/'));
-                app.use(require('morgan')('combined'));
-                app.use(require('body-parser').urlencoded({extended: true }));
-                app.use(require('body-parser').json());
-                app.set('views', __dirname + '/../../public/views');
-                app.set('view options', {layout: false});
-                app.engine('jade', require('jade').__express);
+            Server: function (assetPath, callbacks) {
+                var server;
+                var io;
+                var express = require('express');
+                var favicon = require('serve-favicon');
+                var configureRoutes = require("./configure-routes");
 
-                var pathToFavIcon = process.cwd() + '/game/favicon.ico';
-                if (!require('fs').existsSync(pathToFavIcon)) {
-                    pathToFavIcon = __dirname + '/../../public/favicon.ico';
-                }
-                app.use(favicon(pathToFavIcon));
+                return {
+                    start: function () {
+                        var app = express();
+                        app.use('/game', express.static(assetPath));
+                        app.use('/inch', express.static(__dirname + '/../../public/'));
+                        app.use(require('morgan')('combined'));
+                        app.use(require('body-parser').urlencoded({extended: true }));
+                        app.use(require('body-parser').json());
+                        app.set('views', __dirname + '/../../public/views');
+                        app.set('view options', {layout: false});
+                        app.engine('jade', require('jade').__express);
 
-                server = require('http').createServer(app);
-                var pages = ["primary"];
-                configureRoutes(callbacks, app, pages, '.jade');
-
-                server.listen(process.env.PORT || 3000);
-
-                io = require('socket.io').listen(server);
-
-                //TODO: Plugins should be loaded in some default place rather than just shoved in here
-                plugins.load(require('../../../inch-input-handler/src/input-handler.js'));
-                plugins.load(require('../../../inch-delayed-effects/src/manager.js'));
-                plugins.load(require('../../../inch-socket-support/src/socket-support.js'));
-                plugins.load(require('../../../inch-game-engine/src/engine.js'));
-                plugins.load(require('../../../inch-plugin-state-mutator-default/src/index.js'));
-                plugins.load(require('../../../inch-plugin-behaviour-invoker-default/src/index.js'));
-
-                var definePlugin = plugins.get("DefinePlugin");
-                definePlugin("StateSeed", function () {
-                    return {
-                        inch: {
-                            players: 0,
-                            observers: 0,
-                            paused: false,
-                            started: Date.now(),
-                            dimensions: { width: 1000, height: 500 }
+                        var pathToFavIcon = process.cwd() + '/game/favicon.ico';
+                        if (!require('fs').existsSync(pathToFavIcon)) {
+                            pathToFavIcon = __dirname + '/../../public/favicon.ico';
                         }
-                    };
-                });
-                definePlugin("OnPause", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                paused: true
-                            }
-                        };
-                    };
-                });
-                definePlugin("OnUnpause", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                paused: false
-                            }
-                        };
-                    };
-                });
-                definePlugin("OnPlayerConnected", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                players: State().get("players") + 1
-                            }
-                        };
-                    };
-                });
-                definePlugin("OnPlayerDisconnected", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                paused: true,
-                                players: State().get("players") - 1
-                            }
-                        };
-                    };
-                });
-                definePlugin("OnObserverConnected", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                observers: State().get("observers") + 1
-                            }
-                        };
-                    };
-                });
-                definePlugin("OnObserverDisconnected", ["StateAccess"], function (State) {
-                    return function () {
-                        return {
-                            inch: {
-                                observers: State().get("observers") - 1
-                            }
-                        };
-                    };
-                });
+                        app.use(favicon(pathToFavIcon));
 
-                var each = require('lodash').each;
-                definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (StateSeed, StateMutator) {
-                    return function () {
-                        each(StateSeed(), function (state) {
-                            StateMutator()(state);
-                        });
-                    };
-                });
+                        server = require('http').createServer(app);
+                        var pages = ["primary"];
+                        configureRoutes(callbacks, app, pages, '.jade');
 
-                plugins.get("SocketSupport")(io, callbacks);
-                plugins.get("InitialiseState")();
-                plugins.get("ServerSideEngine")().run(120);
-            },
-            stop: function () {
-                if (io !== undefined) {
-                    io.close();
-                }
-                if (server !== undefined) {
-                    server.close();
-                }
+                        server.listen(process.env.PORT || 3000);
+
+                        //TODO: does this really belong here?
+                        io = require('socket.io').listen(server);
+                        plugins().get("SocketSupport")(io, callbacks);
+                    },
+                    stop: function () {
+                        if (io !== undefined) {
+                            io.close();
+                        }
+                        if (server !== undefined) {
+                            server.close();
+                        }
+                    }
+                };
             }
         };
     }

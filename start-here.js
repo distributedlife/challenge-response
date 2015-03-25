@@ -1,13 +1,11 @@
 "use strict";
 
-var plugins = require('./plugins/inch-plugins/src/plugin_manager.js').PluginManager;
-
-plugins.loadPath(process.cwd() + "/game/js/modes");
-plugins.loadPath(process.cwd() + '/game/js/entities');
+var inch = require('./plugins/inch-framework.js');
+inch.loadPath(process.cwd() + "/game/js/modes");
+inch.loadPath(process.cwd() + '/game/js/entities');
 
 var modes = {
-  'practice': plugins.get("GameMode-Practice")
-}
+  'practice': inch.get("GameMode-Practice")
+};
 
-var inch = "./plugins/inch-plugin-server-express/src/js/server.js";
-require(inch).Server("./game", modes).start(plugins);
+inch.start("./game", modes);
