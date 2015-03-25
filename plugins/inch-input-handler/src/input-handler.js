@@ -34,6 +34,16 @@ module.exports = {
 			});
 		};
 
+		var parseMouse = function(currentInput, callback) {
+			if (ActionMap().cursor === undefined) { return; }
+
+			each(ActionMap().cursor, function(action) {
+				StateMutator()(
+					callback(action.target, action.noEventKey, currentInput.rawData.x, currentInput.rawData.y, action.data)
+				);
+			});
+		};
+
 		var parseTouches = function(currentInput, callback) {
 			each(currentInput.rawData.touches, function(touch) {
 				var key = "touch" + touch.id;
@@ -88,13 +98,10 @@ module.exports = {
 					return target(x, y, force, data, suppliedData);
 				});
 
-				if (actionMap().cursor !== undefined) {
-					each(actionMap().cursor, function(action) {
-						var cx = currentInput.rawData.x;
-						var cy = currentInput.rawData.y;
-						return action.target(cx, cy, data, action.data);
-					});
-				}
+				parseMouse(currentInput, function(target, noEventKey, x, y, suppliedData) {
+					somethingHasReceivedInput.push(noEventKey);
+					return target(x, y, data, suppliedData);
+				});
 
 				each(actionMap().nothing, function(action) {
 					if (somethingHasReceivedInput.indexOf(action.noEventKey) === -1) {
