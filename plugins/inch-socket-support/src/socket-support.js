@@ -14,7 +14,7 @@ module.exports = {
     var io;
     var statistics = {};
 
-    var startUpdateClientLoop = function (id, socket) {
+    var startUpdateClientLoop = function (socketId, socket) {
       var lastPacket = {};
 
       var updateClient = function () {
@@ -28,9 +28,9 @@ module.exports = {
 
         lastPacket = cloneDeep(packet);
 
-        packet.id = sequence.next('server-origin-messages');
+        packet.socketId = sequence.next('server-origin-messages');
         packet.sentTimestamp = Date.now();
-        statistics[id].packets.unacked[packet.id] = packet.sentTimestamp;
+        statistics[socketId].packets.unacked[packet.socketId] = packet.sentTimestamp;
 
         socket.emit("gameState/update", packet);
       };
@@ -38,17 +38,17 @@ module.exports = {
       setInterval(updateClient, 45);
     };
 
-    var calculateLatency = function (id, pendingAcknowledgements) {
+    var calculateLatency = function (socketId, pendingAcknowledgements) {
       each(pendingAcknowledgements, function (ack) {
-        var sentTime = statistics[id].packets.unacked[ack.id];
+        var sentTime = statistics[socketId].packets.unacked[ack.socketId];
 
-        statistics[id].latency.total += ack.rcvdTimestamp - sentTime;
+        statistics[socketId].latency.total += ack.rcvdTimestamp - sentTime;
       });
 
-      statistics[id].packets.totalAcked += size(pendingAcknowledgements);
+      statistics[socketId].packets.totalAcked += size(pendingAcknowledgements);
     };
 
-    var removeAcknowledgedPackets = function (id, pendingAcknowledgements) {
+    var removeAcknowledgedPackets = function (socketId, pendingAcknowledgements) {
       each(pendingAcknowledgements, function (ack) {
         each(ack.names, function (name) {
           if (AcknowledgementMap()[name] === undefined) { return; }
@@ -58,11 +58,11 @@ module.exports = {
           });
         });
 
-        delete statistics[id].packets.unacked[ack.id];
+        delete statistics[socketId].packets.unacked[ack.socketId];
       });
     };
 
-    var createOnInputFunction = function (id) {
+    var createOnInputFunction = function (socketId) {
       return function (inputData) {
         var pendingAcks = inputData.pendingAcks;
         delete inputData.pendingAcks;
@@ -71,46 +71,48 @@ module.exports = {
             onInputCallback(inputData, Date.now());
         });
 
-        calculateLatency(id, pendingAcks);
-        removeAcknowledgedPackets(id, pendingAcks);
+        calculateLatency(socketId, pendingAcks);
+        removeAcknowledgedPackets(socketId, pendingAcks);
+      };
+    };
+
+    var mutateCallbackResponse = function (callbacks) {
+      return function() {
+        each(callbacks, function(callback) {
+          StateMutator()(callback());
+        });
+      };
+    };
+
+    var seedSocketStatistics = function() {
+      return {
+        packets: {
+          totalAcked: 0,
+          unacked: {}
+        },
+        latency: {
+          total: 0
+        }
       };
     };
 
     var createSetupPlayableClientFunction = function (modeCallback) {
       return function (socket) {
-        var id = socket.id;
-
-        statistics[id] = {
-          packets: {
-            totalAcked: 0,
-            unacked: {}
-          },
-          latency: {
-            total: 0
-          }
-        };
+        statistics[socket.id] = seedSocketStatistics();
 
         modeCallback();
         InitialiseState()();
 
-        var onInput = createOnInputFunction(id);
-
-        var mutateCallbackResponse = function (callbacks) {
-          return function() {
-            each(callbacks, function(callback) {
-              StateMutator()(callback());
-            });
-          };
-        }
-
         socket.on('disconnect', mutateCallbackResponse(OnPlayerDisconnect()));
-        socket.on('input', onInput);
         socket.on('pause', mutateCallbackResponse(OnPause()));
         socket.on('unpause', mutateCallbackResponse(OnUnpause()));
 
+        var onInput = createOnInputFunction(socket.id);
+        socket.on('input', onInput);
+
         socket.emit("gameState/setup", RawStateAccess());
 
-        startUpdateClientLoop(id, socket);
+        startUpdateClientLoop(socket.id, socket);
 
         each(OnPlayerConnect(), function(callback) {
           StateMutator()(callback());
