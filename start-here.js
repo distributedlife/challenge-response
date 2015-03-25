@@ -8,4 +8,4 @@ var modes = {
   'practice': inch.get("GameMode-Practice")
 };
 
-inch.start("./game", modes);
+inch.run("./game", modes);

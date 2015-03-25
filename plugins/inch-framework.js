@@ -11,11 +11,14 @@ plugins.load(require('./inch-plugin-behaviour-invoker-default/src/index.js'));
 module.exports = {
   loadPath: plugins.loadPath,
   get: plugins.get,
-  start: function (pathToGame, modes) {
-    plugins.get("Server").Server(pathToGame, modes).start();
+  run: function (pathToGame, modes) {
+    plugins.get("Server").start(pathToGame, modes);
 
     var each = require('lodash').each;
     var definePlugin = plugins.get("DefinePlugin");
+
+    //TODO: move each of these into a seperate file
+    //inch/server/state-seed.js
     definePlugin("StateSeed", function () {
       return {
         inch: {
@@ -27,6 +30,7 @@ module.exports = {
         }
       };
     });
+    //inch/server/event/on-pause.js
     definePlugin("OnPause", ["StateAccess"], function (State) {
       return function () {
         return {
@@ -82,6 +86,7 @@ module.exports = {
         };
       };
     });
+    //inch/server/initialise-state.js
     definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (StateSeed, StateMutator) {
       return function () {
         each(StateSeed(), function (state) {

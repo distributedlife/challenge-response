@@ -1,54 +1,69 @@
 "use strict";
 
+var express = require('express');
+var favicon = require('serve-favicon');
+var each = require('lodash').each;
+
 module.exports = {
   type: "Server",
-  deps: ["PluginManager"],
-  func: function (plugins) {
-    return {
-      Server: function (assetPath, callbacks) {
-        var server;
-        var io;
-        var express = require('express');
-        var favicon = require('serve-favicon');
-        var configureRoutes = require("./configure-routes");
+  deps: ["SocketSupport"],
+  func: function (ConfigureServerSockets) {
+    var pages = ["primary"];
+    var extension = ".jade";
+    var server;
 
-        return {
-          start: function () {
-            var app = express();
-            app.use('/game', express.static(assetPath));
-            app.use('/inch', express.static(__dirname + '/../../public/'));
-            app.use(require('morgan')('combined'));
-            app.use(require('body-parser').urlencoded({extended: true }));
-            app.use(require('body-parser').json());
-            app.set('views', __dirname + '/../../public/views');
-            app.set('view options', {layout: false});
-            app.engine('jade', require('jade').__express);
+    var configureApp = function (assetPath) {
+      var app = express();
 
-            var pathToFavIcon = process.cwd() + '/game/favicon.ico';
-            if (!require('fs').existsSync(pathToFavIcon)) {
-                pathToFavIcon = __dirname + '/../../public/favicon.ico';
-            }
-            app.use(favicon(pathToFavIcon));
+      app.use('/game', express.static(assetPath));
+      app.use('/inch', express.static(__dirname + '/../../public/'));
+      app.use(require('morgan')('combined'));
+      app.use(require('body-parser').urlencoded({extended: true }));
+      app.use(require('body-parser').json());
+      app.set('views', __dirname + '/../../public/views');
+      app.set('view options', {layout: false});
+      app.engine('jade', require('jade').__express);
 
-            server = require('http').createServer(app);
-            var pages = ["primary"];
-            configureRoutes(callbacks, app, pages, '.jade');
+      var pathToFavIcon = process.cwd() + '/game/favicon.ico';
+      if (!require('fs').existsSync(pathToFavIcon)) {
+          pathToFavIcon = __dirname + '/../../public/favicon.ico';
+      }
+      app.use(favicon(pathToFavIcon));
 
-            server.listen(process.env.PORT || 3000);
+      return app;
+    }
 
-            //TODO: does this really belong here?
-            io = require('socket.io').listen(server);
-            plugins().get("SocketSupport")(io, callbacks);
-          },
-          stop: function () {
-            if (io !== undefined) {
-              io.close();
-            }
-            if (server !== undefined) {
-              server.close();
-            }
+    var configureRoutes = function (callbacks, app) {
+      each(pages, function (page) {
+        app.get('/:mode/' + page, function (req, res) {
+          var mode = req.params.mode;
+
+          if (callbacks[mode] === undefined) {
+            res.redirect('/');
+            return;
           }
-        };
+
+          res.render(page + extension, { mode: mode });
+        });
+      });
+    };
+
+    return {
+      start: function (assetPath, callbacks) {
+        var app = configureApp(assetPath);
+        configureRoutes(callbacks, app);
+
+        server = require('http').createServer(app);
+        server.listen(process.env.PORT || 3000);
+
+        ConfigureServerSockets().start(server, callbacks);
+      },
+      stop: function () {
+        ConfigureServerSockets().stop();
+
+        if (server !== undefined) {
+          server.close();
+        }
       }
     };
   }
