@@ -1,16 +1,20 @@
 var expect = require('expect');
-var rek = require('rekuire');
-var pluginManager = rek('plugins/inch-plugins/src/plugin_manager.js').PluginManager;
-var stateMutator = require("../src/index.js").func(function () { return pluginManager; });
 
-var stateAccess;
-pluginManager.load({
-  type: "Ignore",
-  deps: ["StateAccess"],
-  func: function(access) {
-    stateAccess = access();
-  }
-});
+//TODO: move this into a helper
+// var deferDep = require('../helpers/defer-dep');
+var deferDep = function (dep) {
+  return function () {
+    return dep;
+  };
+};
+
+var plugins = {}
+var definePlugin = function (name, func) {
+  plugins[name] = func;
+};
+
+var stateMutator = require("../src/index.js").func(deferDep(definePlugin));
+var state = plugins["StateAccess"]();
 
 describe("as before but return new objects with only the changed state", function () {
   beforeEach(function () {
@@ -41,9 +45,9 @@ describe("as before but return new objects with only the changed state", functio
       }
     });
 
-    expect(stateAccess.get("controller")("state")).toBe('started');
-    expect(stateAccess.get("controller")("score")).toBe(0);
-    expect(stateAccess.get("controller")("child")("age")).toBe(123);
+    expect(state.get("controller")("state")).toBe('started');
+    expect(state.get("controller")("score")).toBe(0);
+    expect(state.get("controller")("child")("age")).toBe(123);
   });
 
   it("should work with adding to arrays", function () {
@@ -53,7 +57,7 @@ describe("as before but return new objects with only the changed state", functio
       }
     });
 
-    expect(stateAccess.get("controller")("list")).toEqual([4, 3]);
+    expect(state.get("controller")("list")).toEqual([4, 3]);
   });
 
   it("should work with removing elements from arrays", function () {
@@ -63,6 +67,6 @@ describe("as before but return new objects with only the changed state", functio
       }
     });
 
-    expect(stateAccess.get("controller")("list")).toEqual([]);
+    expect(state.get("controller")("list")).toEqual([]);
   });
 });

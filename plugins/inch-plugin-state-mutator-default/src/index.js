@@ -1,11 +1,14 @@
 "use strict";
 
-var _ = require('lodash');
+var isObject = require('lodash').isObject;
+var isArray = require('lodash').isArray;
+var merge = require('lodash').merge;
+
 
 var root = {};
 var provideReadAccessToState = function(stateHash) {
   return function(key) {
-    if (_.isObject(stateHash[key]) && !_.isArray(stateHash[key])) {
+    if (isObject(stateHash[key]) && !isArray(stateHash[key])) {
       return provideReadAccessToState(stateHash[key]);
     } else {
       return stateHash[key];
@@ -15,24 +18,26 @@ var provideReadAccessToState = function(stateHash) {
 
 var rootNodeAccess = provideReadAccessToState(root);
 
+var StateAccess = {
+  get: function(key) {
+    return rootNodeAccess(key);
+  },
+  add: function (namespace, obj) {
+    root[namespace] = obj;
+  }
+};
+
 module.exports = {
   type: "StateMutator",
   deps: ["DefinePlugin"],
   func: function (DefinePlugin) {
-    DefinePlugin()("StateAccess", function () {
-      return {
-        get: function(key) {
-          return rootNodeAccess(key);
-        },
-        add: function (namespace, obj) {
-          root[namespace] = obj;
-        }
-      };
-    });
+    DefinePlugin()("StateAccess", function () { return StateAccess; });
     DefinePlugin()("RawStateAccess", function () { return root; });
 
     return function(result) {
-      root = _.merge(root, result, function (a, b) { return _.isArray(a) ? b : undefined; });
+      root = merge(root, result, function (a, b) {
+        return isArray(a) ? b : undefined;
+      });
     };
   }
 };
