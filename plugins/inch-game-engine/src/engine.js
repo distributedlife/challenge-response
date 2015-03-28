@@ -16,22 +16,23 @@ module.exports = {
         });
       };
 
-      return {
-        step: function(priorStepTime) {
-          var now = Date.now();
+      var step = function(priorStepTime) {
+        var now = Date.now();
 
-          if (State().get('inch')('paused')) {
-            return now;
-          }
-
-          var dt = (now - priorStepTime) / 1000;
-          update(dt);
-
+        if (State().get('inch')('paused')) {
           return now;
-        },
+        }
+
+        var dt = (now - priorStepTime) / 1000;
+        update(dt);
+
+        return now;
+      };
+
+      return {
         run: function(frequency) {
-          priorStepTime = this.step(priorStepTime);
-          setTimeout(this.run.bind(this), 1000 / frequency);
+          priorStepTime = step(priorStepTime);
+          return setInterval(this.run.bind(this), 1000 / frequency);
         }
       };
     };
