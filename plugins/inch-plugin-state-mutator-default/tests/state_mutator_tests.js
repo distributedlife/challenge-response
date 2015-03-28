@@ -1,20 +1,11 @@
 var expect = require('expect');
 
-//TODO: move this into a helper
-// var deferDep = require('../helpers/defer-dep');
-var deferDep = function (dep) {
-  return function () {
-    return dep;
-  };
-};
-
-var plugins = {}
-var definePlugin = function (name, func) {
-  plugins[name] = func;
-};
+var deferDep = require('../../../tests/helpers.js').deferDep;
+var definePlugin = require('../../../tests/helpers.js').definePlugin;
+var getDefinedPlugin = require('../../../tests/helpers.js').getDefinedPlugin;
 
 var stateMutator = require("../src/index.js").func(deferDep(definePlugin));
-var state = plugins["StateAccess"]();
+var state = getDefinedPlugin("StateAccess");;
 
 describe("as before but return new objects with only the changed state", function () {
   beforeEach(function () {
