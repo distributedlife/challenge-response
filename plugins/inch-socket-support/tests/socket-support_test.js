@@ -192,8 +192,8 @@ describe("on input", function () {
 		expect(inputData.pendingAcks).toEqual(undefined);
 	});
 
-	it("should calculate the latency of each packet");
-	it("remove ack'd packets from the unacked packet list");
+	it.skip("should calculate the latency of each packet");
+	it.skip("remove ack'd packets from the unacked packet list");
 
 	it("should call the onNewUserInput callback", function () {
 		expect(OnInput.called).toEqual(true);
