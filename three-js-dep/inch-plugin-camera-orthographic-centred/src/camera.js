@@ -3,10 +3,10 @@
 module.exports = {
     deps: ['RenderEngineAdapter', 'Dimensions'],
     type: 'Camera',
-    func: function (adapter, Dimensions) {
+    func: function (adapter, dimensions) {
         return {
             Camera: function () {
-                var dims = Dimensions().Dimensions();
+                var dims = dimensions().Dimensions();
 
                 var camera = adapter().newOrthographicCamera(
                     dims.usableWidth / -2,

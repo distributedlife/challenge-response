@@ -32,7 +32,7 @@ module.exports = {
       return {
         run: function(frequency) {
           priorStepTime = step(priorStepTime);
-          return setInterval(this.run.bind(this), 1000 / frequency);
+          return setTimeout(this.run.bind(this), 1000 / frequency);
         }
       };
     };
