@@ -19,7 +19,7 @@ var express;
 var favicon = sinon.spy();
 
 describe("starting the server", function () {
-	before(function () {
+	beforeEach(function () {
 		http = require('http');
 		http.createServer = function() { return expressServer; }
 
@@ -31,7 +31,7 @@ describe("starting the server", function () {
 		server.start("../game", modes);
 	});
 
-	after(function() {
+	afterEach(function() {
 		server.stop();
 	});
 
@@ -56,7 +56,7 @@ describe("starting the server", function () {
 });
 
 describe("stopping the server", function () {
-	before(function() {
+	beforeEach(function() {
 		http = require('http');
 		io = require('socket.io');
 		io.listen = sinon.spy();

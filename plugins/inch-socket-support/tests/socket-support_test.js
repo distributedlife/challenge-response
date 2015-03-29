@@ -17,11 +17,6 @@ var io = {
 		};
 	}
 }
-var socketIo = require('socket.io');
-socketIo.listen = function(server) {
-	return io;
-};
-
 var gameState = {
 	hi: "there"
 };
@@ -51,6 +46,9 @@ var SocketSupport = require("../src/socket-support").func(deferDep(ackMap), defe
 
 describe("setting up the socket", function () {
 	beforeEach(function () {
+		var socketIo = require('socket.io');
+		socketIo.listen = function(server) { return io; };
+
 		sinon.spy(io, "of");
 		sinon.spy(global, "setInterval");
 		SocketSupport.start(server, modeCallbacks);
