@@ -2,7 +2,7 @@ var expect = require('expect');
 var sinon = require('sinon');
 var request = require('request');
 
-describe("configuring the routes", function () {
+describe.skip("configuring the routes", function () {
 	var routes;
 	var callbacks = {
 		arcade: sinon.spy()
@@ -34,7 +34,7 @@ describe("configuring the routes", function () {
 		}).end();
 	});
 
-	it("should invoke the callback specified by the mode", function (done) {
+	it.skip("should invoke the callback specified by the mode", function (done) {
 		request.get("http://localhost:3000/arcade/primary", function (err, res, body) {
 			expect(res.statusCode).toEqual(200);
 			expect(callbacks.arcade.called).toEqual(true);
