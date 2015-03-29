@@ -3,7 +3,7 @@
 module.exports = {
     deps: ["Debug", "Dimensions"],
     type: 'RenderEngineAdapter',
-    func: function (DebugItems, Dimensions) {
+    func: function (debugItems, dimensions) {
         var THREE = require('inch-threejs');
         var each = require('lodash').each;
         var $ = require('zepto-browserify').$;
@@ -70,7 +70,7 @@ module.exports = {
             createScene: function () {
                 var scene = new THREE.Scene();
 
-                each(DebugItems(), function (debugItem) {
+                each(debugItems(), function (debugItem) {
                     scene.add(debugItem());
                 });
 
@@ -79,7 +79,7 @@ module.exports = {
             createRenderer: function () {
                 var renderer = new THREE.WebGLRenderer({ antialias: true });
 
-                renderer.setSize(Dimensions().Dimensions().usableWidth, Dimensions().Dimensions().usableHeight);
+                renderer.setSize(dimensions().Dimensions().usableWidth, dimensions().Dimensions().usableHeight);
 
                 return renderer;
             },
