@@ -2,7 +2,13 @@ var expect = require('expect');
 var sinon = require('sinon');
 var request = require('request');
 
-describe.skip("configuring the routes", function () {
+var deferDep = require('../../../tests/helpers.js').deferDep;
+var socketSupport = {
+	start: sinon.spy(),
+	stop: sinon.spy()
+};
+
+describe("configuring the routes", function () {
 	var routes;
 	var callbacks = {
 		arcade: sinon.spy()
@@ -14,8 +20,8 @@ describe.skip("configuring the routes", function () {
 		io.listen = sinon.spy();
 		io.of = sinon.spy();
 
-		server = require("../src/js/server").Server("../dummy", callbacks);
-		server.start();
+		server = require("../src/js/server").func(deferDep(socketSupport));
+		server.start("../dummy", callbacks);
 	});
 
 	after(function () {

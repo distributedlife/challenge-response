@@ -1,6 +1,12 @@
 var expect = require('expect');
 var sinon = require('sinon');
 
+var deferDep = require('../../../tests/helpers.js').deferDep;
+var socketSupport = {
+	start: sinon.spy(),
+	stop: sinon.spy()
+};
+
 var modes = {
     'test': function() { console.log("this just happened"); }
 };
@@ -12,7 +18,7 @@ var server;
 var express;
 var favicon = sinon.spy();
 
-describe.skip("starting the server", function () {
+describe("starting the server", function () {
 	before(function () {
 		http = require('http');
 		http.createServer = function() { return expressServer; }
@@ -21,8 +27,8 @@ describe.skip("starting the server", function () {
 		io.listen = sinon.spy();
 		io.of = sinon.spy();
 
-		server = require("../src/js/server").Server("../game", modes);
-		server.start();
+		server = require("../src/js/server").func(deferDep(socketSupport));
+		server.start("../game", modes);
 	});
 
 	after(function() {
@@ -49,7 +55,7 @@ describe.skip("starting the server", function () {
 	});
 });
 
-describe.skip("stopping the server", function () {
+describe("stopping the server", function () {
 	before(function() {
 		http = require('http');
 		io = require('socket.io');
@@ -57,8 +63,8 @@ describe.skip("stopping the server", function () {
 		io.of = sinon.spy();
 		http.createServer = function() { return expressServer; }
 
-		server = require("../src/js/server").Server("../game", modes);
-		server.start();
+		server = require("../src/js/server").func(deferDep(socketSupport));
+		server.start("../game", modes);
 		server.stop();
 	});
 
