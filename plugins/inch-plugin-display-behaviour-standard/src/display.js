@@ -1,12 +1,12 @@
 "use strict";
 
+var each = require("lodash").each;
+var reject = require("lodash").reject;
+
 module.exports = {
     deps: ['Dimensions', 'Level', 'OnMuteCallback', 'OnUnmuteCallback'],
     type: 'DisplayBehaviour',
     func: function (Dimensions, levelParts, OnMuteCallbacks, OnUnmuteCallbacks) {
-        var each = require("lodash").each;
-        var reject = require("lodash").reject;
-
         var effects = [];
         var priorStep = Date.now();
         var lastReceivedId = 0;

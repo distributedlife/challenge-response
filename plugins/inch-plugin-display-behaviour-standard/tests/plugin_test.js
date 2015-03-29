@@ -30,9 +30,10 @@ describe("the standard display behaviour", function () {
 	var levelParts = [part1, part2, part3];
 	var ackLast = sinon.spy();
 	var addAck = sinon.spy();
-	var tracker = {
-		updateState: sinon.spy()
-	};
+
+	var tracker = require("../../inch-state-tracker/src/tracker.js").Tracker();
+	tracker.updateState = sinon.spy();
+
 	var behaviour;
 	var dimensions = {
 		usableWidth: sinon.spy(),
@@ -102,7 +103,7 @@ describe("the standard display behaviour", function () {
 			expect(tracker.updateState.called).toEqual(false);
 		});
 
-		it("is waiting for us to decide on how to mock out modules");
+		it.skip("is waiting for us to decide on how to mock out modules");
 
 		it.skip("should tell the state tracker of the new packet", function () {
 			packet.id = 1;
