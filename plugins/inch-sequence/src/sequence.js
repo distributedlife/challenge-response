@@ -8,7 +8,8 @@ module.exports = {
 			next[key] = 0;
 		}
 
-		return ++next[key];
+    next[key] += 1;
+		return next[key];
 	},
 	exists: function(key) {
 		return next[key] !== undefined;

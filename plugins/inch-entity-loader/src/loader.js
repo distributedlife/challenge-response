@@ -12,7 +12,7 @@ module.exports = {
 	loadFromPath: function(pathToEntites, callback) {
 		var absolutePath = normaliseRelativePath(addTrailingSlash(pathToEntites));
 
-		var exports = {}
+		var exports = {};
 
 		require("fs").readdirSync(absolutePath).forEach(function(file){
 			if (file.substr(-3) !== ".js") {

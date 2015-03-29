@@ -6,7 +6,7 @@ var reject = require("lodash").reject;
 module.exports = {
     deps: ['Dimensions', 'Level', 'OnMuteCallback', 'OnUnmuteCallback'],
     type: 'DisplayBehaviour',
-    func: function (Dimensions, levelParts, OnMuteCallbacks, OnUnmuteCallbacks) {
+    func: function (dimensions, levelParts, onMuteCallbacks, onUnmuteCallbacks) {
         var effects = [];
         var priorStep = Date.now();
         var lastReceivedId = 0;
@@ -16,11 +16,11 @@ module.exports = {
         var setupComplete = false;
 
         require("./enable-fullscreen")();
-        require("./toggle-sound")(OnMuteCallbacks(), OnUnmuteCallbacks());
+        require("./toggle-sound")(onMuteCallbacks(), onUnmuteCallbacks());
 
         return {
             Display: function (ackLast, addAck) {
-                var dims = Dimensions().Dimensions();
+                var dims = dimensions().Dimensions();
 
                 each(levelParts(), function (levelPart) {
                     if (levelPart.screenResized) {
@@ -43,7 +43,7 @@ module.exports = {
                                 registerEffect,
                                 tracker
                             );
-                        };
+                        }
                     });
 
                     setupComplete = true;

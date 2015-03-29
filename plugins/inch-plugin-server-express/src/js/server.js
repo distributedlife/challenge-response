@@ -7,7 +7,7 @@ var each = require('lodash').each;
 module.exports = {
   type: "Server",
   deps: ["SocketSupport"],
-  func: function (ConfigureServerSockets) {
+  func: function (configureServerSockets) {
     var pages = ["primary"];
     var extension = ".jade";
     var server;
@@ -31,7 +31,7 @@ module.exports = {
       app.use(favicon(pathToFavIcon));
 
       return app;
-    }
+    };
 
     var configureRoutes = function (callbacks, app) {
       each(pages, function (page) {
@@ -56,10 +56,10 @@ module.exports = {
         server = require('http').createServer(app);
         server.listen(process.env.PORT || 3000);
 
-        ConfigureServerSockets().start(server, callbacks);
+        configureServerSockets().start(server, callbacks);
       },
       stop: function () {
-        ConfigureServerSockets().stop();
+        configureServerSockets().stop();
 
         if (server !== undefined) {
           server.close();

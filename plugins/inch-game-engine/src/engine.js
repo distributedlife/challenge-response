@@ -1,17 +1,16 @@
 "use strict";
 
 var each = require('lodash').each;
-var isArray = require('lodash').isArray;
 
 module.exports = {
   type: "ServerSideEngine",
   deps: ["ServerSideUpdate", "StateAccess"],
-  func: function (ServerSideUpdate, State) {
+  func: function (serverSideUpdate, state) {
     return function() {
       var priorStepTime = Date.now();
 
       var update = function(dt) {
-        each(ServerSideUpdate(), function(callback) {
+        each(serverSideUpdate(), function(callback) {
           callback(dt);
         });
       };
@@ -19,7 +18,7 @@ module.exports = {
       var step = function(priorStepTime) {
         var now = Date.now();
 
-        if (State().get('inch')('paused')) {
+        if (state().get('inch')('paused')) {
           return now;
         }
 

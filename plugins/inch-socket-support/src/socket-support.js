@@ -8,8 +8,8 @@ var sequence = require('../../inch-sequence/src/sequence.js');
 
 module.exports = {
   type: "SocketSupport",
-  deps: ["AcknowledgementMap", "OnInput", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "InitialiseState"],
-  func: function(AcknowledgementMap, OnInput, OnPlayerConnect, OnPlayerDisconnect, OnObserverConnect, OnObserverDisconnect, OnPause, OnUnpause, RawStateAccess, StateMutator, InitialiseState) {
+  deps: ["acknowledgementMap", "onInput", "onPlayerConnect", "onPlayerDisconnect", "onObserverConnect", "onObserverDisconnect", "onPause", "onUnpause", "rawStateAccess", "stateMutator", "initialiseState"],
+  func: function(acknowledgementMap, onInput, onPlayerConnect, onPlayerDisconnect, onObserverConnect, onObserverDisconnect, onPause, onUnpause, rawStateAccess, stateMutator, initialiseState) {
 
     var io;
     var statistics = {};
@@ -19,7 +19,7 @@ module.exports = {
 
       var updateClient = function () {
         var packet = {
-          gameState: RawStateAccess()
+          gameState: rawStateAccess()
         };
 
         if (isEqual(packet.gameState, lastPacket.gameState)) {
@@ -51,10 +51,10 @@ module.exports = {
     var removeAcknowledgedPackets = function (socketId, pendingAcknowledgements) {
       each(pendingAcknowledgements, function (ack) {
         each(ack.names, function (name) {
-          if (AcknowledgementMap()[name] === undefined) { return; }
+          if (acknowledgementMap()[name] === undefined) { return; }
 
-          each(AcknowledgementMap()[name], function (action) {
-            StateMutator()(action.target(ack, action.data));
+          each(acknowledgementMap()[name], function (action) {
+            stateMutator()(action.target(ack, action.data));
           });
         });
 
@@ -67,7 +67,7 @@ module.exports = {
         var pendingAcks = inputData.pendingAcks;
         delete inputData.pendingAcks;
 
-        each(OnInput(), function (onInputCallback) {
+        each(onInput(), function (onInputCallback) {
             onInputCallback(inputData, Date.now());
         });
 
@@ -79,7 +79,7 @@ module.exports = {
     var mutateCallbackResponse = function (callbacks) {
       return function() {
         each(callbacks, function(callback) {
-          StateMutator()(callback());
+          stateMutator()(callback());
         });
       };
     };
@@ -101,21 +101,21 @@ module.exports = {
         statistics[socket.id] = seedSocketStatistics();
 
         modeCallback();
-        InitialiseState()();
+        initialiseState()();
 
-        socket.on('disconnect', mutateCallbackResponse(OnPlayerDisconnect()));
-        socket.on('pause', mutateCallbackResponse(OnPause()));
-        socket.on('unpause', mutateCallbackResponse(OnUnpause()));
+        socket.on('disconnect', mutateCallbackResponse(onPlayerDisconnect()));
+        socket.on('pause', mutateCallbackResponse(onPause()));
+        socket.on('unpause', mutateCallbackResponse(onUnpause()));
 
         var onInput = createOnInputFunction(socket.id);
         socket.on('input', onInput);
 
-        socket.emit("gameState/setup", RawStateAccess());
+        socket.emit("gameState/setup", rawStateAccess());
 
         startUpdateClientLoop(socket.id, socket);
 
-        each(OnPlayerConnect(), function(callback) {
-          StateMutator()(callback());
+        each(onPlayerConnect(), function(callback) {
+          stateMutator()(callback());
         });
       };
     };

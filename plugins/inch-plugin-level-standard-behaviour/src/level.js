@@ -3,17 +3,16 @@
 module.exports = {
     deps: ["OnPauseCallback", "OnResumeCallback"],
     type: "Level",
-    func: function (OnPauseCallbacks, OnResumeCallbacks) {
+    func: function (onPauseCallbacks, onResumeCallbacks) {
         var each = require("lodash").each;
         var $ = require("zepto-browserify").$;
         var equals = require("../../inch-state-tracker/src/tracker.js").Equals;
-        var the = require("../../inch-state-tracker/src/tracker.js").The;
 
         var pause = function () {
             $('.paused').show();
             $('#paused').show();
 
-            each(OnPauseCallbacks(), function(onPauseCallback) {
+            each(onPauseCallbacks(), function(onPauseCallback) {
                 onPauseCallback();
             });
         };
@@ -21,7 +20,7 @@ module.exports = {
             $('.paused').hide();
             $('#paused').hide();
 
-            each(OnResumeCallbacks(), function(onResumeCallback) {
+            each(onResumeCallbacks(), function(onResumeCallback) {
                 onResumeCallback();
             });
         };

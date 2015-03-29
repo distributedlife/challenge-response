@@ -106,7 +106,7 @@ pluginManager.load({
             load(define(type, deps, func));
         };
     }
-})
+});
 
 module.exports = {
     PluginManager: pluginManager

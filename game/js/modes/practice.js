@@ -3,9 +3,9 @@
 module.exports = {
   type: 'GameMode-Practice',
   deps: ['DefinePlugin', "GameBehaviour-Controller"],
-  func: function(DefinePlugin, Controller) {
+  func: function(definePlugin, controller) {
     return function() {
-      DefinePlugin()("StateSeed", function () {
+      definePlugin()("StateSeed", function () {
         return {
           controller: {
             start: 0,
@@ -16,17 +16,17 @@ module.exports = {
         };
       });
 
-      DefinePlugin()("ActionMap", function () {
+      definePlugin()("ActionMap", function () {
         return {
-          'space': [{target: Controller().response, keypress: true}],
-          'r': [{target: Controller().reset, keypress: true}]
+          'space': [{target: controller().response, keypress: true}],
+          'r': [{target: controller().reset, keypress: true}]
         };
       });
 
-      DefinePlugin()("AcknowledgementMap", function () {
+      definePlugin()("AcknowledgementMap", function () {
         return {
           'show-challenge': [{
-            target: Controller().challengeSeen
+            target: controller().challengeSeen
           }]
         };
       });

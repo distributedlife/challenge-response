@@ -3,13 +3,12 @@
 module.exports = {
     deps: ["RenderEngineAdapter", "PositionHelper", "Camera", "Element"],
     type: "Level",
-    func: function (adapter, PositionHelper, Camera, element) {
+    func: function (adapter, positionHelper, theCamera, element) {
         var colour = require('color');
         var equals = require("../../../plugins/inch-state-tracker/src/tracker.js").Equals;
         var Howl = require('howler').Howl;
         var $ = require('zepto-browserify').$;
         var _ = require('lodash');
-        var define = require('../../../plugins/inch-define-plugin/src/define.js');
 
         var mainTemplate = require("../../jade/practice.jade");
         var priorScoresTemplate = require("../../jade/priorScores.jade");
@@ -31,7 +30,7 @@ module.exports = {
                     adapter().updateProjectionMatrix(camera);
                 }
             },
-            update: function(dt) {
+            update: function() {
                 if (renderer) {
                     renderer.render(scene.scene(), camera);
                 }
@@ -44,7 +43,7 @@ module.exports = {
 
                 //Render layer concern
                 //Setup threejs-camera, inch-scene, threejs-scene, threejs-renderer
-                camera = Camera().Camera();
+                camera = theCamera().Camera();
                 scene = require('../../../three-js-dep/inch-scene/src/scene.js')(adapter().createScene());
                 renderer = adapter().createRenderer();
                 adapter().attachRenderer(element(), renderer);
@@ -91,7 +90,7 @@ module.exports = {
                     $("#score")[0].innerText = model;
 
                     var score = $("#score");
-                    var centered = PositionHelper().centreInCamera(camera, score.width(), score.height());
+                    var centered = positionHelper().centreInCamera(camera, score.width(), score.height());
 
                     score.css('left', centered.left + 'px');
                     score.css('top', centered.top + "px");

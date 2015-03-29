@@ -7,7 +7,7 @@ var min = require('lodash').min;
 module.exports = {
     type: "GameBehaviour-Controller",
     deps: ["DelayedEffects", "StateAccess"],
-    func: function (DelayedEffects, State) {
+    func: function (delayedEffects, state) {
         var rollUpAnUnnvervingDelay = function () {
             return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
         };
@@ -18,13 +18,13 @@ module.exports = {
                     controller: {
                         start: ack.rcvdTimestamp
                     }
-                }
+                };
             },
             response: function (force, data) {
-                var get = State().get;
+                var get = state().get;
 
                 if (get("controller")("state") === 'ready') {
-                    DelayedEffects().add("pause-for-effect", rollUpAnUnnvervingDelay(), function () {
+                    delayedEffects().add("pause-for-effect", rollUpAnUnnvervingDelay(), function () {
                         if (get("controller")("state") === 'falseStart') {
                             return {};
                         }
@@ -41,7 +41,7 @@ module.exports = {
                     };
                 }
                 if (get("controller")("state") === 'waiting') {
-                    DelayedEffects().cancelAll("pause-for-effect");
+                    delayedEffects().cancelAll("pause-for-effect");
 
                     return {
                         controller: {
@@ -61,8 +61,8 @@ module.exports = {
                 }
                 return {};
             },
-            reset: function (force, data) {
-                var get = State().get;
+            reset: function () {
+                var get = state().get;
 
                 if (get("controller")("state") !== 'complete' && get("controller")("state") !== "falseStart") {
                     return {};
@@ -88,7 +88,7 @@ module.exports = {
                         state: "ready",
                         priorScores: priorScores
                     }
-                }
+                };
             }
         };
     }

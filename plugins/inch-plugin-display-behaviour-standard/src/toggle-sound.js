@@ -11,7 +11,7 @@ module.exports = function (onMuteCallbacks, onUnmuteCallbacks) {
 
         each(onMuteCallbacks, function(onMuteCallback) {
             onMuteCallback();
-        })
+        });
     });
     $(".sound-off").on('click', function () {
         $(".sound-off").hide();
@@ -19,6 +19,6 @@ module.exports = function (onMuteCallbacks, onUnmuteCallbacks) {
 
         each(onUnmuteCallbacks, function(onUnmuteCallback) {
             onUnmuteCallback();
-        })
+        });
     });
 };

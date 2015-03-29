@@ -7,7 +7,7 @@ var $ = require('zepto-browserify').$;
 module.exports = {
   deps: ["Window", "ConnectDisconnectBehaviour", "InputMode", "GameMode"],
   type: "SocketBehaviour",
-  func: function (window, ConnectDisconnectBehaviour, InputModes, GameMode) {
+  func: function (window, connectDisconnectBehaviour, inputModes, gameMode) {
     return {
       SocketBehaviour: function (flushPendingAcks) {
         var controls = [];
@@ -31,14 +31,14 @@ module.exports = {
             connect: function (setupFunc, updateFunc) {
               var io = require('socket.io-client');
 
-              var socket = io.connect('http://localhost:3000/' + GameMode() + '/primary');
+              var socket = io.connect('http://localhost:3000/' + gameMode() + '/primary');
 
               if (window().document.hasFocus()) {
                   socket.emit('unpause');
               }
 
-              socket.on('connect', ConnectDisconnectBehaviour().connected);
-              socket.on('disconnect', ConnectDisconnectBehaviour().disconnected);
+              socket.on('connect', connectDisconnectBehaviour().connected);
+              socket.on('disconnect', connectDisconnectBehaviour().disconnected);
               socket.on('gameState/setup', setupFunc);
               socket.on('gameState/update', updateFunc);
               socket.on('error', function (data) { throw new Error(data); });
@@ -48,8 +48,8 @@ module.exports = {
               $(window()).on('mousedown', function () { socket.emit('unpause'); });
               $(window()).on('mouseup', function () { socket.emit('unpause'); });
 
-              each(InputModes(), function (InputMode) {
-                controls.push(InputMode.InputMode());
+              each(inputModes(), function (inputMode) {
+                controls.push(inputMode.InputMode());
               });
 
               var id = setInterval(configureEmitFunction(socket), 1000 / 120);

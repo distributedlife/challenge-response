@@ -60,12 +60,6 @@ module.exports = {
                     keys[key] = false;
                 };
 
-                var handleClickOrTouch = function (func, value, e) {
-                    func(value);
-                    e.preventDefault();
-                    e.stopPropagation();
-                };
-
                 var bindToWindowEvents = function () {
                     $(window()).on('mousedown', function (e) {
                         press(mouseMap()[e.which]);

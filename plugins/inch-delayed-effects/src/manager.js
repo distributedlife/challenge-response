@@ -7,7 +7,7 @@ var delayedEffect = require('./delayed_effect');
 module.exports = {
     type: "DelayedEffects",
     deps: ["DefinePlugin", "StateMutator"],
-    func: function (DefinePlugin, StateMutator) {
+    func: function (definePlugin, stateMutator) {
         var effects = [];
 
         var prune = function () {
@@ -17,7 +17,7 @@ module.exports = {
         };
 
 
-        DefinePlugin()("ServerSideUpdate", function() {
+        definePlugin()("ServerSideUpdate", function() {
             return function (dt) {
                 each(effects, function (effect) {
                     effect.tick(dt);
@@ -30,8 +30,8 @@ module.exports = {
         return {
             add: function (key, duration, onComplete) {
                 var wrapOnCompleteWithStateMutation = function () {
-                    StateMutator()(onComplete());
-                }
+                    stateMutator()(onComplete());
+                };
 
                 effects.push(Object.create(delayedEffect(key, duration, wrapOnCompleteWithStateMutation)));
             },

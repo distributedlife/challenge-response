@@ -30,9 +30,9 @@ var StateAccess = {
 module.exports = {
   type: "StateMutator",
   deps: ["DefinePlugin"],
-  func: function (DefinePlugin) {
-    DefinePlugin()("StateAccess", function () { return StateAccess; });
-    DefinePlugin()("RawStateAccess", function () { return root; });
+  func: function (definePlugin) {
+    definePlugin()("StateAccess", function () { return StateAccess; });
+    definePlugin()("RawStateAccess", function () { return root; });
 
     return function(result) {
       root = merge(root, result, function (a, b) {

@@ -1,3 +1,5 @@
+"use strict";
+
 var plugins = require('./inch-plugins/src/plugin_manager.js').PluginManager;
 
 plugins.load(require("./inch-plugin-server-express/src/js/server.js"));
@@ -31,7 +33,7 @@ module.exports = {
       };
     });
     //inch/server/event/on-pause.js
-    definePlugin("OnPause", ["StateAccess"], function (State) {
+    definePlugin("OnPause", function () {
       return function () {
         return {
           inch: {
@@ -40,7 +42,7 @@ module.exports = {
         };
       };
     });
-    definePlugin("OnUnpause", ["StateAccess"], function (State) {
+    definePlugin("OnUnpause", function () {
       return function () {
         return {
           inch: {
@@ -49,48 +51,48 @@ module.exports = {
         };
       };
     });
-    definePlugin("OnPlayerConnected", ["StateAccess"], function (State) {
+    definePlugin("OnPlayerConnected", ["StateAccess"], function (state) {
       return function () {
         return {
           inch: {
-            players: State().get("players") + 1
+            players: state().get("players") + 1
           }
         };
       };
     });
-    definePlugin("OnPlayerDisconnected", ["StateAccess"], function (State) {
+    definePlugin("OnPlayerDisconnected", ["StateAccess"], function (state) {
       return function () {
         return {
           inch: {
             paused: true,
-            players: State().get("players") - 1
+            players: state().get("players") - 1
           }
         };
       };
     });
-    definePlugin("OnObserverConnected", ["StateAccess"], function (State) {
+    definePlugin("OnObserverConnected", ["StateAccess"], function (state) {
       return function () {
         return {
           inch: {
-            observers: State().get("observers") + 1
+            observers: state().get("observers") + 1
           }
         };
       };
     });
-    definePlugin("OnObserverDisconnected", ["StateAccess"], function (State) {
+    definePlugin("OnObserverDisconnected", ["StateAccess"], function (state) {
       return function () {
         return {
           inch: {
-            observers: State().get("observers") - 1
+            observers: state().get("observers") - 1
           }
         };
       };
     });
     //inch/server/initialise-state.js
-    definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (StateSeed, StateMutator) {
+    definePlugin("InitialiseState", ["StateSeed", "StateMutator"], function (stateSeed, stateMutator) {
       return function () {
-        each(StateSeed(), function (state) {
-          StateMutator()(state);
+        each(stateSeed(), function (state) {
+          stateMutator()(state);
         });
       };
     });
