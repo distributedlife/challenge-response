@@ -81,7 +81,6 @@ describe("the standard display behaviour", function () {
 			behaviour.setup();
 		});
 
-		it.skip("should tell the state tracker of the new state");
 		it("should call setup on each level part", function () {
 			expect(part1.setup.called).toEqual(true);
 			expect(part2.setup.called).toEqual(true);
@@ -104,7 +103,7 @@ describe("the standard display behaviour", function () {
 
 		it("is waiting for us to decide on how to mock out modules");
 
-		it.skip("should tell the state tracker of the new packet", function () {
+		it("should tell the state tracker of the new packet", function () {
 			packet.id = 1;
 			behaviour.update(packet);
 

@@ -28,9 +28,9 @@ module.exports = {
 
         lastPacket = cloneDeep(packet);
 
-        packet.socketId = sequence.next('server-origin-messages');
+        packet.id = sequence.next('server-origin-messages');
         packet.sentTimestamp = Date.now();
-        statistics[socketId].packets.unacked[packet.socketId] = packet.sentTimestamp;
+        statistics[socketId].packets.unacked[packet.id] = packet.sentTimestamp;
 
         socket.emit("gameState/update", packet);
       };
