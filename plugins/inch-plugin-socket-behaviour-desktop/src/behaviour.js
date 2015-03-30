@@ -5,9 +5,9 @@ var extend = require('lodash').extend;
 var $ = require('zepto-browserify').$;
 
 module.exports = {
-  deps: ["Window", "ConnectDisconnectBehaviour", "InputMode", "GameMode"],
+  deps: ["Window", "ConnectDisconnectBehaviour", "InputMode", "GameMode", "ServerUrl"],
   type: "SocketBehaviour",
-  func: function (window, connectDisconnectBehaviour, inputModes, gameMode) {
+  func: function (window, connectDisconnectBehaviour, inputModes, gameMode, serverUrl) {
     return {
       SocketBehaviour: function (flushPendingAcks) {
         var controls = [];
@@ -31,7 +31,7 @@ module.exports = {
             connect: function (setupFunc, updateFunc) {
               var io = require('socket.io-client');
 
-              var socket = io.connect('http://localhost:3000/' + gameMode() + '/primary');
+              var socket = io.connect(serverUrl() + gameMode() + '/primary');
 
               if (window().document.hasFocus()) {
                   socket.emit('unpause');

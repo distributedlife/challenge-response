@@ -21,6 +21,7 @@ var InputModes = [
 	{ InputMode: function(socket) { return { getCurrentState: function() { return { "b": { "c": "c" } }; }}}}
 ];
 var GameMode = "arcade";
+var serverUrl = "http://localhost:3000/"
 var flushPendingAcksFunc = function() { return [1, 2, 3]; };
 var setupFunc = sinon.spy();
 var updateFunc = sinon.spy();
@@ -45,7 +46,7 @@ describe("desktop socket behaviour", function () {
 
 	      $ = require('zepto-browserify').$;
 
-				Behaviour = require("../src/behaviour").func(defer(window), defer(ConnectDisconnectBehaviour), defer(InputModes), defer(GameMode));
+				Behaviour = require("../src/behaviour").func(defer(window), defer(ConnectDisconnectBehaviour), defer(InputModes), defer(GameMode), defer(serverUrl));
 
 	      done();
     }});
