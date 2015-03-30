@@ -35,10 +35,11 @@ module.exports = {
 		};
 
 		var parseMouse = function(currentInput, callback) {
-			if (ActionMap().cursor === undefined) { return; }
+			console.log(currentInput);
+			if (actionMap().cursor === undefined) { return; }
 
-			each(ActionMap().cursor, function(action) {
-				StateMutator()(
+			each(actionMap().cursor, function(action) {
+				stateMutator()(
 					callback(action.target, action.noEventKey, currentInput.rawData.x, currentInput.rawData.y, action.data)
 				);
 			});
