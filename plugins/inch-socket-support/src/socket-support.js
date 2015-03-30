@@ -8,7 +8,7 @@ var sequence = require('../../inch-sequence/src/sequence.js');
 
 module.exports = {
   type: "SocketSupport",
-  deps: ["acknowledgementMap", "onInput", "onPlayerConnect", "onPlayerDisconnect", "onObserverConnect", "onObserverDisconnect", "onPause", "onUnpause", "rawStateAccess", "stateMutator", "initialiseState"],
+  deps: ["AcknowledgementMap", "OnInput", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "InitialiseState"],
   func: function(acknowledgementMap, onInput, onPlayerConnect, onPlayerDisconnect, onObserverConnect, onObserverDisconnect, onPause, onUnpause, rawStateAccess, stateMutator, initialiseState) {
 
     var io;
