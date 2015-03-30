@@ -25,6 +25,7 @@ var transform = require('vinyl-transform');
 
 var paths = {
   js: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
+  lintjs: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js'],
   scss: ['game/**/*.scss', 'plugins/**/src/scss/*.scss'],
   css: ['game/css', 'plugins/**/public/*.css'],
   tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js', 'plugins/**/tests/*.js'],
@@ -46,7 +47,7 @@ gulp.task('delete-gen-code', function (cb) {
 gulp.task('clean', ['delete-gen-css', 'delete-gen-code']);
 
 gulp.task('lint-code', function () {
-    gulp.src(paths.js)
+    gulp.src(paths.lintjs)
         .pipe(plumber({errorHandler: onError}))
         .pipe(jshint())
         .pipe(jshint.reporter('default', { verbose: true }));
