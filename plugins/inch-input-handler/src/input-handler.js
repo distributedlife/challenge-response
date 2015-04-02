@@ -41,7 +41,7 @@ module.exports = {
 
 				each(actionMap()[key], function(action) {
 					stateMutator()(
-						callback(action.target, action.noEventKey, touch.x, touch.y, action.data)
+						callback(action.target, action.noEventKey, {x: touch.x, y: touch.y}, action.data)
 					);
 				});
 			});
@@ -55,7 +55,7 @@ module.exports = {
 				var data = currentInput.rawData[key];
 				each(actionMap()[key], function(action) {
 					stateMutator()(
-						callback(action.target, action.noEventKey, data.x, data.y, data.force, action.data)
+						callback(action.target, action.noEventKey,{x: data.x, y: data.y, force: data.force}, action.data)
 					);
 				});
 			});
@@ -78,14 +78,14 @@ module.exports = {
 					return target(1.0, data, suppliedData);
 				});
 
-				parseTouches(currentInput, function(target, noEventKey, x, y, suppliedData) {
+				parseTouches(currentInput, function(target, noEventKey, inputData, suppliedData) {
 					somethingHasReceivedInput.push(noEventKey);
-					return target(x, y, data, suppliedData);
+					return target(inputData.x, inputData.y, data, suppliedData);
 				});
 
-				parseSticks(currentInput, function(target, noEventKey, x, y, force, suppliedData) {
+				parseSticks(currentInput, function(target, noEventKey, inputData, suppliedData) {
 					somethingHasReceivedInput.push(noEventKey);
-					return target(x, y, force, data, suppliedData);
+					return target(inputData.x, inputData.y, inputData.force, data, suppliedData);
 				});
 
 				if (actionMap().cursor !== undefined) {
