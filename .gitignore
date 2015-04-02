@@ -6,3 +6,4 @@ coverage/
 .node-version
 npm-debug.log
 vendor
+.DS_Store
