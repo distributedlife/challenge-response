@@ -41,7 +41,7 @@
     display: inline;
   }
 
-  li + li:before {
+  li:nth-child(n+1):after {
     color: #fff !important;
     content: ', ';
   }

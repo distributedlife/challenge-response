@@ -76,11 +76,15 @@ module.exports = {
         var priorScores = get('controller')('priorScores');
         priorScores.push({id: sequence.next('prior-scores'), score: score});
         each(priorScores, function(priorScore) {
-            priorScore.best = false;
+          priorScore.best = false;
         });
 
-        var bestScore = min(priorScores, function(priorScore) { return priorScore.score; });
-        bestScore.best = true;
+        var bestScore = min(priorScores, function(priorScore) {
+          return priorScore.score;
+        });
+        if (bestScore !== Infinity) {
+          bestScore.best = true;
+        }
 
         return {
           controller: {

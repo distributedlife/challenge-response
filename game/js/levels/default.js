@@ -124,8 +124,8 @@ module.exports = {
           }
         };
         var addExistingScoresFunction = function() {
-          return function (currrentValues) {
-            _.each(currrentValues, function(value) {
+          return function (currentValues) {
+            _.each(currentValues, function(value) {
               $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
             });
           };
