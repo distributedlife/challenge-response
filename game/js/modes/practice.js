@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 module.exports = {
   type: 'GameMode-Practice',
-  deps: ['DefinePlugin', "GameBehaviour-Controller"],
+  deps: ['DefinePlugin', 'GameBehaviour-Controller'],
   func: function(definePlugin, controller) {
     return function() {
-      definePlugin()("StateSeed", function () {
+      definePlugin()('StateSeed', function () {
         return {
           controller: {
             start: 0,
@@ -16,14 +16,14 @@ module.exports = {
         };
       });
 
-      definePlugin()("ActionMap", function () {
+      definePlugin()('ActionMap', function () {
         return {
           'space': [{target: controller().response, keypress: true}],
           'r': [{target: controller().reset, keypress: true}]
         };
       });
 
-      definePlugin()("AcknowledgementMap", function () {
+      definePlugin()('AcknowledgementMap', function () {
         return {
           'show-challenge': [{
             target: controller().challengeSeen

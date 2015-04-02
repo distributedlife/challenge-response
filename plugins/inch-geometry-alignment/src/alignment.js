@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 var _ = require('lodash');
 
 var repositionX = function (alignment, currentPosition, areaWidth) {
-  if (alignment === "left") {
+  if (alignment === 'left') {
     return currentPosition.x;
-  } else if (alignment === "right") {
+  } else if (alignment === 'right') {
     return currentPosition.x - areaWidth;
   } else {
     return currentPosition.x - (areaWidth / 2);
@@ -13,9 +13,9 @@ var repositionX = function (alignment, currentPosition, areaWidth) {
 };
 
 var repositionY = function (alignment, currentPosition, areaHeight) {
-  if (alignment === "top") {
+  if (alignment === 'top') {
     return currentPosition.y + areaHeight;
-  } else if (alignment === "bottom") {
+  } else if (alignment === 'bottom') {
     return currentPosition.y;
   } else {
     return currentPosition.y + (areaHeight / 4);
@@ -25,8 +25,8 @@ var repositionY = function (alignment, currentPosition, areaHeight) {
 module.exports = {
   toSelf2d: function (position, areaWidth, areaHeight, options) {
     _.defaults(options, {
-      horizontal: "centre",
-      vertical: "centre"
+      horizontal: 'centre',
+      vertical: 'centre'
     });
 
     var newPosition = {x: 0, y: 0, z: 0};

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var isObject = require('lodash').isObject;
 var isArray = require('lodash').isArray;
@@ -28,11 +28,11 @@ var StateAccess = {
 };
 
 module.exports = {
-  type: "StateMutator",
-  deps: ["DefinePlugin"],
+  type: 'StateMutator',
+  deps: ['DefinePlugin'],
   func: function (definePlugin) {
-    definePlugin()("StateAccess", function () { return StateAccess; });
-    definePlugin()("RawStateAccess", function () { return root; });
+    definePlugin()('StateAccess', function () { return StateAccess; });
+    definePlugin()('RawStateAccess', function () { return root; });
 
     return function(result) {
       root = merge(root, result, function (a, b) {

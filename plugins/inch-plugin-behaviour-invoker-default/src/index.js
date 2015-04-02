@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var _ = require('lodash');
 var rek = require('rekuire');
 var define = rek('plugins/inch-define-plugin/src/define.js');
 
-module.exports = define("BehaviourInvoker", ["StateMutator"], function (stateMutator) {
+module.exports = define('BehaviourInvoker', ['StateMutator'], function (stateMutator) {
   return function (toInvoke, suppliedState, optionalData) {
     var changedState;
 

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var each = require('lodash').each;
 var isEqual = require('lodash').isEqual;
@@ -6,9 +6,10 @@ var cloneDeep = require('lodash').cloneDeep;
 var size = require('lodash').size;
 var sequence = require('../../inch-sequence/src/sequence.js');
 
+//jshint maxparams:false
 module.exports = {
-  type: "SocketSupport",
-  deps: ["AcknowledgementMap", "OnInput", "OnPlayerConnect", "OnPlayerDisconnect", "OnObserverConnect", "OnObserverDisconnect", "OnPause", "OnUnpause", "RawStateAccess", "StateMutator", "InitialiseState"],
+  type: 'SocketSupport',
+  deps: ['AcknowledgementMap', 'OnInput', 'OnPlayerConnect', 'OnPlayerDisconnect', 'OnObserverConnect', 'OnObserverDisconnect', 'OnPause', 'OnUnpause', 'RawStateAccess', 'StateMutator', 'InitialiseState'],
   func: function(acknowledgementMap, onInput, onPlayerConnect, onPlayerDisconnect, onObserverConnect, onObserverDisconnect, onPause, onUnpause, rawStateAccess, stateMutator, initialiseState) {
 
     var io;
@@ -32,7 +33,7 @@ module.exports = {
         packet.sentTimestamp = Date.now();
         statistics[socketId].packets.unacked[packet.id] = packet.sentTimestamp;
 
-        socket.emit("gameState/update", packet);
+        socket.emit('gameState/update', packet);
       };
 
       setInterval(updateClient, 45);
@@ -110,7 +111,7 @@ module.exports = {
         var onInput = createOnInputFunction(socket.id);
         socket.on('input', onInput);
 
-        socket.emit("gameState/setup", rawStateAccess());
+        socket.emit('gameState/setup', rawStateAccess());
 
         startUpdateClientLoop(socket.id, socket);
 

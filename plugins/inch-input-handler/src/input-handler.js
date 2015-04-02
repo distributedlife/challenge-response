@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var each = require('lodash').each;
 
 module.exports = {
-	type: "OnInput",
-	deps: ["ActionMap", "DefinePlugin", "StateMutator"],
+	type: 'OnInput',
+	deps: ['ActionMap', 'DefinePlugin', 'StateMutator'],
 	func: function(actionMap, definePlugin, stateMutator) {
 		var userInput = [];
 
@@ -36,7 +36,7 @@ module.exports = {
 
 		var parseTouches = function(currentInput, callback) {
 			each(currentInput.rawData.touches, function(touch) {
-				var key = "touch" + touch.id;
+				var key = 'touch' + touch.id;
 				if (actionMap()[key] === undefined) { return; }
 
 				each(actionMap()[key], function(action) {
@@ -61,7 +61,7 @@ module.exports = {
 			});
 		};
 
-		definePlugin()("ServerSideUpdate", function () {
+		definePlugin()('ServerSideUpdate', function () {
 			return function () {
 				var currentInput = userInput.shift();
 				if (currentInput === undefined) {

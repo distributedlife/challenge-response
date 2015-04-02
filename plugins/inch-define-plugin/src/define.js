@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = function (type, deps, func) {
   if (deps instanceof Function) {

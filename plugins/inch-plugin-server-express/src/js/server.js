@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
 var express = require('express');
 var favicon = require('serve-favicon');
 var each = require('lodash').each;
 
 module.exports = {
-  type: "Server",
-  deps: ["SocketSupport"],
+  type: 'Server',
+  deps: ['SocketSupport'],
   func: function (configureServerSockets) {
-    var pages = ["primary"];
-    var extension = ".jade";
+    var pages = ['primary'];
+    var extension = '.jade';
     var server;
 
     var configureApp = function (assetPath) {

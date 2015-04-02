@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 module.exports = {
-    deps: ["Window"],
-    type: "UpdateLoop",
+    deps: ['Window'],
+    type: 'UpdateLoop',
     func: function (window) {
         return {
             UpdateLoop: function (updateFunc) {

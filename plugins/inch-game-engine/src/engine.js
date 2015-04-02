@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var each = require('lodash').each;
 
 module.exports = {
-  type: "ServerSideEngine",
-  deps: ["ServerSideUpdate", "StateAccess"],
+  type: 'ServerSideEngine',
+  deps: ['ServerSideUpdate', 'StateAccess'],
   func: function (serverSideUpdate, state) {
     return function() {
       var priorStepTime = Date.now();

@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
 var each = require('lodash').each;
 var extend = require('lodash').extend;
 var $ = require('zepto-browserify').$;
 
 module.exports = {
-  deps: ["Window", "ConnectDisconnectBehaviour", "InputMode", "GameMode", "ServerUrl"],
-  type: "SocketBehaviour",
+  deps: ['Window', 'ConnectDisconnectBehaviour', 'InputMode', 'GameMode', 'ServerUrl'],
+  type: 'SocketBehaviour',
   func: function (window, connectDisconnectBehaviour, inputModes, gameMode, serverUrl) {
     return {
       SocketBehaviour: function (flushPendingAcks) {
