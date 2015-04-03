@@ -14,7 +14,7 @@ module.exports = {
       });
     };
 
-    var step = function(priorStepTime) {
+    var step = function() {
       var now = Date.now();
 
       if (state().get('inch')('paused')) {
@@ -24,13 +24,13 @@ module.exports = {
       var dt = (now - priorStepTime) / 1000;
       update(dt);
 
-      return now;
+      priorStepTime = now;
     };
 
     return {
       run: function(frequency) {
-        priorStepTime = step(priorStepTime);
-        return setTimeout(this.run.bind(this), 1000 / frequency);
+        step();
+        return setInterval(step, 1000 / frequency);
       }
     };
   }

@@ -25,7 +25,7 @@ describe('the engine', function() {
 	});
 
 	afterEach(function() {
-		clearTimeout(interval);
+		clearInterval(interval);
 		clock.restore();
 	})
 
