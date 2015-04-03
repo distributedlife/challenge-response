@@ -12,7 +12,7 @@
     "express": "^4.12.3",
     "howler": "^1.1.25",
     "inch-threejs": "^0.71.0",
-    "inch-unfurl": "^1.0.0",
+    "inch-unfurl": "^1.0.1",
     "jade": "^1.9.2",
     "javascript-state-machine": "^2.3.5",
     "lerp": "^1.0.3",
