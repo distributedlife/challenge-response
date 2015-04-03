@@ -102,7 +102,7 @@ module.exports = {
         statistics[socket.id] = seedSocketStatistics();
 
         modeCallback();
-        initialiseState()();
+        initialiseState().initialise();
 
         socket.on('disconnect', mutateCallbackResponse(onPlayerDisconnect()));
         socket.on('pause', mutateCallbackResponse(onPause()));
