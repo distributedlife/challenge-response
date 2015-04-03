@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var expect = require('expect');
 var sinon = require('sinon');
@@ -12,9 +12,6 @@ var socketSupport = {
 
 describe('configuring the routes', function () {
 	var io;
-	var callbacks = {
-		arcade: sinon.spy()
-	};
 	var server;
 
 	before(function() {
@@ -23,43 +20,75 @@ describe('configuring the routes', function () {
 		io.of = sinon.spy();
 
 		server = require('../src/js/server').func(deferDep(socketSupport));
-		server.start('../dummy', callbacks);
 	});
 
-	after(function () {
-		server.stop();
+	describe('when the callbacks supplied is a single function', function () {
+		var callbacks = sinon.spy();
+
+		before(function () {
+			server.start('../dummy', callbacks);
+		});
+
+		after(function () {
+			server.stop();
+		});
+
+		it('should map /index to the single game mode', function (done) {
+			request.get('http://localhost:3000/', function (err, res) {
+				expect(res.statusCode).toEqual(200);
+				expect(res.body).toInclude('<script src="/game/js/gen/game.js">');
+				done();
+			}).end();
+		});
 	});
 
-	describe('when the modes object is not a hash', function () {
+	describe('when the modes object is a hash', function () {
+		var callbacks = {
+			arcade: sinon.spy()
+		};
 
-	});
+		before(function () {
+			server.start('../dummy', callbacks);
+		});
 
-	it('should redirect to the root page when the mode is not in the callbacks', function (done) {
-		request({
-			followRedirect: function(res) {
-				expect(res.statusCode).toEqual(302);
-				expect(res.headers.location).toEqual('/');
-			},
-			uri: 'http://localhost:3000/derp/primary'
-		}, function () {
-			done();
-		}).end();
-	});
+		after(function () {
+			server.stop();
+		});
 
-	it.skip('should invoke the callback specified by the mode', function (done) {
-		request.get('http://localhost:3000/arcade/primary', function (err, res, body) {
-			expect(res.statusCode).toEqual(200);
-			expect(callbacks.arcade.called).toEqual(true);
-			done();
-		}).end();
-	});
-
-	describe('each of the default routes', function () {
-		it('the "primary" view', function (done) {
-			request.get('http://localhost:3000/arcade/primary', function (err, res, body) {
+		it('should provide a route to the index, to be supplied by the gamedev', function (done) {
+			request.get('http://localhost:3000/', function (err, res) {
 				expect(res.statusCode).toEqual(200);
 				done();
 			}).end();
+		});
+
+		it('should redirect to the root page when the mode is not in the callbacks', function (done) {
+			request({
+				followRedirect: function(res) {
+					expect(res.statusCode).toEqual(302);
+					expect(res.headers.location).toEqual('/');
+				},
+				uri: 'http://localhost:3000/derp'
+			}, function () {
+				done();
+			}).end();
+		});
+
+		it.skip('should invoke the callback specified by the mode', function (done) {
+			request.get('http://localhost:3000/arcade', function (err, res) {
+				expect(res.statusCode).toEqual(200);
+				expect(res.body).toInclude('<script src="/game/js/gen/arcade.js">');
+				done();
+			}).end();
+		});
+
+		describe('each of the default routes', function () {
+			it('the "primary" view', function (done) {
+				request.get('http://localhost:3000/arcade', function (err, res) {
+					expect(res.statusCode).toEqual(200);
+					done();
+				}).end();
+			});
 		});
 	});
 });

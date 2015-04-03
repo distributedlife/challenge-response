@@ -2,13 +2,12 @@
 
 var express = require('express');
 var favicon = require('serve-favicon');
-var each = require('lodash').each;
+var isFunction = require('lodash').isFunction;
 
 module.exports = {
   type: 'Server',
   deps: ['SocketSupport'],
   func: function (configureServerSockets) {
-    var pages = ['primary'];
     var extension = '.jade';
     var server;
 
@@ -20,7 +19,7 @@ module.exports = {
       app.use(require('morgan')('combined'));
       app.use(require('body-parser').urlencoded({extended: true }));
       app.use(require('body-parser').json());
-      app.set('views', __dirname + '/../../public/views');
+      app.set('views', ['game/views/pages', __dirname + '/../../public/views']);
       app.set('view options', {layout: false});
       app.engine('jade', require('jade').__express);
 
@@ -33,19 +32,35 @@ module.exports = {
       return app;
     };
 
-    var configureRoutes = function (callbacks, app) {
-      each(pages, function (page) {
-        app.get('/:mode/' + page, function (req, res) {
-          var mode = req.params.mode;
-
-          if (callbacks[mode] === undefined) {
-            res.redirect('/');
-            return;
-          }
-
-          res.render(page + extension, { mode: mode });
-        });
+    var configureSingleModeGame = function (callback, app) {
+      app.get('/', function (req, res) {
+        res.render('primary' + extension, { mode: 'game' });
       });
+    };
+
+    var configureMultiModeGame = function (callbacks, app) {
+      app.get('/', function (req, res) {
+        res.render('index' + extension);
+      });
+
+      app.get('/:mode/', function (req, res) {
+        var mode = req.params.mode;
+
+        if (callbacks[mode] === undefined) {
+          res.redirect('/');
+          return;
+        }
+
+        res.render('primary' + extension, { mode: mode });
+      });
+    };
+
+    var configureRoutes = function (callbacks, app) {
+      if (isFunction(callbacks)) {
+        configureSingleModeGame(callbacks, app);
+      } else {
+        configureMultiModeGame(callbacks, app);
+      }
     };
 
     return {
