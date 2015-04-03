@@ -9,6 +9,12 @@ plugins.load(require('./inch-socket-support/src/socket-support.js'));
 plugins.load(require('./inch-game-engine/src/engine.js'));
 plugins.load(require('./inch-plugin-state-mutator-default/src/index.js'));
 plugins.load(require('./inch-plugin-behaviour-invoker-default/src/index.js'));
+plugins.load(require('./server/events/on-pause.js'));
+plugins.load(require('./server/events/on-unpause.js'));
+plugins.load(require('./server/events/on-player-connected.js'));
+plugins.load(require('./server/events/on-player-disconnected.js'));
+plugins.load(require('./server/events/on-observer-connected.js'));
+plugins.load(require('./server/events/on-observer-disconnected.js'));
 
 module.exports = {
   loadPath: plugins.loadPath,
@@ -29,62 +35,6 @@ module.exports = {
           paused: false,
           started: Date.now()
         }
-      };
-    });
-    //inch/server/event/on-pause.js
-    definePlugin('OnPause', function () {
-      return function () {
-        return {
-          inch: {
-            paused: true
-          }
-        };
-      };
-    });
-    definePlugin('OnUnpause', function () {
-      return function () {
-        return {
-          inch: {
-            paused: false
-          }
-        };
-      };
-    });
-    definePlugin('OnPlayerConnected', ['StateAccess'], function (state) {
-      return function () {
-        return {
-          inch: {
-            players: state().get('players') + 1
-          }
-        };
-      };
-    });
-    definePlugin('OnPlayerDisconnected', ['StateAccess'], function (state) {
-      return function () {
-        return {
-          inch: {
-            paused: true,
-            players: state().get('players') - 1
-          }
-        };
-      };
-    });
-    definePlugin('OnObserverConnected', ['StateAccess'], function (state) {
-      return function () {
-        return {
-          inch: {
-            observers: state().get('observers') + 1
-          }
-        };
-      };
-    });
-    definePlugin('OnObserverDisconnected', ['StateAccess'], function (state) {
-      return function () {
-        return {
-          inch: {
-            observers: state().get('observers') - 1
-          }
-        };
       };
     });
     //inch/server/initialise-state.js
