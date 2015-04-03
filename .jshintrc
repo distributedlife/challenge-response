@@ -19,5 +19,11 @@
 	"maxparams": 5,
 	"maxdepth": 2,
 	"maxcomplexity": 5,
-	"node": true
+	"node": true,
+	"globals": {
+	    "describe": false,
+	    "it": false,
+	    "beforeEach": false,
+	    "afterEach": false
+	}
 }
