@@ -21,9 +21,6 @@ var rootNodeAccess = provideReadAccessToState(root);
 var StateAccess = {
   get: function(key) {
     return rootNodeAccess(key);
-  },
-  add: function (namespace, obj) {
-    root[namespace] = obj;
   }
 };
 
