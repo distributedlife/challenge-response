@@ -23,11 +23,7 @@ module.exports = {
         }
 
         if (camera) {
-          //TODO: can we use dims.ratio?
-          adapter().setCameraAspectRatio(camera, dims.usableWidth / dims.usableHeight);
-
-          //TODO: move this technical detail into the adapter
-          adapter().updateProjectionMatrix(camera);
+          adapter().setCameraAspectRatio(camera, dims.ratio);
         }
       },
       update: function() {

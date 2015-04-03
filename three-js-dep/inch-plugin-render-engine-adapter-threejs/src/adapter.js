@@ -45,6 +45,8 @@ module.exports = {
             },
             setCameraAspectRatio: function (camera, aspectRatio) {
                 camera.aspect = aspectRatio;
+
+                this.updateProjectionMatrix(camera);
             },
             setVisible: function (obj, visible) {
                 obj.visible = visible;
