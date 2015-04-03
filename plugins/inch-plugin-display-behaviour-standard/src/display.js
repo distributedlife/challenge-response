@@ -4,14 +4,12 @@ var each = require('lodash').each;
 var reject = require('lodash').reject;
 
 module.exports = {
-  deps: ['Dimensions', 'Level', 'OnMuteCallback', 'OnUnmuteCallback'],
+  deps: ['Dimensions', 'Level', 'OnMuteCallback', 'OnUnmuteCallback', 'StateTracker'],
   type: 'DisplayBehaviour',
-  func: function (dimensions, levelParts, onMuteCallbacks, onUnmuteCallbacks) {
+  func: function (dimensions, levelParts, onMuteCallbacks, onUnmuteCallbacks, tracker) {
     var effects = [];
     var priorStep = Date.now();
     var lastReceivedId = 0;
-
-    var tracker = require('../../inch-state-tracker/src/tracker.js').Tracker();
 
     var setupComplete = false;
 
@@ -33,7 +31,7 @@ module.exports = {
         };
 
         var setup = function (state) {
-          tracker.updateState(state);
+          tracker().updateState(state);
 
           each(levelParts(), function (levelPart) {
             if (levelPart.setup) {
@@ -41,7 +39,7 @@ module.exports = {
                 undefined,
                 ackLast,
                 registerEffect,
-                tracker
+                tracker()
               );
             }
           });
@@ -57,7 +55,7 @@ module.exports = {
           }
           lastReceivedId = packet.id;
 
-          tracker.updateState(packet.gameState);
+          tracker().updateState(packet.gameState);
         };
 
         var doUpdate = function () {
@@ -95,7 +93,7 @@ module.exports = {
           setup: setup,
           update: update,
           updateDisplay: function () {
-            if (tracker.get(paused)) {
+            if (tracker().get(paused)) {
               dontUpdate();
             } else {
               doUpdate();

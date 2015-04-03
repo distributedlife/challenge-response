@@ -1,8 +1,10 @@
+'use strict';
+
 var sinon = require('sinon');
 var expect = require('expect');
 var jsdom = require('jsdom').jsdom;
 
-describe("the standard display behaviour", function () {
+describe('the standard display behaviour', function () {
 	var DisplayBehaviour;
 	var Dimensions = {
 		Dimensions: function() {}
@@ -31,8 +33,10 @@ describe("the standard display behaviour", function () {
 	var ackLast = sinon.spy();
 	var addAck = sinon.spy();
 
-	var tracker = require("../../inch-state-tracker/src/tracker.js").Tracker();
-	tracker.updateState = sinon.spy();
+	var tracker = {
+		get: sinon.spy(),
+		updateState: sinon.spy()
+	};
 
 	var behaviour;
 	var dimensions = {
@@ -43,12 +47,12 @@ describe("the standard display behaviour", function () {
 	var defer = function(dep) {
 		return function() {
 			return dep;
-		}
+		};
 	};
 
 	before(function(done) {
 		jsdom.env({
-			html: "<div id=\"a-div\">With content.</div>",
+			html: '<div id="a-div">With content.</div>',
 			done: function(err, window) {
 				global.window = window;
 				global.document = window.document;
@@ -68,44 +72,45 @@ describe("the standard display behaviour", function () {
 		part1.update.reset();
 		part2.update.reset();
 
-		DisplayBehaviour = require("../src/display").func(defer(Dimensions), defer(levelParts), defer([]), defer([]));
+		DisplayBehaviour = require('../src/display').func(defer(Dimensions), defer(levelParts), defer([]), defer([]), defer(tracker));
 		behaviour = DisplayBehaviour.Display(ackLast, addAck);
 	});
 
-	it("should resize each level part to the current dimensions", function () {
+	it('should resize each level part to the current dimensions', function () {
 		expect(part1.screenResized.called).toEqual(true);
 		expect(part2.screenResized.called).toEqual(true);
 	});
 
-	describe("on a setup packet", function() {
+	describe('on a setup packet', function() {
 		beforeEach(function () {
 			behaviour.setup();
 		});
 
-		it.skip("should tell the state tracker of the new state");
-		it("should call setup on each level part", function () {
+		it.skip('should tell the state tracker of the new state');
+		it('should call setup on each level part', function () {
 			expect(part1.setup.called).toEqual(true);
 			expect(part2.setup.called).toEqual(true);
 		});
 	});
 
-	describe("on an update packet", function () {
+	describe('on an update packet', function () {
 		var packet;
 
 		beforeEach(function () {
 			packet = {};
+			tracker.updateState.reset();
 		});
 
-		it("should do nothing if the packet is old", function () {
+		it('should do nothing if the packet is old', function () {
 			packet.id = -1;
 			behaviour.update(packet);
 
 			expect(tracker.updateState.called).toEqual(false);
 		});
 
-		it.skip("is waiting for us to decide on how to mock out modules");
+		it.skip('is waiting for us to decide on how to mock out modules');
 
-		it.skip("should tell the state tracker of the new packet", function () {
+		it.skip('should tell the state tracker of the new packet', function () {
 			packet.id = 1;
 			behaviour.update(packet);
 
@@ -113,10 +118,10 @@ describe("the standard display behaviour", function () {
 		});
 	});
 
-	describe("when updating the display once per frame", function () {
+	describe('when updating the display once per frame', function () {
 		var effect;
 
-		describe("when the game is paused", function () {
+		describe('when the game is paused', function () {
 			before(function () {
 				effect = {
 					tick: sinon.spy(),
@@ -137,12 +142,12 @@ describe("the standard display behaviour", function () {
 				behaviour.updateDisplay();
 			});
 
-			it("should not update the effects when setup", function () {
+			it('should not update the effects when setup', function () {
 				expect(effect.tick.called).toEqual(false);
 			});
 		});
 
-		describe("when the game is not paused", function () {
+		describe('when the game is not paused', function () {
 			var effect;
 			var expiredEffect;
 
@@ -163,7 +168,7 @@ describe("the standard display behaviour", function () {
 				behaviour.update(packet);
 			});
 
-			it("should render the scene", function () {
+			it('should render the scene', function () {
 				behaviour.setup();
 				part3.registerEffect(effect);
 				behaviour.updateDisplay();
@@ -171,7 +176,7 @@ describe("the standard display behaviour", function () {
 				expect(part2.update.called).toEqual(true);
 			});
 
-			describe("when the setup is complete", function () {
+			describe('when the setup is complete', function () {
 				beforeEach(function () {
 					behaviour.setup();
 					part3.registerEffect(effect);
@@ -179,11 +184,11 @@ describe("the standard display behaviour", function () {
 					behaviour.updateDisplay();
 				});
 
-				it("should update the effects", function () {
+				it('should update the effects', function () {
 					expect(effect.tick.called).toEqual(true);
 				});
 
-				it("should remove all expired effects from the being updated", function () {
+				it('should remove all expired effects from the being updated', function () {
 					effect.tick.reset();
 					expiredEffect.tick.reset();
 
@@ -194,24 +199,24 @@ describe("the standard display behaviour", function () {
 				});
 			});
 
-			describe("when the setup is not complete", function () {
+			describe('when the setup is not complete', function () {
 				beforeEach(function () {
 					behaviour.updateDisplay();
 				});
 
-				it("should not update the effects", function () {
+				it('should not update the effects', function () {
 					expect(effect.tick.called).toEqual(false);
 				});
 			});
 		});
 	});
 
-	describe("when told to resize", function () {
+	describe('when told to resize', function () {
 		beforeEach(function () {
 			behaviour.resize(dimensions);
 		});
 
-		it("should tell each level part to resize", function () {
+		it('should tell each level part to resize', function () {
 			expect(part1.screenResized.called).toEqual(true);
 			expect(part2.screenResized.called).toEqual(true);
 		});

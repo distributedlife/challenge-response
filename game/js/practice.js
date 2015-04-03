@@ -20,6 +20,8 @@ pluginManager.load(require('../../plugins/inch-plugin-display-behaviour-standard
 pluginManager.load(require('../../plugins/inch-plugin-connect-disconnect-behaviour/src/behaviour.js'));	//default, required
 pluginManager.load(require('../../plugins/inch-plugin-socket-behaviour-desktop/src/behaviour.js'));
 
+pluginManager.load(require('../../plugins/inch-state-tracker/src/tracker.js'));
+pluginManager.load(require('../../plugins/inch-state-tracker/src/helper.js'));
 
 pluginManager.load(require('../../plugins/inch-plugin-input-mode-keyboard/src/input.js'));
 

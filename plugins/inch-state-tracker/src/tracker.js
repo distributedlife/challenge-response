@@ -1,33 +1,21 @@
 'use strict';
 
-var _ = require('lodash');
+var each = require('lodash').each;
+var isArray = require('lodash').isArray;
+var isEqual = require('lodash').isEqual;
+var clone = require('lodash').clone;
+var where = require('lodash').where;
 
 module.exports = {
-  Equals: function (expectedValue) {
-      return function (currentValue) {
-          return _.isEqual(currentValue, expectedValue);
-      };
-  },
-  The: function (name) {
-      return function (state) { return state[name]; };
-  },
-  To: function (name) {
-      return function (state) { return state[name]; };
-  },
-  From: function (name) {
-      return function (state) { return state[name]; };
-  },
-  Within: function (name) {
-      return function (state) { return state[name]; };
-  },
-  Tracker: function () {
+  type: 'StateTracker',
+  func: function () {
     var priorState;
     var currentState;
     var changes = [];
 
     var invokeCallback = function (callback, model, priorModel, data) {
-      if (_.isArray(data)) {
-        var args = _.clone(data);
+      if (isArray(data)) {
+        var args = clone(data);
         args.unshift(model, priorModel);
         callback.apply(this, args);
       } else {
@@ -38,7 +26,7 @@ module.exports = {
     var hasChanged = function (f) {
       if (priorState === undefined) { return true; }
 
-      return !_.isEqual(f(priorState), f(currentState));
+      return !isEqual(f(priorState), f(currentState));
     };
 
     var currentValue = function (f) {
@@ -60,27 +48,27 @@ module.exports = {
         return undefined;
       }
 
-      return _.where(f(currentState), {id: model.id})[0];
+      return where(f(currentState), {id: model.id})[0];
     };
     var priorElement = function (f, model) {
       if (priorState === undefined) {
         return undefined;
       }
 
-      return _.where(f(priorState), {id: model.id})[0];
+      return where(f(priorState), {id: model.id})[0];
     };
     var elementAdded = function (f, model) {
-      return (_.where(f(priorState), {id: model.id}).length === 0);
+      return (where(f(priorState), {id: model.id}).length === 0);
     };
     var elementRemoved = function (f, model) {
-      return (_.where(f(currentState), {id: model.id}).length === 0);
+      return (where(f(currentState), {id: model.id}).length === 0);
     };
     var elementChanged = function (f, model) {
       if (priorState === undefined) { return true; }
 
-      var current = _.where(f(currentState), {id: model.id});
-      var prior = _.where(f(priorState), {id: model.id});
-      return !_.isEqual(current, prior);
+      var current = where(f(currentState), {id: model.id});
+      var prior = where(f(priorState), {id: model.id});
+      return !isEqual(current, prior);
     };
     var handleObjects = function (change) {
       if (hasChanged(change.focus)) {
@@ -95,7 +83,7 @@ module.exports = {
       }
     };
     var handleArrays = function (change) {
-      _.each(change.operatesOn(change.focus), function (model) {
+      each(change.operatesOn(change.focus), function (model) {
         if (change.detectionFunc(change.focus, model)) {
           invokeCallback(change.callback, currentElement(change.focus, model), priorElement(change.focus, model), change.data);
         }
@@ -111,7 +99,7 @@ module.exports = {
     };
 
     var detectChangesAndNotifyObservers = function () {
-      _.each(changes, function (change) {
+      each(changes, function (change) {
         handle[change.type](change);
       });
     };

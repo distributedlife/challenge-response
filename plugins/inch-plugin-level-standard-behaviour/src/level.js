@@ -1,12 +1,12 @@
 'use strict';
 
 module.exports = {
-  deps: ['OnPauseCallback', 'OnResumeCallback'],
+  deps: ['OnPauseCallback', 'OnResumeCallback', 'StateTrackerHelpers'],
   type: 'Level',
-  func: function (onPauseCallbacks, onResumeCallbacks) {
+  func: function (onPauseCallbacks, onResumeCallbacks, trackerHelpers) {
     var each = require('lodash').each;
     var $ = require('zepto-browserify').$;
-    var equals = require('../../inch-state-tracker/src/tracker.js').Equals;
+    var equals = trackerHelpers().equals;
 
     var pause = function () {
       $('.paused').show();

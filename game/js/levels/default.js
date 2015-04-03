@@ -1,14 +1,14 @@
 'use strict';
 
 module.exports = {
-  deps: ['RenderEngineAdapter', 'PositionHelper', 'Camera', 'Element'],
+  deps: ['RenderEngineAdapter', 'PositionHelper', 'Camera', 'Element', 'StateTrackerHelpers'],
   type: 'Level',
-  func: function (adapter, positionHelper, theCamera, element) {
+  func: function (adapter, positionHelper, theCamera, element, trackerHelpers) {
     var colour = require('color');
-    var equals = require('../../../plugins/inch-state-tracker/src/tracker.js').Equals;
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
     var _ = require('lodash');
+    var equals = trackerHelpers().equals;
 
     var mainTemplate = require('../../jade/practice.jade');
     var priorScoresTemplate = require('../../jade/priorScores.jade');
