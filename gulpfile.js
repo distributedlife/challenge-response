@@ -48,7 +48,8 @@ gulp.task('lint-code', function () {
     gulp.src(paths.lintjs)
         .pipe(plumber({errorHandler: onError}))
         .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'));
+        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter('fail'));
 });
 gulp.task('lint-scss', function () {
     return gulp.src(paths.scss)
