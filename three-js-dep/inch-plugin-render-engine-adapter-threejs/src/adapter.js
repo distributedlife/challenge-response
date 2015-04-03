@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 module.exports = {
-    deps: ["Debug", "Dimensions"],
+    deps: ['Debug', 'Dimensions'],
     type: 'RenderEngineAdapter',
     func: function (debugItems, dimensions) {
         var THREE = require('inch-threejs');
@@ -15,6 +15,7 @@ module.exports = {
             newPerspectiveCamera: function (fov, aspect, near, far) {
                 return new THREE.PerspectiveCamera(fov, aspect, near, far);
             },
+            //jshint maxparams: 6
             newOrthographicCamera: function (left, right, top, bottom, near, far) {
                 return new THREE.OrthographicCamera(left, right, top, bottom, near, far);
             },
@@ -86,9 +87,10 @@ module.exports = {
                 return renderer;
             },
             attachRenderer: function (element, renderer) {
-                $("#" + element).append(renderer.domElement);
+                $('#' + element).append(renderer.domElement);
             },
             loadFont: function (fontData) {
+                //jshint camelcase:false
                 if (THREE.typeface_js && THREE.typeface_js.loadFace) {
                     THREE.typeface_js.loadFace(fontData);
                 }
