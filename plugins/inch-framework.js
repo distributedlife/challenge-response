@@ -27,8 +27,7 @@ module.exports = {
           players: 0,
           observers: 0,
           paused: false,
-          started: Date.now(),
-          dimensions: { width: 1000, height: 500 }
+          started: Date.now()
         }
       };
     });
