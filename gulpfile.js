@@ -27,7 +27,7 @@ var paths = {
   css: ['game/css', 'plugins/**/public/*.css'],
   tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js', 'plugins/**/tests/*.js'],
   genjs: './game/js/gen',
-  modes: ['./game/js/practice.js']
+  modes: ['./game/js/*.js', '!./game/js/modes.js']
 };
 
 var onError = function (error) {

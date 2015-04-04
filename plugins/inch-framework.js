@@ -1,5 +1,6 @@
 'use strict';
 
+var each = require('lodash').each;
 var plugins = require('./inch-plugins/src/plugin_manager.js').PluginManager;
 
 plugins.load(require('./inch-plugin-server-express/src/js/server.js'));
@@ -18,13 +19,23 @@ plugins.load(require('./server/events/on-observer-disconnected.js'));
 plugins.load(require('./server/state/initialiser.js'));
 plugins.load(require('./server/state/seed.js'));
 
-module.exports = {
-  loadPath: plugins.loadPath,
-  get: plugins.get,
-  run: function (pathToGame, modes) {
-    plugins.get('Server').start(pathToGame, modes);
+var run = function (pathToGame, modes) {
+  plugins.get('Server').start(pathToGame, modes);
 
-    plugins.get('InitialiseState').initialise();
-    plugins.get('ServerSideEngine').run(120);
-  }
+  plugins.get('InitialiseState').initialise();
+  plugins.get('ServerSideEngine').run(120);
+};
+
+module.exports = {
+  runGameAtPath: function (path) {
+    plugins.loadPath(path + '/js/modes');
+    plugins.loadPath(path + '/js/entities');
+
+    var modes = require(path + '/js/modes.js');
+    each(modes, function (pluginName, modeName) {
+      modes[modeName] = plugins.get(pluginName);
+    });
+
+    run(path, modes);
+  },
 };
