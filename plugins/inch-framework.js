@@ -29,7 +29,7 @@ var run = function (pathToGame, modes) {
 module.exports = {
   runGameAtPath: function (path) {
     plugins.loadPath(path + '/js/modes');
-    plugins.loadPath(path + '/js/entities');
+    plugins.loadPath(path + '/js/logic');
 
     var modes = require(path + '/js/modes.js');
     each(modes, function (pluginName, modeName) {

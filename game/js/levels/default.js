@@ -10,8 +10,8 @@ module.exports = {
     var _ = require('lodash');
     var equals = trackerHelpers().equals;
 
-    var mainTemplate = require('../../jade/practice.jade');
-    var priorScoresTemplate = require('../../jade/priorScores.jade');
+    var mainTemplate = require('../../views/overlays/easy.jade');
+    var priorScoresTemplate = require('../../views/partials/priorScores.jade');
 
     var camera;
     var renderer;

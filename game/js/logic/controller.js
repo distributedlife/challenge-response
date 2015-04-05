@@ -20,7 +20,7 @@ module.exports = {
           }
         };
       },
-      response: function (force, data) {
+      response: function (data) {
         var get = state().get;
 
         if (get('controller')('state') === 'ready') {
