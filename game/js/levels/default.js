@@ -1,9 +1,10 @@
 'use strict';
 
+//jshint maxparams: 6
 module.exports = {
-  deps: ['RenderEngineAdapter', 'PositionHelper', 'Camera', 'Element', 'StateTrackerHelpers'],
+  deps: ['RenderEngineAdapter', 'PositionHelper', 'Camera', 'Element', 'StateTrackerHelpers', 'DebugItem-Grid'],
   type: 'Level',
-  func: function (adapter, positionHelper, theCamera, element, trackerHelpers) {
+  func: function (adapter, positionHelper, theCamera, element, trackerHelpers, grid) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
@@ -44,7 +45,7 @@ module.exports = {
         renderer = adapter().createRenderer();
         adapter().attachRenderer(element(), renderer);
 
-
+        scene.add(grid().create());
 
         var showInstructions = function (model, priorModel, statusIndicator) {
           $('#instructions').show();

@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-    deps: ['Debug', 'Dimensions'],
+    deps: ['Dimensions'],
     type: 'RenderEngineAdapter',
-    func: function (debugItems, dimensions) {
+    func: function (dimensions) {
         var THREE = require('inch-threejs');
         var each = require('lodash').each;
         var $ = require('zepto-browserify').$;
@@ -71,13 +71,7 @@ module.exports = {
                 obj.updateProjectionMatrix();
             },
             createScene: function () {
-                var scene = new THREE.Scene();
-
-                each(debugItems(), function (debugItem) {
-                    scene.add(debugItem());
-                });
-
-                return scene;
+                return new THREE.Scene();
             },
             createRenderer: function () {
                 var renderer = new THREE.WebGLRenderer({ antialias: true });

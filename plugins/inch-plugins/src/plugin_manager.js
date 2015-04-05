@@ -2,6 +2,7 @@
 
 var loader = require('../../inch-entity-loader/src/loader.js');
 var isArray = require('lodash').isArray;
+var contains = require('lodash').contains;
 
 //Multimode plugins are initialised to an empty array.
 var plugins = {
@@ -23,9 +24,17 @@ var plugins = {
   OnInput: []
 };
 
+var deprecated = [
+  'Debug', 'Camera', 'DebugProperties', 'Font', 'FOV', 'RenderEngineAdapter', 'PluginManager'
+];
+
 var get = function (name) {
   if (!plugins[name]) {
     throw new Error('No plugin defined for: ' + name);
+  }
+
+  if (contains(deprecated, name)) {
+    console.log(name + ' is deprecated');
   }
 
   return plugins[name];
@@ -93,7 +102,6 @@ var pluginManager = {
 pluginManager.load({
   type: 'PluginManager',
   func: function() {
-    console.log('PluginManager is deprecated');
     return pluginManager;
   }
 });
