@@ -31,7 +31,7 @@ module.exports = {
             connect: function (setupFunc, updateFunc) {
               var io = require('socket.io-client');
 
-              var socket = io.connect(serverUrl() + gameMode() + '/primary');
+              var socket = io.connect(serverUrl() + gameMode() + '/primary', {reconnection: false});
 
               if (window().document.hasFocus()) {
                   socket.emit('unpause');
