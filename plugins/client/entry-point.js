@@ -1,10 +1,15 @@
 'use strict';
 
-var plugins = require('../inch-plugins/src/plugin_manager.js').PluginManager;
+var plugins = require('../inch-plugins/src/plugin_manager').PluginManager;
 
 module.exports = {
-  plugins: plugins,
   load: plugins.load,
+  loadWindow: function (window) {
+    plugins.set('Window', window);
+  },
+  run: function () {
+    plugins.get('ClientSideAssembler').assembleAndRun();
+  },
   loadDefaults: function () {
     plugins.set('ServerUrl', 'http://localhost:3000/');
     plugins.set('GameMode', 'easy');
@@ -15,21 +20,23 @@ module.exports = {
     plugins.set('FOV', 60);
     plugins.set('DebugProperties', {});
 
-    plugins.load(require('../inch-plugin-dimensions-widescreen/src/dimensions.js'));
-    plugins.load(require('../inch-plugin-display-behaviour-standard/src/display.js'));
-    plugins.load(require('../client/events/on-connect.js'));
-    plugins.load(require('../client/events/on-disconnect.js'));
-    plugins.load(require('../inch-plugin-socket-behaviour-desktop/src/behaviour.js'));
-    plugins.load(require('../inch-state-tracker/src/tracker.js'));
-    plugins.load(require('../inch-state-tracker/src/helper.js'));
-    plugins.load(require('../inch-plugin-input-mode-keyboard/src/input.js'));
-    plugins.load(require('../inch-plugin-update-loop-vsync/src/loop.js'));
+    plugins.load(require('../inch-plugin-dimensions-widescreen/src/dimensions'));
+    plugins.load(require('../inch-plugin-display-behaviour-standard/src/display'));
+    plugins.load(require('../client/events/on-connect'));
+    plugins.load(require('../client/events/on-disconnect'));
+    plugins.load(require('../inch-plugin-socket-behaviour-desktop/src/behaviour'));
+    plugins.load(require('../inch-state-tracker/src/tracker'));
+    plugins.load(require('../inch-state-tracker/src/helper'));
+    plugins.load(require('../inch-plugin-input-mode-keyboard/src/input'));
+    plugins.load(require('../inch-plugin-update-loop-vsync/src/loop'));
 
-    //../client/view-logic/icon-layout.js
-    //../client/view-logic/observer-count.js
-    //../client/view-logic/player-count.js
-    plugins.load(require('../inch-plugin-icon-layout-fixed-aspect/src/layout-icons.js'));
-    plugins.load(require('../inch-plugin-level-player-observer-count/src/level.js'));
-    plugins.load(require('../inch-plugin-level-standard-behaviour/src/level.js'));
+    //../client/view-logic/icon-layout
+    //../client/view-logic/observer-count
+    //../client/view-logic/player-count
+    plugins.load(require('../inch-plugin-icon-layout-fixed-aspect/src/layout-icons'));
+    plugins.load(require('../inch-plugin-level-player-observer-count/src/level'));
+    plugins.load(require('../inch-plugin-level-standard-behaviour/src/level'));
+
+    plugins.load(require('../inch-client-assembler/src/assembler'));
   }
 };
