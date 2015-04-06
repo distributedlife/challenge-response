@@ -1,10 +1,12 @@
 'use strict';
 
+var numeral = require('numeral');
+
 module.exports = {
   type: 'Level',
-  func: function () {
+  deps: ['StateTracker'],
+  func: function (tracker) {
     var $ = require('zepto-browserify').$;
-    var numeral = require('numeral');
 
     var updatePlayerCount = function (currentValue) {
       $('#player-count').text(numeral(currentValue).format('0a'));
@@ -14,15 +16,12 @@ module.exports = {
     };
 
     return {
-      screenResized: function () {
-        return undefined;
-      },
-      setup: function (scene, ackLastRequest, register, tracker) {
+      setup: function () {
         var playerCount = function (state) { return state.inch.players; };
         var observerCount = function (state) { return state.inch.observers; };
 
-        tracker.onChangeOf(playerCount, updatePlayerCount);
-        tracker.onChangeOf(observerCount, updateObserverCount);
+        tracker().onChangeOf(playerCount, updatePlayerCount);
+        tracker().onChangeOf(observerCount, updateObserverCount);
         }
     };
   }

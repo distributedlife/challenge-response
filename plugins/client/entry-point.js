@@ -32,7 +32,7 @@ module.exports = {
     //../client/view-logic/observer-count
     //../client/view-logic/player-count
     plugins.load(require('../inch-plugin-icon-layout-fixed-aspect/src/layout-icons'));
-    plugins.load(require('../inch-plugin-level-player-observer-count/src/level'));
+    plugins.load(require('../client/view-logic/player-observer-count'));
     plugins.load(require('../inch-plugin-level-standard-behaviour/src/level'));
 
     plugins.load(require('../inch-client-assembler/src/assembler'));
