@@ -12,6 +12,7 @@ module.exports = {
     return new THREE.PerspectiveCamera(fov, aspect, near, far);
   },
   //jshint maxparams: 6
+  //A frustum requires this many parameters to define it's bounds
   newOrthographicCamera: function (left, right, top, bottom, near, far) {
     return new THREE.OrthographicCamera(left, right, top, bottom, near, far);
   },
@@ -81,6 +82,7 @@ module.exports = {
   },
   loadFont: function (fontData) {
     //jshint camelcase:false
+    //can't help inconsistent case usage in deps
     if (THREE.typeface_js && THREE.typeface_js.loadFace) {
       THREE.typeface_js.loadFace(fontData);
     }

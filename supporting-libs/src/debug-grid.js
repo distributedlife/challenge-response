@@ -35,5 +35,5 @@ module.exports = function(adapter, dims, spacing, colour) {
     vertices.push({x:  dims.usableWidth, y: y, z: 0});
   }
 
-  return adapter().createColouredLinePieces(vertices, lineColour);
+  return adapter.createColouredLinePieces(vertices, lineColour);
 };
