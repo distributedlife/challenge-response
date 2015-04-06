@@ -21,11 +21,13 @@ var plugins = {
   OnObserverDisconnect: [],
   OnPause: [],
   OnUnpause: [],
-  OnInput: []
+  OnInput: [],
+  OnConnect: [],
+  OnDisonnect: []
 };
 
 var deprecated = [
-  'Debug', 'Camera', 'DebugProperties', 'Font', 'FOV', 'RenderEngineAdapter', 'PluginManager'
+  'Debug', 'Camera', 'DebugProperties', 'Font', 'FOV', 'RenderEngineAdapter', 'PluginManager', 'PositionHelper', 'DebugItem-Grid'
 ];
 
 var get = function (name) {

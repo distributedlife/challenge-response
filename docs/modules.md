@@ -175,6 +175,8 @@ These are the roles defined within the system:
 - **OnPauseCallback** `array`, `event`, `function` – Called when the current client pauses.
 - **OnResumeCallback** `array`, `event`, `function` – Called when the current client resumes the game.
 - **OnUnmuteCallback** `array`, `event`, `function` – Called when the current client un-mutes the sound.
+- **OnConnect** `array`, `event, `function` – Called when the client's socket connects to the server
+- **OnDisconnect** `array`, `event, `function` – Called when the client's socket disconnects from the server
 - **PluginManager** `object` – `deprecated` Provides full access to the plugin manager.
 - **PositionHelper** `object` – Helps you place things on the canvas.
 - **RenderEngineAdapter** `object` – `deprecated` Provides an abstraction between

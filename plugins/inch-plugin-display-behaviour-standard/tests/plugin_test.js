@@ -7,7 +7,7 @@ var jsdom = require('jsdom').jsdom;
 describe('the standard display behaviour', function () {
 	var DisplayBehaviour;
 	var Dimensions = {
-		Dimensions: function() {}
+		get: function() {}
 	};
 	var part1 = {
 		screenResized: sinon.spy(),

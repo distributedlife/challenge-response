@@ -4,27 +4,27 @@ var each = require('lodash').each;
 var $ = require('zepto-browserify').$;
 var pendingAcknowledgements = require('../../inch-socket-pending-acknowledgements/src/index.js')();
 
-module.exports = function (pluginManager) {
-  each(pluginManager.get('Font'), function (font) {
+module.exports = function (plugins) {
+  each(plugins.get('Font'), function (font) {
     font.load();
   });
 
   return {
     assembleAndRun: function () {
-      var display = pluginManager.get('DisplayBehaviour').Display(pendingAcknowledgements.ackLast, pendingAcknowledgements.add);
-      var socket = pluginManager.get('SocketBehaviour').SocketBehaviour(pendingAcknowledgements.flush);
+      var display = plugins.get('DisplayBehaviour').Display(pendingAcknowledgements.ackLast, pendingAcknowledgements.add);
+      var socket = plugins.get('SocketBehaviour').SocketBehaviour(pendingAcknowledgements.flush);
       socket.connect(display.setup, display.update);
 
       var resizeCanvas = function () {
-        var dims = pluginManager.get('Dimensions').Dimensions();
-        pluginManager.get('IconLayout').IconLayout(dims.orientation);
+        var dims = plugins.get('Dimensions').get();
+        plugins.get('IconLayout').IconLayout(dims.orientation);
 
-        var element = pluginManager.get('Element');
+        var element = plugins.get('Element');
         $('#' + element).css('margin-top', dims.marginTopBottom);
         $('#' + element).css('width', dims.usableWidth);
         $('#' + element).css('height', dims.usableHeight);
 
-        var inputElement = pluginManager.get('InputElement');
+        var inputElement = plugins.get('InputElement');
         $('#' + inputElement).css('margin-top', dims.marginTopBottom);
         $('#' + inputElement).css('width', dims.usableWidth);
         $('#' + inputElement).css('height', dims.usableHeight);
@@ -32,8 +32,8 @@ module.exports = function (pluginManager) {
         display.resize(dims);
       };
 
-      $(pluginManager.get('Window')).on('load resize', resizeCanvas);
-      pluginManager.get('UpdateLoop').UpdateLoop(display.updateDisplay).run();
+      $(plugins.get('Window')).on('load resize', resizeCanvas);
+      plugins.get('UpdateLoop').UpdateLoop(display.updateDisplay).run();
     }
   };
 };

@@ -4,10 +4,11 @@ var each = require('lodash').each;
 var extend = require('lodash').extend;
 var $ = require('zepto-browserify').$;
 
+//jshint maxparams: 6
 module.exports = {
-  deps: ['Window', 'ConnectDisconnectBehaviour', 'InputMode', 'GameMode', 'ServerUrl'],
+  deps: ['Window', 'InputMode', 'GameMode', 'ServerUrl', 'OnConnect', 'OnDisconnect'],
   type: 'SocketBehaviour',
-  func: function (window, connectDisconnectBehaviour, inputModes, gameMode, serverUrl) {
+  func: function (window, inputModes, gameMode, serverUrl, onConnectCallbacks, onDisconnectCallbacks) {
     return {
       SocketBehaviour: function (flushPendingAcks) {
         var controls = [];
@@ -37,8 +38,13 @@ module.exports = {
                   socket.emit('unpause');
               }
 
-              socket.on('connect', connectDisconnectBehaviour().connected);
-              socket.on('disconnect', connectDisconnectBehaviour().disconnected);
+              each(onConnectCallbacks(), function (callback) {
+                socket.on('connect', callback);
+              });
+              each(onDisconnectCallbacks(), function (callback) {
+                socket.on('disconnect', callback);
+              });
+
               socket.on('gameState/setup', setupFunc);
               socket.on('gameState/update', updateFunc);
               socket.on('error', function (data) { throw new Error(data); });

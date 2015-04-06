@@ -1,16 +1,18 @@
 'use strict';
 
-//jshint maxparams: 6
 module.exports = {
-  deps: ['RenderEngineAdapter', 'PositionHelper', 'Camera', 'Element', 'StateTrackerHelpers', 'DebugItem-Grid'],
+  deps: ['Element', 'StateTrackerHelpers', 'Dimensions'],
   type: 'Level',
-  func: function (adapter, positionHelper, theCamera, element, trackerHelpers, grid) {
+  func: function (element, trackerHelpers, dimensions) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
     var _ = require('lodash');
     var equals = trackerHelpers().equals;
-
+    var centreInCamera = require('../../../supporting-libs/src/centre-in-camera');
+    var adapter = require('../../../three-js-dep/inch-plugin-render-engine-adapter-threejs/src/adapter');
+    var grid = require('../../../supporting-libs/src/debug-grid');
+    var theCamera = require('../../../three-js-dep/inch-plugin-camera-orthographic-centred/src/camera');
     var mainTemplate = require('../../views/overlays/easy.jade');
     var priorScoresTemplate = require('../../views/partials/priorScores.jade');
 
@@ -24,7 +26,7 @@ module.exports = {
         }
 
         if (camera) {
-          adapter().setCameraAspectRatio(camera, dims.ratio);
+          adapter.setCameraAspectRatio(camera, dims.ratio);
         }
       },
       update: function() {
@@ -33,19 +35,19 @@ module.exports = {
         }
       },
       setup: function (unused1, ackLastRequest, register, tracker) {
-        var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter());
+        var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter);
 
         $('#overlay').append(mainTemplate());
 
 
         //Render layer concern
         //Setup threejs-camera, inch-scene, threejs-scene, threejs-renderer
-        camera = theCamera().Camera();
-        scene = require('../../../three-js-dep/inch-scene/src/scene.js')(adapter().createScene());
-        renderer = adapter().createRenderer();
-        adapter().attachRenderer(element(), renderer);
+        camera = theCamera(adapter, dimensions().get());
+        scene = require('../../../three-js-dep/inch-scene/src/scene.js')(adapter.createScene());
+        renderer = adapter.createRenderer(dimensions().get());
+        adapter.attachRenderer(element(), renderer);
 
-        scene.add(grid().create());
+        scene.add(grid(adapter, dimensions().get()));
 
         var showInstructions = function (model, priorModel, statusIndicator) {
           $('#instructions').show();
@@ -87,7 +89,7 @@ module.exports = {
           $('#score')[0].innerText = model;
 
           var score = $('#score');
-          var centered = positionHelper().centreInCamera(camera, score.width(), score.height());
+          var centered = centreInCamera(dimensions().get(), camera, score.width(), score.height());
 
           score.css('left', centered.left + 'px');
           score.css('top', centered.top + 'px');

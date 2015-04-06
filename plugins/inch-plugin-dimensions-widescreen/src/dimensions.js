@@ -5,43 +5,47 @@ module.exports = {
   type: 'Dimensions',
   func: function (ratio, minMargin, window) {
     return {
-      Dimensions: function () {
-        var width;
-        var height;
-        var possibleHeight = Math.round(window().innerWidth / ratio());
-        var possibleWidth = Math.round(window().innerHeight * ratio());
+      get: function () {
+        var actualWidth = window().innerWidth;
+        var actualHeight = window().innerHeight;
+        var heightBasedOnWidth = Math.round(actualWidth / ratio());
+        var widthBasedOnHeight = Math.round(actualHeight * ratio());
+        var totalMargin = minMargin() + minMargin();
+
+        var usableWidth;
+        var usableHeight;
         var orientation;
 
-        if (possibleHeight >= window().innerHeight) {
-          if (possibleWidth + minMargin() + minMargin() > window().innerWidth) {
-            width = window().innerWidth - minMargin() - minMargin();
-            height = possibleHeight;
+        if (heightBasedOnWidth >= actualHeight) {
+          if (widthBasedOnHeight + totalMargin > actualWidth) {
+            usableWidth = actualWidth - totalMargin;
+            usableHeight = heightBasedOnWidth;
           } else {
-            width = possibleWidth;
-            height = window().innerHeight;
+            usableWidth = widthBasedOnHeight;
+            usableHeight = actualHeight;
           }
 
           orientation = 'landscape';
         } else {
-          if (possibleHeight + minMargin() + minMargin() > window().innerHeight) {
-            width = possibleWidth;
-            height = window().innerHeight - minMargin() - minMargin();
+          if (heightBasedOnWidth + totalMargin > actualHeight) {
+            usableWidth = widthBasedOnHeight;
+            usableHeight = actualHeight - totalMargin;
           } else {
-            width = window().innerWidth;
-            height = possibleHeight;
+            usableWidth = actualWidth;
+            usableHeight = heightBasedOnWidth;
           }
 
           orientation = 'portrait';
         }
 
         return {
-          usableWidth: width,
-          usableHeight: height,
-          marginSides: Math.round(window().innerWidth - width) / 2,
-          marginTopBottom: Math.round(window().innerHeight - height) / 2,
+          usableWidth: usableWidth,
+          usableHeight: usableHeight,
+          marginSides: Math.round(actualWidth - usableWidth) / 2,
+          marginTopBottom: Math.round(actualHeight - usableHeight) / 2,
           orientation: orientation,
-          screenWidth: window().innerWidth,
-          screenHeight: window().innerHeight,
+          screenWidth: actualWidth,
+          screenHeight: actualHeight,
           ratio: ratio()
         };
       }

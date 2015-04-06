@@ -18,7 +18,7 @@ module.exports = {
 
     return {
       Display: function (ackLast, addAck) {
-        var dims = dimensions().Dimensions();
+        var dims = dimensions().get();
 
         each(levelParts(), function (levelPart) {
           if (levelPart.screenResized) {

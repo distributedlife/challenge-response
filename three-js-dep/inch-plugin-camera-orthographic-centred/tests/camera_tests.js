@@ -9,7 +9,7 @@ describe("the camera", function () {
 		updateProjectionMatrix: sinon.spy()
 	};
 	var dimensions = {
-		Dimensions: function() {
+		get: function() {
 			return {
 				usableWidth: 200,
 				usableHeight: 200
