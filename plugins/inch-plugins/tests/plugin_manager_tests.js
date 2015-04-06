@@ -1,88 +1,89 @@
+'use strict';
+
 var expect = require('expect');
 var jsdom = require('jsdom').jsdom;
-var _ = require('lodash');
 
 describe('the plugin manager', function() {
-	var document = jsdom("<div id=\"a-div\">With content.</div>");
+	var document = jsdom('<div id="a-div">With content.</div>');
 	global.window = document.parentWindow;
 	global.getComputedStyle = function() {};
 	global.document = document;
 
 	var myModule = {
-		type: "AlsoMine",
+		type: 'AlsoMine',
 		func: function() {
 			return 4;
 		}
 	};
 	var myDep = {
-		type: "Dep",
+		type: 'Dep',
 		func: function () {
 			return 3;
 		}
-	}
+	};
 	var myModuleWithDep = {
-		type: "Mine",
-		deps: ["Dep"],
-		func: function(Dep) {
-			return Dep();
+		type: 'Mine',
+		deps: ['Dep'],
+		func: function(dep) {
+			return dep();
 		}
 	};
 
 	var createAModuleToExecuteTest = function(deps, vaidationCode) {
 		return {
-			type: "Test",
+			type: 'Test',
 			deps: deps,
 			func: vaidationCode
-		}
-	}
+		};
+	};
 	var pluginManager;
 
-	describe("using a module", function() {
+	describe('using a module', function() {
 		beforeEach(function () {
 			pluginManager = require('../src/plugin_manager').PluginManager;
 		});
 
-		it("should have it's dependencies injected as parameters", function() {
+		it('should have it\'s dependencies injected as parameters', function() {
 			pluginManager.load(myDep);
 			pluginManager.load(myModuleWithDep);
 
-			pluginManager.load(createAModuleToExecuteTest(["Mine"], function(Mine) {
-				expect(Mine()).toEqual(3);
+			pluginManager.load(createAModuleToExecuteTest(['Mine'], function(mine) {
+				expect(mine()).toEqual(3);
 			}));
 		});
 
-		it("should still work for modules without dependencies", function () {
+		it('should still work for modules without dependencies', function () {
 			pluginManager.load(myModule);
 
-			pluginManager.load(createAModuleToExecuteTest(["AlsoMine"], function(AlsoMine) {
-				expect(AlsoMine()).toEqual(4);
+			pluginManager.load(createAModuleToExecuteTest(['AlsoMine'], function(alsoMine) {
+				expect(alsoMine()).toEqual(4);
 			}));
 		});
 
-		it("should all multiple plugins for specific plugin-types", function() {
+		it('should all multiple plugins for specific plugin-types', function() {
 			var inputMode = {
-				type: "InputMode",
+				type: 'InputMode',
 				func: function() { return undefined; }
 			};
 			pluginManager.load(inputMode);
 			pluginManager.load(inputMode);
 
-			pluginManager.load(createAModuleToExecuteTest(["InputMode"], function(InputMode) {
-				expect(InputMode().length).toEqual(2);
+			pluginManager.load(createAModuleToExecuteTest(['InputMode'], function(inputMode) {
+				expect(inputMode().length).toEqual(2);
 			}));
 		});
 
-		it("should defer all modules", function () {
+		it('should defer all modules', function () {
 			var loadedSecondNeededInFirst = {
-				type: "LaterDude",
-				func: function() { return "Holla"; }
+				type: 'LaterDude',
+				func: function() { return 'Holla'; }
 			};
 			var loadedFirstRequiresSecondDefine = {
-				deps: ["LaterDude"],
-				type: "NowNowNow",
-				func: function(LaterDude, OkNow) {
+				deps: ['LaterDude'],
+				type: 'NowNowNow',
+				func: function(laterDude, OkNow) {
 					return {
-						LaterDude: function () { return LaterDude() },
+						LaterDude: function () { return laterDude(); },
 						OkNow: OkNow
 					};
 				}
@@ -91,21 +92,18 @@ describe('the plugin manager', function() {
 			pluginManager.load(loadedFirstRequiresSecondDefine);
 			pluginManager.load(loadedSecondNeededInFirst);
 
-			pluginManager.load(createAModuleToExecuteTest(["NowNowNow"], function(NowNowNow) {
-				expect(NowNowNow().LaterDude).toNotEqual("Holla");
-				expect(NowNowNow().LaterDude()).toEqual("Holla");
+			pluginManager.load(createAModuleToExecuteTest(['NowNowNow'], function(nowNowNow) {
+				expect(nowNowNow().LaterDude).toNotEqual('Holla');
+				expect(nowNowNow().LaterDude()).toEqual('Holla');
 			}));
 		});
 
-		it("should raise an exception if the old format for deferred modules is used", function () {
+		it('should raise an exception if a dependency is used during the load phase', function () {
 			var now = {
-				deps: ["LaterDude*"],
-				type: "NowNowNow",
-				func: function(LaterDude, OkNow) {
-					return {
-						LaterDude: LaterDude,
-						OkNow: OkNow
-					};
+				deps: ['OkNow'],
+				type: 'NowNowNow',
+				func: function(okNow) {
+					return okNow();
 				}
 			};
 
@@ -119,28 +117,9 @@ describe('the plugin manager', function() {
 			expect(true).toBe(false);
 		});
 
-		it("should raise an exception if a dependency is used during the load phase", function () {
-			var now = {
-				deps: ["OkNow"],
-				type: "NowNowNow",
-				func: function(OkNow) {
-					return OkNow();
-				}
-			};
-
+		it('should raise an exception if the dependency is not defined', function () {
 			try {
-				pluginManager.load(now);
-			} catch (e) {
-				expect(true).toBe(true);
-				return;
-			}
-
-			expect(true).toBe(false);
-		});
-
-		it("should raise an exception if the dependency is not defined", function () {
-			try {
-				pluginManager.load(createAModuleToExecuteTest(["NotDefined"], function(PM) {
+				pluginManager.load(createAModuleToExecuteTest(['NotDefined'], function(PM) {
 					expect(PM).toEqual(pluginManager);
 				}));
 			} catch (e) {
@@ -150,27 +129,21 @@ describe('the plugin manager', function() {
 
 			expect(true).toBe(false);
 		});
-
-		it("should load itself into the set of loaded modules", function () {
-			pluginManager.load(createAModuleToExecuteTest(["PluginManager"], function(PM) {
-				expect(PM()).toEqual(pluginManager);
-			}));
-		});
 	});
 
-	describe("getting a module", function() {
+	describe('getting a module', function() {
 		it('should return the module set by the developer', function() {
-			expect(pluginManager.get("AlsoMine")).toEqual(4)
+			expect(pluginManager.get('AlsoMine')).toEqual(4);
 		});
 	});
 
-	describe("setting a property", function() {
-		it("should set the property", function() {
-			pluginManager.set("P", 1);
+	describe('setting a property', function() {
+		it('should set the property', function() {
+			pluginManager.set('P', 1);
 
-			pluginManager.load(createAModuleToExecuteTest(["P"], function(P) {
-				expect(P()).toEqual(1);
+			pluginManager.load(createAModuleToExecuteTest(['P'], function(p) {
+				expect(p()).toEqual(1);
 			}));
-		})
+		});
 	});
 });

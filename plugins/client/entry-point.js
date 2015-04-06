@@ -17,8 +17,6 @@ module.exports = {
     plugins.set('WidescreenMinimumMargin', 32);
     plugins.set('Element', 'canvas');
     plugins.set('InputElement', 'input');
-    plugins.set('FOV', 60);
-    plugins.set('DebugProperties', {});
 
     plugins.load(require('../inch-plugin-dimensions-widescreen/src/dimensions'));
     plugins.load(require('../inch-plugin-display-behaviour-standard/src/display'));

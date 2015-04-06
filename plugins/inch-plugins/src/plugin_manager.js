@@ -2,7 +2,6 @@
 
 var loader = require('../../inch-entity-loader/src/loader.js');
 var isArray = require('lodash').isArray;
-var contains = require('lodash').contains;
 
 //Multimode plugins are initialised to an empty array.
 var plugins = {
@@ -26,17 +25,9 @@ var plugins = {
   OnDisonnect: []
 };
 
-var deprecated = [
-  'Debug', 'Camera', 'DebugProperties', 'Font', 'FOV', 'RenderEngineAdapter', 'PluginManager', 'PositionHelper', 'DebugItem-Grid'
-];
-
 var get = function (name) {
   if (!plugins[name]) {
     throw new Error('No plugin defined for: ' + name);
-  }
-
-  if (contains(deprecated, name)) {
-    console.log(name + ' is deprecated');
   }
 
   return plugins[name];
@@ -57,9 +48,6 @@ var load = function (module) {
   var dep;
   for (i = 0; i < module.deps.length; i += 1) {
     dep = module.deps[i];
-    if (dep.indexOf('*') !== -1) {
-      throw new Error('Dependency ' +  dep + ' for role ' + module.type + 'contains an asterisk. This is no longer used for deferred dependencies as all dependencies are now deferred.');
-    }
 
     args.push(deferredDependency(dep));
   }
@@ -100,13 +88,6 @@ var pluginManager = {
   set: set,
   get: get
 };
-
-pluginManager.load({
-  type: 'PluginManager',
-  func: function() {
-    return pluginManager;
-  }
-});
 
 pluginManager.load({
   type: 'DefinePlugin',
