@@ -21,12 +21,9 @@ describe('the standard display behaviour', function () {
 	};
 	var part3 = {
 		screenResized: function() {},
-		setup: function(inchScene, ackLast, registerEffect, tracker, camera) {
-			part3.inchScene = inchScene;
+		setup: function(ackLast, registerEffect) {
 			part3.ackLast = ackLast;
 			part3.registerEffect = registerEffect;
-			part3.tracker = tracker;
-			part3.camera = camera;
 		}
 	};
 	var levelParts = [part1, part2, part3];

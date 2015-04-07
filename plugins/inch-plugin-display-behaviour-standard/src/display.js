@@ -36,10 +36,8 @@ module.exports = {
           each(levelParts(), function (levelPart) {
             if (levelPart.setup) {
               levelPart.setup(
-                undefined,
                 ackLast,
-                registerEffect,
-                tracker()
+                registerEffect
               );
             }
           });

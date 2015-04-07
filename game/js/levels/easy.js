@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  deps: ['Element', 'StateTrackerHelpers', 'Dimensions'],
+  deps: ['Element', 'StateTrackerHelpers', 'Dimensions', 'StateTracker'],
   type: 'Level',
-  func: function (element, trackerHelpers, dimensions) {
+  func: function (element, trackerHelpers, dimensions, tracker) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
@@ -34,7 +34,7 @@ module.exports = {
           renderer.render(scene.scene(), camera);
         }
       },
-      setup: function (unused1, ackLastRequest, register, tracker) {
+      setup: function (ackLastRequest, register) {
         var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter);
 
         $('#overlay').append(mainTemplate());
@@ -134,14 +134,14 @@ module.exports = {
         var theScore = function (state) { return state.controller.score; };
         var thePriorScores = function (state) { return state.controller.priorScores; };
 
-        tracker.onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
-        tracker.onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator, waitingSound]);
-        tracker.onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator, goSound, waitingSound]);
-        tracker.onChangeTo(theGameState, equals('complete'), showResults, statusIndicator);
-        tracker.onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator, goSound, waitingSound]);
-        tracker.onChangeOf(theScore, updateScore);
-        tracker.onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
-        tracker.onElementChanged(thePriorScores, updateHightlight);
+        tracker().onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
+        tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator, waitingSound]);
+        tracker().onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator, goSound, waitingSound]);
+        tracker().onChangeTo(theGameState, equals('complete'), showResults, statusIndicator);
+        tracker().onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator, goSound, waitingSound]);
+        tracker().onChangeOf(theScore, updateScore);
+        tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
+        tracker().onElementChanged(thePriorScores, updateHightlight);
       }
     };
   }

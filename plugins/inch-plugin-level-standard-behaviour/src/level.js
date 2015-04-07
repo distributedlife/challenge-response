@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  deps: ['OnPauseCallback', 'OnResumeCallback', 'StateTrackerHelpers'],
+  deps: ['OnPauseCallback', 'OnResumeCallback', 'StateTrackerHelpers', 'StateTracker'],
   type: 'Level',
-  func: function (onPauseCallbacks, onResumeCallbacks, trackerHelpers) {
+  func: function (onPauseCallbacks, onResumeCallbacks, trackerHelpers, tracker) {
     var each = require('lodash').each;
     var $ = require('zepto-browserify').$;
     var equals = trackerHelpers().equals;
@@ -26,11 +26,11 @@ module.exports = {
     };
 
     return {
-      setup: function (scene, ackLastRequest, register, tracker) {
+      setup: function () {
         var paused = function (state) { return state.inch.paused; };
 
-        tracker.onChangeTo(paused, equals(true), pause);
-        tracker.onChangeTo(paused, equals(false), resume);
+        tracker().onChangeTo(paused, equals(true), pause);
+        tracker().onChangeTo(paused, equals(false), resume);
       }
     };
   }
