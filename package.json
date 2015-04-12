@@ -10,7 +10,7 @@
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
     "ensemblejs": "0.0.4",
-    "ensemblejs-client": "0.0.1",
+    "ensemblejs-client": "0.0.2",
     "howler": "^1.1.25",
     "inch-threejs": "^0.70.0",
     "inch-unfurl": "^1.0.0",
