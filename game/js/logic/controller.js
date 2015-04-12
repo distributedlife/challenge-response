@@ -1,12 +1,12 @@
 'use strict';
 
-var sequence = require('../../../plugins/inch-sequence/src/sequence.js');
+var sequence = require('distributedlife-sequence');
 var each = require('lodash').each;
 var min = require('lodash').min;
 
 module.exports = {
   type: 'GameBehaviour-Controller',
-  deps: ['DelayedEffects', 'StateAccess'],
+  deps: ['DelayedJobs', 'StateAccess'],
   func: function (delayedEffects, state) {
     var rollUpAnUnnvervingDelay = function () {
       return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);

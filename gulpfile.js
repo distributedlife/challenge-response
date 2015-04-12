@@ -1,8 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var server = require('gulp-develop-server');
-var livereload = require('gulp-livereload');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-ruby-sass');
@@ -19,6 +17,7 @@ var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
 var sourcemaps = require('gulp-sourcemaps');
 var transform = require('vinyl-transform');
+var exec = require('child_process').exec;
 
 var paths = {
   js: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
@@ -86,7 +85,20 @@ gulp.task('build-code', function() {
         .pipe(plumber({errorHandler: onError}))
         .pipe(browserified)
         .pipe(sourcemaps.init({loadMaps: true}))
-        // .pipe(uglify())
+        .pipe(uglify())
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(paths.genjs));
+});
+gulp.task('build-code-fast', function() {
+    var browserified = transform(function(filename) {
+        var b = browserify(filename);
+        return b.bundle();
+    });
+
+    return gulp.src(paths.modes)
+        .pipe(plumber({errorHandler: onError}))
+        .pipe(browserified)
+        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(paths.genjs));
 });
@@ -101,22 +113,15 @@ gulp.task('build-styles', function() {
         .pipe(gulp.dest('game/css'));
 });
 gulp.task('build', ['build-styles', 'build-code']);
+gulp.task('build-fast', ['build-styles', 'build-code-fast']);
 
-gulp.task('server:start', function () {
-    server.listen({path: './start-here.js'});
-});
-
-gulp.task('watch', ['server:start'], function() {
-    function restart(file) {
-        server.changed(function (error) {
-            if (!error) { livereload.changed(file.path); }
-        });
-    }
-
-    livereload.listen();
-    gulp.watch(paths.js, ['delete-gen-code', 'lint-code', 'test', 'build-code']).on('change', restart);
-    gulp.watch(paths.scss, ['delete-gen-css', 'lint-scss', 'build-styles']).on('change', restart);
+gulp.task('start-server', function (cb) {
+    exec('start ' + process.cwd() + '/game', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
 });
 
 gulp.task('default', ['lint', 'test', 'build']);
-gulp.task('local', ['build', 'server:start']);
+gulp.task('local', ['build-fast', 'start-server']);

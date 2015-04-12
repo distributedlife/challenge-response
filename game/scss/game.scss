@@ -1,3 +1,6 @@
+$green: #0f0;
+$black: #fff;
+
 .centre-box {
   position: relative;
   text-align: center;
@@ -20,7 +23,7 @@
 }
 
 .best {
-  color: #0f0;
+  color: $green;
 }
 
 .score {
@@ -42,7 +45,7 @@
   }
 
   li:nth-child(n+1):after {
-    color: #fff !important;
+    color: $black;
     content: ', ';
   }
 }
