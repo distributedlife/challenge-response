@@ -20,11 +20,10 @@ var transform = require('vinyl-transform');
 var exec = require('child_process').exec;
 
 var paths = {
-  js: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js', 'supporting-libs/**/*.js', '!supporting-libs/**/tests/*.js', 'three-js-dep/**/*.js', '!three-js-dep/**/tests/*.js'],
-  lintjs: ['game/**/*.js', 'start-here.js', '!game/js/gen/**', 'plugins/**/*.js', '!plugins/**/tests/*.js'],
+  js: ['game/**/*.js', '!game/js/gen/**', 'supporting-libs/**/*.js', 'three-js-dep/**/*.js'],
   scss: ['game/**/*.scss', 'plugins/**/src/scss/*.scss'],
   css: ['game/css', 'plugins/**/public/*.css'],
-  tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js', 'plugins/**/tests/*.js'],
+  tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js'],
   genjs: './game/js/gen',
   modes: ['./game/js/*.js', '!./game/js/modes.js']
 };
@@ -44,7 +43,7 @@ gulp.task('delete-gen-code', function (cb) {
 gulp.task('clean', ['delete-gen-css', 'delete-gen-code']);
 
 gulp.task('lint-code', function () {
-    gulp.src(paths.lintjs)
+    gulp.src(paths.js)
         .pipe(plumber({errorHandler: onError}))
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))

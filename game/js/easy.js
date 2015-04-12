@@ -8,7 +8,7 @@ entryPoint.load(require('./events/on-mute'));
 entryPoint.load(require('./events/on-unmute'));
 entryPoint.run();
 
-//
+// TODO: potential future vision?
 // {
 //   levels: ['easy'],
 //   events: ['on-mute', 'on-unmute']

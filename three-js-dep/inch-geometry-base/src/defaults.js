@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _ =  require('lodash');
 
@@ -13,8 +13,8 @@ module.exports = function (adapter) {
             size: 20,
             duration: 0,
             alignment: {
-                horizontal: "centre",
-                vertical: "centre"
+                horizontal: 'centre',
+                vertical: 'centre'
             },
             scale: 1.0,
             colour: [1.0, 1.0, 1.0],

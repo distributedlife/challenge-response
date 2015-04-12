@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 module.exports = function (adapter) {
-    var base = require("../../inch-geometry-base/src/geometry.js")(adapter);
+    var base = require('../../inch-geometry-base/src/geometry.js')(adapter);
     var _ = require('lodash');
-    var temporaryEffect = require('../../../plugins/inch-temporary-effect/src/temporary_effect.js');
-    var geometryTransitions = require("../../inch-geometry-transitions/src/transitions.js");
+    var temporaryEffect = require('../../../supporting-libs/src/temporary_effect.js');
+    var geometryTransitions = require('../../inch-geometry-transitions/src/transitions.js');
 
     return function (onCreate, onDestroy, settings) {
         var current = {};

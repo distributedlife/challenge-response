@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 var _ = require('lodash');
-var temporaryEffect = require('../../../plugins/inch-temporary-effect/src/temporary_effect.js');
+var temporaryEffect = require('../../../supporting-libs/src/temporary_effect.js');
 var lerp = require('lerp');
 
 module.exports = function (mesh, current) {
