@@ -2,7 +2,7 @@
 
 module.exports = {
   deps: ['Element', 'StateTrackerHelpers', 'Dimensions', 'StateTracker'],
-  type: 'Level',
+  type: 'View',
   func: function (element, trackerHelpers, dimensions, tracker) {
     var colour = require('color');
     var Howl = require('howler').Howl;

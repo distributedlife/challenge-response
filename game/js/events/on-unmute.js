@@ -3,7 +3,7 @@
 var Howler = require('howler').Howler;
 
 module.exports = {
-  type: 'OnUnmuteCallback',
+  type: 'OnUnmute',
   func: function () {
     return function () {
       Howler.unmute();
