@@ -1,6 +1,6 @@
 'use strict';
 
-var THREE = require('inch-threejs');
+var THREE = require('ensemblejs-threejs');
 var each = require('lodash').each;
 var $ = require('zepto-browserify').$;
 
