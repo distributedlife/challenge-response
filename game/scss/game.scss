@@ -44,7 +44,7 @@ $black: #fff;
     display: inline;
   }
 
-  li:nth-child(n+1):after {
+  li:not(:last-child):after {
     color: $black;
     content: ', ';
   }
