@@ -18,8 +18,8 @@ module.exports = {
 
       definePlugin()('ActionMap', function () {
         return {
-          'space': [{target: controller().response, keypress: true}],
-          'r': [{target: controller().reset, keypress: true}]
+          'space': [{target: controller().response, onRelease: true}],
+          'r': [{target: controller().reset, onRelease: true}]
         };
       });
 
