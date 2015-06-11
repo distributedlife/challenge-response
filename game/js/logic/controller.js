@@ -6,41 +6,48 @@ var min = require('lodash').min;
 
 module.exports = {
   type: 'GameBehaviour-Controller',
-  deps: ['DelayedJobs', 'StateAccess'],
-  func: function (delayedEffects, state) {
+  deps: ['DelayedJobs'],
+  func: function (delayedEffects) {
     var rollUpAnUnnvervingDelay = function () {
       return Math.round(Math.random() * 6) + Math.round(Math.random() * 6);
     };
 
+    var createStartChallengeCallback = function (state) {
+      return function() {
+        var currentState = state.for('controller').get('state');
+
+        if (currentState === 'falseStart') {
+          return {};
+        }
+        return {
+          controller: {
+            state: 'challengeStarted'
+          }
+        };
+      };
+    };
+
     return {
-      challengeSeen: function (ack) {
+      challengeSeen: function (state, ack) {
         return {
           controller: {
             start: ack.rcvdTimestamp
           }
         };
       },
-      response: function (data) {
-        var get = state().get;
+      response: function (state, data) {
+        var currentState = state.for('controller').get('state');
 
-        if (get('controller')('state') === 'ready') {
-          delayedEffects().add('pause-for-effect', rollUpAnUnnvervingDelay(), function () {
-            if (get('controller')('state') === 'falseStart') {
-              return {};
-            }
-            return {
-              controller: {
-                state: 'challengeStarted'
-              }
-            };
-          });
+        if (currentState === 'ready') {
+          delayedEffects().add('pause-for-effect', rollUpAnUnnvervingDelay(), createStartChallengeCallback(state));
+
           return {
             controller: {
               state: 'waiting'
             }
           };
         }
-        if (get('controller')('state') === 'waiting') {
+        if (currentState === 'waiting') {
           delayedEffects().cancelAll('pause-for-effect');
 
           return {
@@ -49,8 +56,8 @@ module.exports = {
             }
           };
         }
-        if (get('controller')('state') === 'challengeStarted') {
-          var score = data.rcvdTimestamp - get('controller')('start');
+        if (currentState === 'challengeStarted') {
+          var score = data.rcvdTimestamp - state.for('controller').get('start');
 
           return {
             controller: {
@@ -61,19 +68,19 @@ module.exports = {
         }
         return {};
       },
-      reset: function () {
-        var get = state().get;
+      reset: function (state) {
+        var controller = state.for('controller');
 
-        if (get('controller')('state') !== 'complete' && get('controller')('state') !== 'falseStart') {
+        if (controller.get('state') !== 'complete' && controller.get('state') !== 'falseStart') {
           return {};
         }
 
-        var score = get('controller')('score');
-        if (get('controller')('state') === 'falseStart') {
+        var score = controller.get('score');
+        if (controller.get('state') === 'falseStart') {
           score = 'x';
         }
 
-        var priorScores = get('controller')('priorScores');
+        var priorScores = controller.get('priorScores');
         priorScores.push({id: sequence.next('prior-scores'), score: score});
         each(priorScores, function(priorScore) {
           priorScore.best = false;
