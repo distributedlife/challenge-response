@@ -145,6 +145,23 @@ module.exports = {
           adapter.setCameraAspectRatio(camera, dims.ratio);
         };
       });
+      define()('OnPause', function () {
+        return function () {
+          waitingSound.pause();
+          goSound.pause();
+        };
+      });
+      define()('OnResume', function () {
+        return function () {
+          if (waitingSound.pos() > 0) {
+            waitingSound.play();
+          }
+
+          if (goSound.pos() > 0) {
+            goSound.play();
+          }
+        };
+      });
     };
   }
 };
