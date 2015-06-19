@@ -2,8 +2,6 @@ FROM node:latest
 
 MAINTAINER Ryan Boucher ryan.boucher@distributedlife.com
 
-RUN npm i ensemblejs -g
-
 ADD package.json /app/package.json
 ADD game /app/game
 ADD dist/js /app/game/js/gen
@@ -11,6 +9,7 @@ ADD dist/js /app/game/js/gen
 ADD supporting-libs /app/supporting-libs
 ADD three-js-dep /app/three-js-dep
 
+RUN npm i ensemblejs@3.1.3 -g
 RUN cd /app; npm i
 
 EXPOSE 3000

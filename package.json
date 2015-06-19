@@ -9,9 +9,10 @@
   "dependencies": {
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
-    "ensemblejs": "^3.1.1",
-    "ensemblejs-client": "^1.1.1",
+    "ensemblejs": "^3.1.3",
+    "ensemblejs-client": "^1.2.0",
     "ensemblejs-threejs": "^0.71.0",
+    "factor-bundle": "^2.4.1",
     "gulp-sass": "^1.3.3",
     "howler": "^1.1.26",
     "jade": "^1.11.0",
@@ -67,8 +68,13 @@
     "build:make_path": "mkdir -p dist/js",
     "build:browserify": "scripts/browserify.sh $ENSEMBLEJS_URL",
     "build:compress": "scripts/compress.sh",
-    "build": "npm run build:make_path && npm run build:browserify && npm run build:compress",
-    "start": "gulp local"
+    "build": "npm run clean && npm run build:make_path && npm run build:browserify && npm run build:compress",
+    "deploy": "docker build -t distributedlife/challenge-response .",
+    "start": "docker run -d -p 3000:3000 distributedlife/challenge-response",
+    "stop": "docker stop `docker ps -q | grep distributedlife/challenge-response`",
+    "stop:all": "docker stop `docker ps -q`",
+    "clean:docker1": "docker rm `docker ps -aq --no-trunc --filter \"status=exited\"`",
+    "clean:docker2": "docker rmi `docker images --filter 'dangling=true' -q --no-trunc`"
   },
   "browserify": {
     "transform": [
