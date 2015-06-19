@@ -65,7 +65,7 @@
   "scripts": {
     "clean": "rm -rf dist/",
     "build:make_path": "mkdir -p dist/js",
-    "build:browserify": "scripts/browserify.sh $ENSEMBLEJS_HOSTNAME",
+    "build:browserify": "scripts/browserify.sh $ENSEMBLEJS_URL",
     "build:compress": "scripts/compress.sh",
     "build": "npm run build:make_path && npm run build:browserify && npm run build:compress",
     "start": "gulp local"
