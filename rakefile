@@ -1,0 +1,81 @@
+require('./tasks/config')
+require('./tasks/clean')
+require('./tasks/build')
+require('./tasks/compress')
+require('./tasks/replace')
+
+task make: %w[build:preflight_check build:code build:styles build:compress]
+task run: %w[docker:deploy docker:start]
+task default: %w[clean make run]
+
+desc "remove dist folder"
+task :clean do
+  clean
+end
+
+namespace :build do
+  desc "check we have all we need to start"
+  task :preflight_check do
+    assert_envvars_set! config[:vars]
+
+    mkdir_p 'dist/js'
+    mkdir_p 'dist/css'
+  end
+
+  desc "browserify the client entry points pulling out common code"
+  task :code do
+    browserify
+    replace_in_files config[:vars], dist[:js]
+  end
+
+  desc "generate css from scss files"
+  task :styles do
+    sass game[:scss]
+  end
+
+  desc "minify and gzip source files; remove origials"
+  task :compress do
+    js = dist[:js]
+    css = dist[:css]
+    css_map = dist[:css_map]
+
+    minify css
+    uglify js
+    gzip js
+    gzip css
+    remove_original js
+    remove_original css_map
+  end
+end
+
+host_port = 3000
+local_port = 3000
+config_something = "distributedlife/challenge-response"
+
+namespace :docker do
+  desc "create a new docker image"
+  task :deploy do
+    system "docker build -t #{config_something} ."
+  end
+
+  desc "start the latest docker image"
+  task :start do
+    system "docker run -d -p #{host_port}:#{local_port} #{config_something}"
+  end
+
+  desc "stop the latest docker image"
+  task :stop do
+    system "docker stop `docker ps -q | grep #{config_something}`"
+  end
+
+  desc "stop all docker images"
+  task :stop_all do
+    system "docker stop `docker ps -q`"
+  end
+
+  desc "delete all docker images"
+  task :clean do
+    system "docker rm `docker ps -aq --no-trunc --filter \"status=exited\"`"
+    system "docker rmi `docker images --filter 'dangling=true' -q --no-trunc`"
+  end
+end
