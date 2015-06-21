@@ -3,7 +3,7 @@
 var expect = require('expect');
 var sinon = require('sinon');
 var assert = require('assert');
-var temporaryEffect = require('../src/temporary_effect');
+var temporaryEffect = require('../../game/js/supporting-libs/temporary_effect');
 
 describe('Temporary Effect', function() {
 	var effect = {};

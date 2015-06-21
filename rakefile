@@ -50,7 +50,7 @@ end
 
 host_port = 3000
 local_port = 3000
-config_something = "distributedlife/challenge-response"
+config_something = "distributedlife/ensemblejs"
 
 namespace :docker do
   desc "create a new docker image"

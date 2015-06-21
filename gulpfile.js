@@ -14,10 +14,10 @@ var transform = require('vinyl-transform');
 var exec = require('child_process').exec;
 
 var paths = {
-  js: ['game/**/*.js', '!game/js/gen/**', 'supporting-libs/**/*.js', 'three-js-dep/**/*.js'],
-  scss: ['game/**/*.scss', 'plugins/**/src/scss/*.scss'],
-  css: ['game/css', 'plugins/**/public/*.css'],
-  tests: ['tests/**/*.js', 'supporting-libs/**/tests/*.js', 'three-js-dep/**/tests/*.js'],
+  js: ['game/**/*.js', '!game/js/gen/**'],
+  scss: ['game/**/*.scss'],
+  css: ['game/css'],
+  tests: ['tests/**/*.js'],
   genjs: './game/js/gen',
   modes: ['./game/js/*.js']
 };

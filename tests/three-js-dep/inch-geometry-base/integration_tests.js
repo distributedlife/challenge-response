@@ -20,10 +20,10 @@ describe('the geometry base', function () {
   });
 
 	beforeEach(function () {
-    var adapter = require('../../inch-plugin-render-engine-adapter-threejs/src/adapter.js');
-    require('../../inch-font-helvetiker_regular/src/regular.js').func(adapter).load();
+    var adapter = require('../../../game/js/three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter.js');
+    require('../../../game/js/three-js-dep/inch-font-helvetiker_regular/regular.js').func(adapter).load();
 
-		geometry = require('../src/geometry')(adapter);
+		geometry = require('../../../game/js/three-js-dep/inch-geometry-base/geometry')(adapter);
 	});
 
 	it('should call the adapter correctly', function () {
@@ -56,9 +56,9 @@ describe('the defaults module', function() {
   });
 
 	beforeEach(function () {
-    adapter = require('../../inch-plugin-render-engine-adapter-threejs/src/adapter.js');
+    adapter = require('../../../game/js/three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter');
 
-		defaults = require('../src/defaults')(adapter);
+		defaults = require('../../../game/js/three-js-dep/inch-geometry-base/defaults')(adapter);
 	});
 
 	it('should set up sensible defaults', function () {

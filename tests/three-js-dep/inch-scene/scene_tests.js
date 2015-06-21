@@ -8,7 +8,7 @@ var threeJsScene = {
 	remove: sinon.spy()
 };
 
-var inchScene = require('../src/scene');
+var inchScene = require('../../../game/js/three-js-dep/inch-scene/scene');
 var scene = inchScene(threeJsScene);
 
 describe('adding an mesh to the scene', function() {

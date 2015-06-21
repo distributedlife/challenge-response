@@ -9,10 +9,10 @@ module.exports = {
     var $ = require('zepto-browserify').$;
     var each = require('lodash').each;
     var equals = trackerHelpers().equals;
-    var centreInCamera = require('../../../supporting-libs/src/centre-in-camera');
-    var adapter = require('../../../three-js-dep/inch-plugin-render-engine-adapter-threejs/src/adapter');
-    var grid = require('../../../supporting-libs/src/debug-grid');
-    var theCamera = require('../../../three-js-dep/inch-plugin-camera-orthographic-centred/src/camera');
+    var centreInCamera = require('../supporting-libs/centre-in-camera');
+    var adapter = require('../three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter');
+    var grid = require('../supporting-libs/debug-grid');
+    var theCamera = require('../three-js-dep/inch-plugin-camera-orthographic-centred/camera');
     var mainTemplate = require('../../views/overlays/easy.jade');
     var priorScoresTemplate = require('../../views/partials/priorScores.jade');
     var dims;
@@ -23,7 +23,7 @@ module.exports = {
     return function (newDims) {
       dims = newDims;
 
-      var Circle = require('../../../three-js-dep/inch-geometry2d-circle/src/circle.js')(adapter);
+      var Circle = require('../three-js-dep/inch-geometry2d-circle/circle.js')(adapter);
 
       $('#overlay').append(mainTemplate());
 
@@ -31,7 +31,7 @@ module.exports = {
       //Render layer concern
       //Setup threejs-camera, inch-scene, threejs-scene, threejs-renderer
       camera = theCamera(adapter, dims);
-      scene = require('../../../three-js-dep/inch-scene/src/scene.js')(adapter.createScene());
+      scene = require('../three-js-dep/inch-scene/scene.js')(adapter.createScene());
       renderer = adapter.createRenderer(dims);
       adapter.attachRenderer(element(), renderer);
 

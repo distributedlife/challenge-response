@@ -17,7 +17,7 @@ describe('the camera', function () {
 
 	beforeEach(function () {
 		adapter.newOrthographicCamera.reset();
-		require('../src/camera')(adapter, dims);
+		require('../../../game/js/three-js-dep/inch-plugin-camera-orthographic-centred/camera')(adapter, dims);
 	});
 
 	it('it should be centered on the usable width and height of the canvas', function() {

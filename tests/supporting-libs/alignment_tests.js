@@ -1,6 +1,6 @@
 'use strict';
 
-var alignment = require('../src/alignment');
+var alignment = require('../../game/js/supporting-libs/alignment');
 var expect = require('expect');
 var width = 100;
 var height = 50;

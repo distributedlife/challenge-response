@@ -1,6 +1,6 @@
 'use strict';
 
-var alignment = require('../../../supporting-libs/src/alignment.js');
+var alignment = require('../../supporting-libs/alignment.js');
 
 module.exports = function (adapter) {
     var width = function (mesh) {

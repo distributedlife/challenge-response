@@ -17,9 +17,9 @@ describe('a circle', function () {
 	});
 
 	beforeEach(function () {
-		var adapter = require('../../inch-plugin-render-engine-adapter-threejs/src/adapter.js');
+		var adapter = require('../../../game/js/three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter.js');
 
-		circle = require('../src/circle')(adapter);
+		circle = require('../../../game/js/three-js-dep/inch-geometry2d-circle/circle')(adapter);
 	});
 
 	it('should run without error', function () {
