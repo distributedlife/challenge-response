@@ -33,18 +33,17 @@ namespace :build do
     sass game[:scss]
   end
 
-  desc "minify and gzip source files; remove origials"
+  desc "minify source files; remove origials"
   task :compress do
     js = dist[:js]
     css = dist[:css]
     css_map = dist[:css_map]
 
     minify css
-    uglify js
-    gzip js
-    gzip css
-    remove_original js
     remove_original css_map
+
+    uglify js
+    remove_original js
   end
 end
 
