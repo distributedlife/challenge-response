@@ -76,4 +76,5 @@ gulp.task('start-server', function (cb) {
 });
 
 gulp.task('default', ['test', 'build']);
-gulp.task('local', ['build', 'start-server']);
+gulp.task('quick', ['clean', 'build']);
+gulp.task('local', ['clean', 'build', 'start-server']);
