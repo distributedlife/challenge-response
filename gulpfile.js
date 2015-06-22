@@ -47,6 +47,11 @@ gulp.task('build-code', function() {
         return b.bundle();
     });
 
+    var fs = require('fs');
+    fs.mkdir('game/js/gen', function() {
+        fs.writeFileSync('game/js/gen/common.min.js', '');
+    });
+
     return gulp.src(paths.modes)
         .pipe(plumber({errorHandler: onError}))
         .pipe(browserified)
