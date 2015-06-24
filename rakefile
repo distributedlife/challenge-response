@@ -2,7 +2,6 @@ require('./tasks/config')
 require('./tasks/clean')
 require('./tasks/build')
 require('./tasks/compress')
-require('./tasks/replace')
 
 task make: %w[build:preflight_check build:code build:styles build:compress]
 task run: %w[docker:deploy docker:start]
@@ -25,7 +24,6 @@ namespace :build do
   desc "browserify the client entry points pulling out common code"
   task :code do
     browserify
-    replace_in_files config[:vars], dist[:js]
   end
 
   desc "generate css from scss files"
