@@ -11,7 +11,6 @@ var browserify = require('browserify');
 var plumber = require('gulp-plumber');
 var sourcemaps = require('gulp-sourcemaps');
 var transform = require('vinyl-transform');
-var exec = require('child_process').exec;
 
 var paths = {
   js: ['game/**/*.js', '!game/js/gen/**'],
@@ -72,14 +71,5 @@ gulp.task('build-styles', function() {
 });
 gulp.task('build', ['build-styles', 'build-code']);
 
-gulp.task('start-server', function (cb) {
-    exec('start ' + process.cwd() + '/game', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    });
-});
-
 gulp.task('default', ['test', 'build']);
 gulp.task('quick', ['clean', 'build']);
-gulp.task('local', ['clean', 'build', 'start-server']);
