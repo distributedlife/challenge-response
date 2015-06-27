@@ -1,2 +1,1 @@
-var ensemble = require('ensemblejs/src/facade.js');
-ensemble.runGameAtPath(process.cwd() + '/game');
+require('ensemblejs').runGameAtPath(process.cwd() + '/game');
