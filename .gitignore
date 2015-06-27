@@ -7,4 +7,6 @@ coverage/
 npm-debug.log
 vendor
 .DS_Store
+.bundle/dist
+dist/
 .bundle/

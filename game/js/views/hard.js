@@ -6,7 +6,6 @@ module.exports = {
   type: 'View',
   func: function (element, trackerHelpers, tracker, pendingAcknowledgements, registerEffect, define) {
     var colour = require('color');
-    var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
     var each = require('lodash').each;
     var equals = trackerHelpers().equals;
@@ -46,16 +45,12 @@ module.exports = {
         statusIndicator.changeColour(0, colour('grey').rgbArray());
       };
 
-      var hideInstructions = function (model, priorModel, statusIndicator, waitingSound) {
+      var hideInstructions = function (model, priorModel, statusIndicator) {
         $('#instructions').hide();
         statusIndicator.changeColour(0, colour('red').rgbArray());
-        waitingSound.play();
       };
 
-      var showChallenge = function (model, priorModel, statusIndicator, goSound, waitingSound) {
-        waitingSound.stop();
-        goSound.play();
-
+      var showChallenge = function (model, priorModel, statusIndicator) {
         $('#challenge').show();
         pendingAcknowledgements().ackLast('show-challenge');
         statusIndicator.changeColour(0, colour('green').rgbArray());
@@ -67,11 +62,9 @@ module.exports = {
         statusIndicator.changeColour(0, colour('black').rgbArray());
       };
 
-      var showFalseStart = function (model, priorModel, statusIndicator, goSound, waitingSound) {
+      var showFalseStart = function (model, priorModel, statusIndicator) {
         $('#falsestart').show();
         statusIndicator.changeColour(0, colour('orange').rgbArray());
-        goSound.stop();
-        waitingSound.stop();
       };
 
       var updateScore = function (model) {
@@ -86,18 +79,11 @@ module.exports = {
       };
 
       var statusIndicator = new Circle(scene.add, scene.remove, {
-        radius: 100,
+        radius: 10,
         segments: 80,
         position: { x: 0, y: 0, z: -100}
       });
       registerEffect().register(statusIndicator);
-
-      var waitingSound = new Howl({
-        urls: ['/game/audio/waiting.mp3']
-      });
-      var goSound = new Howl({
-        urls: ['/game/audio/go.mp3']
-      });
 
       var onScoreAddedFunction = function() {
         return function (currentValue) {
@@ -124,10 +110,10 @@ module.exports = {
       var thePriorScores = function (state) { return state.controller.priorScores; };
 
       tracker().onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
-      tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator, waitingSound]);
-      tracker().onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator, goSound, waitingSound]);
+      tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator]);
+      tracker().onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator]);
       tracker().onChangeTo(theGameState, equals('complete'), showResults, statusIndicator);
-      tracker().onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator, goSound, waitingSound]);
+      tracker().onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator]);
       tracker().onChangeOf(theScore, updateScore);
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
@@ -143,23 +129,6 @@ module.exports = {
 
           renderer.setSize(dims.usableWidth, dims.usableHeight);
           adapter.setCameraAspectRatio(camera, dims.ratio);
-        };
-      });
-      define()('OnPause', function () {
-        return function () {
-          waitingSound.pause();
-          goSound.pause();
-        };
-      });
-      define()('OnResume', function () {
-        return function () {
-          if (waitingSound.pos() > 0) {
-            waitingSound.play();
-          }
-
-          if (goSound.pos() > 0) {
-            goSound.play();
-          }
         };
       });
     };
