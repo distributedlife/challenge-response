@@ -9,8 +9,8 @@
   "dependencies": {
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
-    "ensemblejs": "^4.0.0",
-    "ensemblejs-client": "^1.4.1",
+    "ensemblejs": "^4.1.0",
+    "ensemblejs-client": "^1.4.2",
     "ensemblejs-threejs": "^0.71.0",
     "howler": "^1.1.26",
     "jade": "^1.11.0",
