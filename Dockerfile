@@ -1,16 +1,7 @@
-FROM node:latest
-
 MAINTAINER Ryan Boucher ryan.boucher@distributedlife.com
-
-ADD package.json /app/package.json
-ADD game /app/game
-ADD dist/js /app/game/js/gen
-ADD dist/css /app/game/css
-
-RUN npm i ensemblejs@latest -g
-RUN cd /app; npm i
-
-EXPOSE 3000
-
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-CMD ["start", "/app/game"]
+FROM node:0.12.5-slim
+COPY package.json game.js /app/
+COPY game /app/game/
+RUN cd /app && npm i && rm /bin/sh && ln -s /bin/bash /bin/sh
+EXPOSE  3000
+CMD ["npm", "start"]
