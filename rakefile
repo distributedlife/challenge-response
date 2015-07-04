@@ -15,7 +15,6 @@ end
 namespace :build do
   desc "check we have all we need to start"
   task :preflight_check do
-    assert_envvars_set! config[:vars]
 
     mkdir_p 'dist/js'
     mkdir_p 'dist/css'

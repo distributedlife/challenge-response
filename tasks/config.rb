@@ -1,9 +1,3 @@
-def config
-  {
-    vars: ['ENSEMBLEJS_URL']
-  }
-end
-
 def game
   {
     js: Dir['game/js/*.js'],
