@@ -1,4 +1,4 @@
-FROM node:0.12.5-slim
+FROM node:0.12.7
 MAINTAINER Ryan Boucher ryan.boucher@distributedlife.com
 COPY package.json game.js /app/
 COPY game /app/game/
