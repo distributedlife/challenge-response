@@ -2,9 +2,9 @@
 
 //jshint maxparams:7
 module.exports = {
-  deps: ['Element', 'StateTrackerHelpers', 'StateTracker', 'PendingAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
+  deps: ['Element', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
   type: 'View',
-  func: function (element, trackerHelpers, tracker, pendingAcknowledgements, registerEffect, define) {
+  func: function (element, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
@@ -57,7 +57,7 @@ module.exports = {
         goSound.play();
 
         $('#challenge').show();
-        pendingAcknowledgements().ackLast('show-challenge');
+        acknowledgements().ackLast('show-challenge');
         statusIndicator.changeColour(0, colour('green').rgbArray());
       };
 
@@ -100,15 +100,15 @@ module.exports = {
       });
 
       var onScoreAddedFunction = function() {
-        return function (currentValue) {
-          $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + currentValue.id, score: currentValue.score}));
+        return function (id, currentValue) {
+          $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + id, score: currentValue.score}));
         };
       };
-      var updateHightlight = function(currentValue) {
+      var updateHightlight = function(id, currentValue) {
         if (currentValue.best) {
-          $('#prior-score-' + currentValue.id).addClass('best');
+          $('#prior-score-' + id).addClass('best');
         } else {
-          $('#prior-score-' + currentValue.id).removeClass('best');
+          $('#prior-score-' + id).removeClass('best');
         }
       };
       var addExistingScoresFunction = function() {

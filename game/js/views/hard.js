@@ -2,9 +2,9 @@
 
 //jshint maxparams:7
 module.exports = {
-  deps: ['Element', 'StateTrackerHelpers', 'StateTracker', 'PendingAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
+  deps: ['Element', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
   type: 'View',
-  func: function (element, trackerHelpers, tracker, pendingAcknowledgements, registerEffect, define) {
+  func: function (element, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
     var colour = require('color');
     var $ = require('zepto-browserify').$;
     var each = require('lodash').each;
@@ -52,7 +52,7 @@ module.exports = {
 
       var showChallenge = function (model, priorModel, statusIndicator) {
         $('#challenge').show();
-        pendingAcknowledgements().ackLast('show-challenge');
+        acknowledgements().ackLast('show-challenge');
         statusIndicator.changeColour(0, colour('green').rgbArray());
       };
 
