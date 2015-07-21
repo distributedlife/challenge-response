@@ -5,14 +5,15 @@ def uglify files
     uglify = "uglifyjs --compress --mangle -- #{f} > #{min_name}"
     puts uglify
     system "#{uglify}"
-
   end
 end
 
 def minify files
   files.each do |f|
-    min_name = f.gsub(".css", ".min.css")
+    min_f = f.gsub('.css', '.min.css')
 
-    cp f, min_name
+    command = "cssnano < #{f} > #{min_f}"
+    puts command
+    system command
   end
 end

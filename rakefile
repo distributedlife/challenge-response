@@ -37,7 +37,7 @@ namespace :build do
     css_map = dist[:css_map]
 
     minify css
-    remove_original css_map
+    remove_original css
 
     uglify js
     remove_original js

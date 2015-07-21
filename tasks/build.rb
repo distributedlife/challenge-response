@@ -15,7 +15,7 @@ def sass files
   files.each do |f|
     css_f = f.gsub('game/scss/', '').gsub('.scss', '')
 
-    command = "sass #{f} #{dist[:root]}/css/#{css_f}.css"
+    command = "sass --sourcemap=none #{f} #{dist[:root]}/css/#{css_f}.css"
     puts command
     system "bundle exec #{command}"
   end
