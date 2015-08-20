@@ -4,7 +4,7 @@
 module.exports = {
   deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
   type: 'View',
-  func: function (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
+  func: function hard (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
     var colour = require('color');
     var $ = require('zepto-browserify').$;
     var each = require('lodash').each;
@@ -20,7 +20,7 @@ module.exports = {
     var renderer;
     var scene;
 
-    return function (newDims) {
+    return ['hard', function setup (newDims) {
       dims = newDims;
 
       var Circle = require('../three-js-dep/inch-geometry2d-circle/circle.js')(adapter);
@@ -118,12 +118,12 @@ module.exports = {
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
 
-      define()('OnPhysicsFrame', function () {
+      define()('OnPhysicsFrame', function hard () {
         return function () {
           renderer.render(scene.scene(), camera);
         };
       });
-      define()('OnResize', function () {
+      define()('OnResize', function hard () {
         return function (newDims) {
           dims = newDims;
 
@@ -131,6 +131,6 @@ module.exports = {
           adapter.setCameraAspectRatio(camera, dims.ratio);
         };
       });
-    };
+    }];
   }
 };

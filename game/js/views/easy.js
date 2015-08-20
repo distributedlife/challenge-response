@@ -4,7 +4,7 @@
 module.exports = {
   deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
   type: 'View',
-  func: function (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
+  func: function easy (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
@@ -21,7 +21,7 @@ module.exports = {
     var renderer;
     var scene;
 
-    return function (newDims) {
+    return ['easy', function setup (newDims) {
       dims = newDims;
 
       var Circle = require('../three-js-dep/inch-geometry2d-circle/circle.js')(adapter);
@@ -132,12 +132,12 @@ module.exports = {
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
 
-      define()('OnPhysicsFrame', function () {
+      define()('OnPhysicsFrame', function easy () {
         return function () {
           renderer.render(scene.scene(), camera);
         };
       });
-      define()('OnResize', function () {
+      define()('OnResize', function easy () {
         return function (newDims) {
           dims = newDims;
 
@@ -145,13 +145,13 @@ module.exports = {
           adapter.setCameraAspectRatio(camera, dims.ratio);
         };
       });
-      define()('OnPause', function () {
+      define()('OnPause', function easy () {
         return function () {
           waitingSound.pause();
           goSound.pause();
         };
       });
-      define()('OnResume', function () {
+      define()('OnResume', function easy () {
         return function () {
           if (waitingSound.pos() > 0) {
             waitingSound.play();
@@ -162,6 +162,6 @@ module.exports = {
           }
         };
       });
-    };
+    }];
   }
 };

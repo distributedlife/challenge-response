@@ -2,7 +2,7 @@
 
 module.exports = {
   type: 'StateSeed',
-  func: function () {
+  func: function StateSeed () {
     return ['*', {
       controller: {
         start: 0,
