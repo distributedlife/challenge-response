@@ -1,10 +1,10 @@
 'use strict';
 
-//jshint maxparams:7
+//jshint maxparams:6
 module.exports = {
-  deps: ['Element', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
+  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
   type: 'View',
-  func: function (element, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
+  func: function (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var $ = require('zepto-browserify').$;
@@ -34,7 +34,7 @@ module.exports = {
       camera = theCamera(adapter, dims);
       scene = require('../three-js-dep/inch-scene/scene.js')(adapter.createScene());
       renderer = adapter.createRenderer(dims);
-      adapter.attachRenderer(element(), renderer);
+      adapter.attachRenderer(config().client.element, renderer);
 
       scene.add(grid(adapter, dims));
 
@@ -132,7 +132,7 @@ module.exports = {
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
 
-      define()('OnEachFrame', function () {
+      define()('OnPhysicsFrame', function () {
         return function () {
           renderer.render(scene.scene(), camera);
         };

@@ -9,8 +9,7 @@
   "dependencies": {
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
-    "ensemblejs": "^4.3.1",
-    "ensemblejs-client": "^2.2.2",
+    "ensemblejs": "file:///Users/distributedlife/projects/ensemblejs",
     "ensemblejs-threejs": "^0.71.0",
     "howler": "^1.1.26",
     "jade": "^1.11.0",
@@ -62,7 +61,8 @@
           "compileDebug": false,
           "pretty": false
         }
-      ]
+      ],
+      "require-globify"
     ]
   },
   "browserify-shim": {
