@@ -1,13 +1,12 @@
 'use strict';
 
-//jshint maxparams:6
+//jshint maxparams:false
 module.exports = {
-  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
-  type: 'View',
-  func: function easy (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
+  type: 'OnReady',
+  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
+  func: function easy (config, trackerHelpers, tracker, acknowledgements, registerEffect, define, $) {
     var colour = require('color');
     var Howl = require('howler').Howl;
-    var $ = require('zepto-browserify').$;
     var each = require('lodash').each;
     var equals = trackerHelpers().equals;
     var centreInCamera = require('../supporting-libs/centre-in-camera');
@@ -26,7 +25,7 @@ module.exports = {
 
       var Circle = require('../three-js-dep/inch-geometry2d-circle/circle.js')(adapter);
 
-      $('#overlay').append(mainTemplate());
+      $()('#overlay').append(mainTemplate());
 
 
       //Render layer concern
@@ -39,15 +38,15 @@ module.exports = {
       scene.add(grid(adapter, dims));
 
       var showInstructions = function (model, priorModel, statusIndicator) {
-        $('#instructions').show();
-        $('#challenge').hide();
-        $('#results').hide();
-        $('#falsestart').hide();
+        $()('#instructions').show();
+        $()('#challenge').hide();
+        $()('#results').hide();
+        $()('#falsestart').hide();
         statusIndicator.changeColour(0, colour('grey').rgbArray());
       };
 
       var hideInstructions = function (model, priorModel, statusIndicator, waitingSound) {
-        $('#instructions').hide();
+        $()('#instructions').hide();
         statusIndicator.changeColour(0, colour('red').rgbArray());
         waitingSound.play();
       };
@@ -56,28 +55,29 @@ module.exports = {
         waitingSound.stop();
         goSound.play();
 
-        $('#challenge').show();
-        acknowledgements().ackLast('show-challenge');
+        $()('#challenge').show();
+        acknowledgements().ack('show-challenge');
         statusIndicator.changeColour(0, colour('green').rgbArray());
       };
 
       var showResults = function (model, priorModel, statusIndicator) {
-        $('#challenge').hide();
-        $('#results').show();
+        $()('#challenge').hide();
+        $()('#results').show();
         statusIndicator.changeColour(0, colour('black').rgbArray());
       };
 
       var showFalseStart = function (model, priorModel, statusIndicator, goSound, waitingSound) {
-        $('#falsestart').show();
+        $()('#falsestart').show();
         statusIndicator.changeColour(0, colour('orange').rgbArray());
         goSound.stop();
         waitingSound.stop();
       };
 
       var updateScore = function (model) {
-        $('#score')[0].innerText = model;
+        console.log(model);
+        $()('#score')[0].innerText = model;
 
-        var score = $('#score');
+        var score = $()('#score');
         var centered = centreInCamera(dims, camera, score.width(), score.height());
 
         score.css('left', centered.left + 'px');
@@ -101,20 +101,23 @@ module.exports = {
 
       var onScoreAddedFunction = function() {
         return function (id, currentValue) {
-          $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + id, score: currentValue.score}));
+          $()('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + id, score: currentValue.score}));
         };
       };
       var updateHightlight = function(id, currentValue) {
         if (currentValue.best) {
-          $('#prior-score-' + id).addClass('best');
+          $()('#prior-score-' + id).addClass('best');
         } else {
-          $('#prior-score-' + id).removeClass('best');
+          $()('#prior-score-' + id).removeClass('best');
         }
+      };
+      var derp = function(id) {
+        $()('#prior-score-' + id).remove();
       };
       var addExistingScoresFunction = function() {
         return function (currentValues) {
           each(currentValues, function(value) {
-            $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
+            $()('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
           });
         };
       };
@@ -131,6 +134,7 @@ module.exports = {
       tracker().onChangeOf(theScore, updateScore);
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
+      tracker().onElementRemoved(thePriorScores, derp);
 
       define()('OnPhysicsFrame', function easy () {
         return function () {

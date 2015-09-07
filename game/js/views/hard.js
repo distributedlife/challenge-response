@@ -1,31 +1,38 @@
 'use strict';
 
-//jshint maxparams:6
+var colour = require('color');
+var each = require('lodash').each;
+
+var centreInCamera = require('../supporting-libs/centre-in-camera');
+var adapter = require('../three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter');
+var grid = require('../supporting-libs/debug-grid');
+var theCamera = require('../three-js-dep/inch-plugin-camera-orthographic-centred/camera');
+var mainTemplate = require('../../views/overlays/easy.jade');
+var priorScoresTemplate = require('../../views/partials/priorScores.jade');
+
+function theGameState (state) { return state.controller.state; };
+function theScore (state) { return state.controller.score; };
+function thePriorScores (state) { return state.controller.priorScores; };
+
+//jshint maxparams:false
 module.exports = {
-  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin'],
-  type: 'View',
-  func: function hard (config, trackerHelpers, tracker, acknowledgements, registerEffect, define) {
-    var colour = require('color');
-    var $ = require('zepto-browserify').$;
-    var each = require('lodash').each;
-    var equals = trackerHelpers().equals;
-    var centreInCamera = require('../supporting-libs/centre-in-camera');
-    var adapter = require('../three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter');
-    var grid = require('../supporting-libs/debug-grid');
-    var theCamera = require('../three-js-dep/inch-plugin-camera-orthographic-centred/camera');
-    var mainTemplate = require('../../views/overlays/easy.jade');
-    var priorScoresTemplate = require('../../views/partials/priorScores.jade');
+  type: 'OnReady',
+  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
+  func: function HardMode (config, trackerHelpers, tracker, acknowledgements, registerEffect, define, $) {
+
     var dims;
     var camera;
     var renderer;
     var scene;
 
     return ['hard', function setup (newDims) {
+      var equals = trackerHelpers().equals;
+
       dims = newDims;
 
       var Circle = require('../three-js-dep/inch-geometry2d-circle/circle.js')(adapter);
 
-      $('#overlay').append(mainTemplate());
+      $()('#overlay').append(mainTemplate());
 
 
       //Render layer concern
@@ -37,46 +44,46 @@ module.exports = {
 
       scene.add(grid(adapter, dims));
 
-      var showInstructions = function (model, priorModel, statusIndicator) {
-        $('#instructions').show();
-        $('#challenge').hide();
-        $('#results').hide();
-        $('#falsestart').hide();
+      function showInstructions (model, priorModel, statusIndicator) {
+        $()('#instructions').show();
+        $()('#challenge').hide();
+        $()('#results').hide();
+        $()('#falsestart').hide();
         statusIndicator.changeColour(0, colour('grey').rgbArray());
-      };
+      }
 
-      var hideInstructions = function (model, priorModel, statusIndicator) {
-        $('#instructions').hide();
+      function hideInstructions (model, priorModel, statusIndicator) {
+        $()('#instructions').hide();
         statusIndicator.changeColour(0, colour('red').rgbArray());
-      };
+      }
 
-      var showChallenge = function (model, priorModel, statusIndicator) {
-        $('#challenge').show();
-        acknowledgements().ackLast('show-challenge');
+      function showChallenge (model, priorModel, statusIndicator) {
+        $()('#challenge').show();
+        acknowledgements().ack('show-challenge');
         statusIndicator.changeColour(0, colour('green').rgbArray());
-      };
+      }
 
-      var showResults = function (model, priorModel, statusIndicator) {
-        $('#challenge').hide();
-        $('#results').show();
+      function showResults (model, priorModel, statusIndicator) {
+        $()('#challenge').hide();
+        $()('#results').show();
         statusIndicator.changeColour(0, colour('black').rgbArray());
-      };
+      }
 
-      var showFalseStart = function (model, priorModel, statusIndicator) {
-        $('#falsestart').show();
+      function showFalseStart (model, priorModel, statusIndicator) {
+        $()('#falsestart').show();
         statusIndicator.changeColour(0, colour('orange').rgbArray());
-      };
+      }
 
-      var updateScore = function (model) {
-        $('#score')[0].innerText = model;
+      function updateScore (model) {
+        $()('#score')[0].innerText = model;
 
-        var score = $('#score');
+        var score = $()('#score');
         var centered = centreInCamera(dims, camera, score.width(), score.height());
 
         score.css('left', centered.left + 'px');
         score.css('top', centered.top + 'px');
         score.show();
-      };
+      }
 
       var statusIndicator = new Circle(scene.add, scene.remove, {
         radius: 10,
@@ -85,29 +92,27 @@ module.exports = {
       });
       registerEffect().register(statusIndicator);
 
-      var onScoreAddedFunction = function() {
+      function onScoreAddedFunction() {
         return function (currentValue) {
-          $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + currentValue.id, score: currentValue.score}));
+          $()('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + currentValue.id, score: currentValue.score}));
         };
-      };
-      var updateHightlight = function(currentValue) {
+      }
+
+      function updateHightlight (currentValue) {
         if (currentValue.best) {
-          $('#prior-score-' + currentValue.id).addClass('best');
+          $()('#prior-score-' + currentValue.id).addClass('best');
         } else {
-          $('#prior-score-' + currentValue.id).removeClass('best');
+          $()('#prior-score-' + currentValue.id).removeClass('best');
         }
-      };
-      var addExistingScoresFunction = function() {
+      }
+
+      function addExistingScoresFunction () {
         return function (currentValues) {
           each(currentValues, function(value) {
-            $('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
+            $()('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
           });
         };
       };
-
-      var theGameState = function (state) { return state.controller.state; };
-      var theScore = function (state) { return state.controller.score; };
-      var thePriorScores = function (state) { return state.controller.priorScores; };
 
       tracker().onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
       tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator]);
@@ -118,13 +123,14 @@ module.exports = {
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
 
-      define()('OnPhysicsFrame', function hard () {
-        return function () {
+      define()('OnPhysicsFrame', function HardMode () {
+        return function renderScene () {
           renderer.render(scene.scene(), camera);
         };
       });
-      define()('OnResize', function hard () {
-        return function (newDims) {
+
+      define()('OnResize', function HardMode () {
+        return function resizeRenderer (newDims) {
           dims = newDims;
 
           renderer.setSize(dims.usableWidth, dims.usableHeight);

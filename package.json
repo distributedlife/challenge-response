@@ -9,7 +9,7 @@
   "dependencies": {
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
-    "ensemblejs": "file:///Users/distributedlife/projects/ensemblejs",
+    "ensemblejs": "^5.0.0-beta-rc2",
     "ensemblejs-threejs": "^0.71.0",
     "howler": "^1.1.26",
     "jade": "^1.11.0",
@@ -47,10 +47,8 @@
     "vinyl-transform": "^1.0.0"
   },
   "scripts": {
-    "debug": "gulp quick && node game.js | bunyan -o short -l debug",
-    "start": "gulp quick && node game.js | bunyan -o short -l info",
-    "test": "gulp test",
-    "trace": "gulp quick && node game.js | bunyan -o short -l trace"
+    "start": "gulp quick && node game.js | bunyan -o short",
+    "test": "gulp test"
   },
   "browserify": {
     "transform": [
