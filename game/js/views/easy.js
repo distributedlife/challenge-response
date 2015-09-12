@@ -2,7 +2,7 @@
 
 //jshint maxparams:false
 module.exports = {
-  type: 'OnReady',
+  type: 'OnClientReady',
   deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
   func: function easy (config, trackerHelpers, tracker, acknowledgements, registerEffect, define, $) {
     var colour = require('color');
@@ -111,7 +111,7 @@ module.exports = {
           $()('#prior-score-' + id).removeClass('best');
         }
       };
-      var derp = function(id) {
+      var removePriorScore = function(id) {
         $()('#prior-score-' + id).remove();
       };
       var addExistingScoresFunction = function() {
@@ -134,7 +134,7 @@ module.exports = {
       tracker().onChangeOf(theScore, updateScore);
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);
-      tracker().onElementRemoved(thePriorScores, derp);
+      tracker().onElementRemoved(thePriorScores, removePriorScore);
 
       define()('OnPhysicsFrame', function easy () {
         return function () {

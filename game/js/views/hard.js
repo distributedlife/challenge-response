@@ -10,13 +10,13 @@ var theCamera = require('../three-js-dep/inch-plugin-camera-orthographic-centred
 var mainTemplate = require('../../views/overlays/easy.jade');
 var priorScoresTemplate = require('../../views/partials/priorScores.jade');
 
-function theGameState (state) { return state.controller.state; };
-function theScore (state) { return state.controller.score; };
-function thePriorScores (state) { return state.controller.priorScores; };
+function theGameState (state) { return state.controller.state; }
+function theScore (state) { return state.controller.score; }
+function thePriorScores (state) { return state.controller.priorScores; }
 
 //jshint maxparams:false
 module.exports = {
-  type: 'OnReady',
+  type: 'OnClientReady',
   deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
   func: function HardMode (config, trackerHelpers, tracker, acknowledgements, registerEffect, define, $) {
 
@@ -112,7 +112,7 @@ module.exports = {
             $()('#prior-scores').append(priorScoresTemplate({id: 'prior-score-' + value.id, score: value.score}));
           });
         };
-      };
+      }
 
       tracker().onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
       tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator]);
