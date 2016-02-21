@@ -36,13 +36,6 @@ module.exports = {
 
       scene.add(grid(adapter, dims));
 
-      var waitingSound = new Howl({
-        urls: ['/game/assets/audio/waiting.mp3']
-      });
-      var goSound = new Howl({
-        urls: ['/game/assets/audio/go.mp3']
-      });
-
       var showInstructions = function (model, priorModel, statusIndicator) {
         $()('#instructions').show();
         $()('#challenge').hide();
@@ -51,13 +44,13 @@ module.exports = {
         statusIndicator.changeColour(0, colour('grey').rgbArray());
       };
 
-      var hideInstructions = function (model, priorModel, statusIndicator, waitingSound2) {
+      var hideInstructions = function (model, priorModel, statusIndicator, waitingSound) {
         $()('#instructions').hide();
         statusIndicator.changeColour(0, colour('red').rgbArray());
         waitingSound.play();
       };
 
-      var showChallenge = function (model, priorModel, statusIndicator, goSound2, waitingSound2) {
+      var showChallenge = function (model, priorModel, statusIndicator, goSound, waitingSound) {
         waitingSound.stop();
         goSound.play();
 
@@ -72,7 +65,7 @@ module.exports = {
         statusIndicator.changeColour(0, colour('black').rgbArray());
       };
 
-      var showFalseStart = function (model, priorModel, statusIndicator, goSound2, waitingSound2) {
+      var showFalseStart = function (model, priorModel, statusIndicator, goSound, waitingSound) {
         $()('#falsestart').show();
         statusIndicator.changeColour(0, colour('orange').rgbArray());
         goSound.stop();
@@ -119,6 +112,13 @@ module.exports = {
           });
         };
       };
+
+      var waitingSound = new Howl({
+        urls: ['/game/assets/audio/waiting.mp3']
+      });
+      var goSound = new Howl({
+        urls: ['/game/assets/audio/go.mp3']
+      });
 
       var theGameState = function (state) { return state.controller.state; };
       var theScore = function (state) { return state.controller.score; };
