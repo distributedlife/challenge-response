@@ -10,3 +10,6 @@ vendor
 .bundle/dist
 dist/
 .bundle/
+build
+couchdb.stderr
+couchdb.stdout

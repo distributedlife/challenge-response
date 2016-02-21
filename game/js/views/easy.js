@@ -3,12 +3,11 @@
 //jshint maxparams:false
 module.exports = {
   type: 'OnClientReady',
-  deps: ['Config', 'StateTrackerHelpers', 'StateTracker', 'PacketAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
-  func: function easy (config, trackerHelpers, tracker, acknowledgements, registerEffect, define, $) {
+  deps: ['Config', 'StateTracker', 'ClientAcknowledgements', 'RegisterEffect', 'DefinePlugin', '$'],
+  func: function easy (config, tracker, acknowledgements, registerEffect, define, $) {
     var colour = require('color');
     var Howl = require('howler').Howl;
     var each = require('lodash').each;
-    var equals = trackerHelpers().equals;
     var centreInCamera = require('../supporting-libs/centre-in-camera');
     var adapter = require('../three-js-dep/inch-plugin-render-engine-adapter-threejs/adapter');
     var grid = require('../supporting-libs/debug-grid');
@@ -37,6 +36,13 @@ module.exports = {
 
       scene.add(grid(adapter, dims));
 
+      var waitingSound = new Howl({
+        urls: ['/game/assets/audio/waiting.mp3']
+      });
+      var goSound = new Howl({
+        urls: ['/game/assets/audio/go.mp3']
+      });
+
       var showInstructions = function (model, priorModel, statusIndicator) {
         $()('#instructions').show();
         $()('#challenge').hide();
@@ -45,13 +51,13 @@ module.exports = {
         statusIndicator.changeColour(0, colour('grey').rgbArray());
       };
 
-      var hideInstructions = function (model, priorModel, statusIndicator, waitingSound) {
+      var hideInstructions = function (model, priorModel, statusIndicator, waitingSound2) {
         $()('#instructions').hide();
         statusIndicator.changeColour(0, colour('red').rgbArray());
         waitingSound.play();
       };
 
-      var showChallenge = function (model, priorModel, statusIndicator, goSound, waitingSound) {
+      var showChallenge = function (model, priorModel, statusIndicator, goSound2, waitingSound2) {
         waitingSound.stop();
         goSound.play();
 
@@ -66,7 +72,7 @@ module.exports = {
         statusIndicator.changeColour(0, colour('black').rgbArray());
       };
 
-      var showFalseStart = function (model, priorModel, statusIndicator, goSound, waitingSound) {
+      var showFalseStart = function (model, priorModel, statusIndicator, goSound2, waitingSound2) {
         $()('#falsestart').show();
         statusIndicator.changeColour(0, colour('orange').rgbArray());
         goSound.stop();
@@ -74,7 +80,6 @@ module.exports = {
       };
 
       var updateScore = function (model) {
-        console.log(model);
         $()('#score')[0].innerText = model;
 
         var score = $()('#score');
@@ -91,13 +96,6 @@ module.exports = {
         position: { x: 0, y: 0, z: -100}
       });
       registerEffect().register(statusIndicator);
-
-      var waitingSound = new Howl({
-        urls: ['/game/audio/waiting.mp3']
-      });
-      var goSound = new Howl({
-        urls: ['/game/audio/go.mp3']
-      });
 
       var onScoreAddedFunction = function() {
         return function (id, currentValue) {
@@ -126,11 +124,11 @@ module.exports = {
       var theScore = function (state) { return state.controller.score; };
       var thePriorScores = function (state) { return state.controller.priorScores; };
 
-      tracker().onChangeTo(theGameState, equals('ready'), showInstructions, statusIndicator);
-      tracker().onChangeTo(theGameState, equals('waiting'), hideInstructions, [statusIndicator, waitingSound]);
-      tracker().onChangeTo(theGameState, equals('challengeStarted'), showChallenge, [statusIndicator, goSound, waitingSound]);
-      tracker().onChangeTo(theGameState, equals('complete'), showResults, statusIndicator);
-      tracker().onChangeTo(theGameState, equals('falseStart'), showFalseStart, [statusIndicator, goSound, waitingSound]);
+      tracker().onChangeTo(theGameState, 'ready', showInstructions, statusIndicator);
+      tracker().onChangeTo(theGameState, 'waiting', hideInstructions, [statusIndicator, waitingSound]);
+      tracker().onChangeTo(theGameState, 'challengeStarted', showChallenge, [statusIndicator, goSound, waitingSound]);
+      tracker().onChangeTo(theGameState, 'complete', showResults, statusIndicator);
+      tracker().onChangeTo(theGameState, 'falseStart', showFalseStart, [statusIndicator, goSound, waitingSound]);
       tracker().onChangeOf(theScore, updateScore);
       tracker().onElementAdded(thePriorScores, onScoreAddedFunction(), addExistingScoresFunction());
       tracker().onElementChanged(thePriorScores, updateHightlight);

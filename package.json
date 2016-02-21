@@ -9,62 +9,23 @@
   "dependencies": {
     "color": "^0.7.3",
     "distributedlife-sequence": "^1.0.1",
-    "ensemblejs": "^5.0.0",
+    "ensemblejs": "^6.0.0-develop-2",
     "ensemblejs-threejs": "^0.71.0",
+    "gamepad-api-mappings": "^4.0.0",
     "howler": "^1.1.26",
     "jade": "^1.11.0",
     "lerp": "^1.0.3",
-    "lodash": "^2.4.2",
-    "numeral": "^1.5.3",
-    "zepto-browserify": "^1.1.3-0"
+    "numeral": "^1.5.3"
   },
   "devDependencies": {
-    "async": "^0.9.0",
-    "browserify": "^8.1.1",
-    "browserify-shim": "^3.8.0",
-    "del": "^0.1.3",
-    "expect": "^1.1.0",
-    "factor-bundle": "^2.4.1",
-    "fake-fs": "^0.5.0",
+    "expect": "^1.14.0",
     "gulp": "^3.8.8",
-    "gulp-autoprefixer": "^2.0.0",
-    "gulp-browserify": "^0.5.1",
-    "gulp-flatten": "^0.0.4",
-    "gulp-mocha": "^1.1.1",
-    "gulp-plumber": "^0.6.6",
-    "gulp-rename": "^1.2.0",
-    "gulp-sass": "^1.3.3",
-    "gulp-sourcemaps": "^1.3.0",
-    "jadeify": "^4.0.0",
-    "jsdom": "^3.1.2",
-    "mocha": "^2.0.1",
-    "plumber": "^0.4.8",
-    "request": "^2.53.0",
-    "sinon": "^1.12.2",
-    "uglifyjs": "^2.4.10",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0",
-    "vinyl-transform": "^1.0.0"
+    "jsdom": "^8.0.4",
+    "sinon": "^1.17.3"
   },
   "scripts": {
-    "start": "gulp quick && node game.js | bunyan -o short",
+    "start": "gulp && gulp db:start && node game.js | bunyan -o short || true && gulp db:stop",
     "test": "gulp test"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim",
-      [
-        "jadeify",
-        {
-          "compileDebug": false,
-          "pretty": false
-        }
-      ],
-      "require-globify"
-    ]
-  },
-  "browserify-shim": {
-    "window": "global:window"
   },
   "main": "game.js",
   "author": "Ryan Boucher",

@@ -5,8 +5,8 @@ module.exports = {
   deps: ['GameBehaviour-Controller'],
   func: function (controller) {
     return ['hard', {
-      'i': [{target: controller().response, onRelease: true}],
-      'r': [{target: controller().reset, onRelease: true}]
+      'i': [{call: controller().response, onRelease: true}],
+      'r': [{call: controller().reset, onRelease: true}]
     }];
   }
 };

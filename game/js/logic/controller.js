@@ -8,25 +8,17 @@ function isNotCompleteOrAFalseStart (currentState) {
 }
 
 function challengeSeen (state, ack) {
-  return {
-    controller: {
-      start: ack.timestamp
-    }
-  };
+  return ['controller.start', ack.timestamp];
 }
 
 function startChallenge (state) {
-  var currentState = state.for('controller').get('state');
+  var currentState = state.get('controller.state');
 
   if (currentState === 'falseStart') {
-    return {};
+    return;
   }
 
-  return {
-    controller: {
-      state: 'challengeStarted'
-    }
-  };
+  return ['controller.state', 'challengeStarted'];
 }
 
 module.exports = {
@@ -40,30 +32,22 @@ module.exports = {
       );
     }
 
-    function response (state, data) {
-      var currentState = state.for('controller').get('state');
+    function response (state, force, data) {
+      var currentState = state.get('controller.state');
 
       if (currentState === 'ready') {
         var delay = rollUpAnUnnvervingDelay(state);
         delayed().add('pause-for-effect', delay, 'GameBehaviour-Controller', 'startChallenge');
 
-        return {
-          controller: {
-            state: 'waiting'
-          }
-        };
+        return ['controller.state', 'waiting'];
       }
       if (currentState === 'waiting') {
         delayed().cancelAll('pause-for-effect');
 
-        return {
-          controller: {
-            state: 'falseStart'
-          }
-        };
+        return ['controller.state', 'falseStart'];
       }
       if (currentState === 'challengeStarted') {
-        var start = state.for('controller').get('start');
+        var start = state.get('controller.start');
         var score = Math.floor(data.timestamp - start);
 
         return {
@@ -73,7 +57,7 @@ module.exports = {
           }
         };
       }
-      return {};
+      return;
     }
 
     function reset (state) {
@@ -81,7 +65,7 @@ module.exports = {
       var currentState = controller.get('state');
 
       if (isNotCompleteOrAFalseStart(currentState)) {
-        return {};
+        return;
       }
 
       var score = controller.get('score');

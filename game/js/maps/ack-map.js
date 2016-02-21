@@ -6,7 +6,7 @@ module.exports = {
   func: function (controller) {
     return ['*', {
       'show-challenge': [{
-        target: controller().challengeSeen
+        onComplete: controller().challengeSeen, type: 'every'
       }]
     }];
   }
