@@ -1,5 +1,5 @@
-$green: #0f0;
-$black: #fff;
+@green: #0f0;
+@black: #fff;
 
 .centre-box {
   position: relative;
@@ -23,7 +23,7 @@ $black: #fff;
 }
 
 .best {
-  color: $green;
+  color: @green;
 }
 
 .score {
@@ -45,7 +45,7 @@ $black: #fff;
   }
 
   li:not(:last-child):after {
-    color: $black;
+    color: @black;
     content: ', ';
   }
 }
